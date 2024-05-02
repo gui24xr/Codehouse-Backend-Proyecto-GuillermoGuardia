@@ -163,8 +163,7 @@ async viewProductsListPaginate(req,res){
         //Diferente a logout de api
         //Este logou es para vistas, hace lo mismo pero ademas redirigje y acomdoda variables
           //Limpia de las cookies el token existente
-          console.log('Entre por aca')
-          //Busca el token que tiene el nombre de los token de nuestra app.
+         //Busca el token que tiene el nombre de los token de nuestra app.
           res.clearCookie("sessiontoken");
           //Limpio mis variables de sesion 
           res.locals.sessionData.login = false
@@ -174,9 +173,8 @@ async viewProductsListPaginate(req,res){
     async viewLoginPost(req,res){
         //Hace lo mismo que api/login pero si esta todo Ok redirecciona a home
         //Si home detecta que hay un jwt valido entonces reenvia a products
-        //No es necesario setear las variablesd e sesion xq de eso se encarga el middleware que fabriqu y leee JWT
-        const {email,password} = req.body 
-        console.log(req.body) 
+        //No es necesario setear las variablesd e sesion xq de eso se encarga el middleware que fabrique y extrae los datos del JWT y los pone en req.sessions.global
+        const {email,password} = req.body // console.log(req.body) 
         try {
             const authenticateResult = await usersRepository.authenticateUser(email,password)
             if (authenticateResult.isSuccess){

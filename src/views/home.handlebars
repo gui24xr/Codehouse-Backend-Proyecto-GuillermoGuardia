@@ -1,0 +1,21 @@
+   <div class="overflow-hidden p-4 flex flex-col  min-h-screen max-h-screen bg-gradient-to-r from-amber-200 via-yellow-300 to-yellow-300 space-y-10">
+        <div class="flex flex-col">
+            <h1 class="text-3xl font-bold mb-5 drop-shadow-lg">E-COMMERCE CODERHOUSE BACKEND</h1>
+            <p class="font-bold mb-5 drop-shadow-lg text-right ml-auto">Guillermo Guardia</p>
+            <!-- SI NO HAY USER LOGUEADO MUESTRO PARA INICIAR/REGISTRAR-->
+        </div>       
+
+        <div class="overflow-y-scroll h96 p-3  overflow-y: auto grid grid-cols-2 md:grid-cols-10 gap-4">
+           {{#each productsList}}
+            <div>
+                <img class="h-auto max-w-full rounded-lg" src={{this.img}} alt="">
+            </div>
+              {{/each}}
+            
+        </div>
+
+</div>
+
+           
+     
+ 

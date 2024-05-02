@@ -14,7 +14,9 @@ import {router as routerViews} from './routes/views.router.js'
 import {router as routerCarts } from './routes/carts.router.js'
 import {router as routerProducts} from './routes/products.router.js'
 import {router as routerSessions} from './routes/sessions.router.js'
+import {router as routerMocking} from './routes/mocking.router.js'
 import {router as routerPruebas} from './routes/pruebas.router.js' //Interno para pruebas
+
 
 import { addSessionData } from "./middlewares/middlewares.js";
 import { SocketManager } from "./socket/socketmanager.js";
@@ -65,6 +67,7 @@ app.use('/',routerViews)
 app.use('/',routerCarts) 
 app.use('/',routerProducts)
 app.use('/',routerSessions)
+app.use('/',routerMocking)
 app.use('/pruebas', routerPruebas)
 
  ////////////////////////////////////////////////////////

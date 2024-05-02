@@ -50,12 +50,15 @@ export class UsersController{
     }
 
     async clearTokenSession(req,res){
-      
         //Redirecciona home
         res.redirect('/')
-
     }
 
+
+    async currentRoute(req,res){
+        //Voy a tomar el user que viene en middleware
+        res.json(req.user)
+    }
     
 
     

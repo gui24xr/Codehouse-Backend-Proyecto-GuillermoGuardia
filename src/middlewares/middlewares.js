@@ -40,7 +40,31 @@ async function addSessionData(req, res, next) {
 
 
 
-async function middlewareChat(req,res,next){
+async function middlewareCurrent(req,res,next){
+  passport.authenticate('jwt', { session: false }, async (err, user, info) => {
+    if (err) { return next(err); }
+    //No hay usuario
+    if (!user) { 
+       res.status(500).send('Acceso restringido, no hay user logueado... !')
+    }
+    else{//Hay user y es admin
+      if (user.user.role == 'admin'){
+      //A travez de req envio datos a la ruta current
+      req.user = user.user
+     next();
+  }
+  else{ 
+    res.status(500).send('El usuario no es un administrador')
+  }
+
+    }
+   
+
+   
+})(req, res, next)
+}
+
+async function middlewareIsUser(req,res,next){
   /*Toma el email ingresado y corrobora que no sea un admin
     si es admin impide el acceso. Si es user o alguein no registrado permite el chat.
     Tener en cuenta que se puede acceder a chat sin estar logueado.
@@ -48,11 +72,15 @@ async function middlewareChat(req,res,next){
   const {email} = req.query //console.log('Ingreso el email: ', email)
   const emailRole = await usersRepository.getMailRole(email)// console.log('Role: ',emailRole)
   emailRole == 'admin' 
+
+
   ? res.render('messagepage',{message:`${email} es administrador, no puede ingresar al chat !!!`})
   : next()
+   
 }
 
-async function middlewareRealTimeProducts(req,res,next){
+
+async function middlewareIsAdmin(req,res,next){
 
   /*Toma el email ingresado y corrobora que sea un admin
     si no es admin impide el acceso. 
@@ -65,7 +93,7 @@ async function middlewareRealTimeProducts(req,res,next){
   : res.render('messagepage',{message:`${email} NO ES administrador, no puede ezta permitido el ingreso a real time products !!!`})
 }
 
-export {addSessionData,middlewareChat, middlewareRealTimeProducts}
+export {addSessionData,middlewareCurrent,middlewareIsAdmin,middlewareIsUser}
 
 
 

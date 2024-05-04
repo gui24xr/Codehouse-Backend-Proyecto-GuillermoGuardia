@@ -103,16 +103,12 @@ export class CheckoutService {
       //si compra entonces actualiza stock
       //genera un ticket
       const searchedProduct = await productsRepository.getProductById(productId)
-      console.log('Product stovk: ', searchedProduct.stock)
       if (searchedProduct.stock >= requiredQuantity){
-        console.log('Realizo el proceso de compra y ticket')
-        //Actualizo stock restandole requiredQuantity
+         //Actualizo stock restandole requiredQuantity
         await productsRepository.updateProductStock(productId,searchedProduct.stock-requiredQuantity)
         //Genero el ticket y en la lista envio producto y cantidad
         //Dado que al ticket le vamos a estampar el id del user dueño del cartId, buscamos el user por cartId.
-       
-       
-        const generatedTicket = await ticketsRepository.createTicket(
+       const generatedTicket = await ticketsRepository.createTicket(
           userId,
           [{
             productTitle: searchedProduct.title,

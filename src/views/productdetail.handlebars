@@ -1,5 +1,4 @@
 
-
 <!--CONTAINER PAGE -->
 <div>
      <!--BANNER SUPERIOR -->
@@ -33,7 +32,7 @@
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
                     </svg>
                     <span class="text-gray-600 ml-3">4 Reviews</span>
-                    <span class="text-gray-600 ml-3">Codigo: {{productDetail.code}}</span>
+                  
                 </span>
                 <span class="flex ml-3 pl-3 py-2 border-l-2 border-gray-200">
                     <a class="text-gray-500">
@@ -54,7 +53,7 @@
                 </span>
                 </div>
 
-                <p class="leading-relaxed">Id: {{productDetail.id}}</p>
+       
                 <p class="leading-relaxed">{{productDetail.description}}</p>
                 <div class="flex mt-6 items-center pb-5 border-b-2 border-gray-200 mb-5">
               
@@ -63,8 +62,9 @@
                         <span class="flex items-center">
                    
                
-                    <span class="text-gray-600 ml-3">Codigo: {{productDetail.code}}</span>
-                    <span class="text-gray-600 ml-3">Stock: {{productDetail.stock}}</span>
+                    <span class="text-gray-600 ml-3">Precio {{productDetail.price}}</span>
+               
+               
                 </span>
           
                 </div>
@@ -74,28 +74,13 @@
 
 
                 </div>
-                <div class="flex">
-                <span class="title-font font-medium text-2xl text-gray-900">${{productDetail.price}}</span>
-               
-                   <!--AGREGADO A CARRITO-->
-                            <form action="/api/carts/{{sessionData.user.cart}}/products/{{productDetail.id}}"
-                                method="post">
+                <div class="w-full flex">
+           
+                   
 
-                                <div class="w-full flex flex-col items-center gap-2">
-                                    <label for="quantity" class="text-sm font-medium text-white">Cantidad por pagina:</label>
-                                    <input type="number" id="inputQuantity" name="quantity"  
-                                    class="text-black border rounded-md px-2 py-1 text-sm leading-5 focus:outline-none focus:ring focus:border-blue-300">
-                                
-                                    <button type="submit" class="flex ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">Add to cart</button>
-                                </div>
+                            <form  class="w-full bg-yellow-500 py-8 border border-slate-200 p-3 flex flex-col items-center space-y-2">
                             
-                            
-                            </form>
-
-
-                             <form  class="my-3 border border-slate-200 p-3 flex flex-col items-center space-y-1">
-                            
-                            <div  class="flex w-full justify-around">
+                            <div  class="flex flex-col justify-center">
                                 <label for="counter-input" class="block text-sm font-medium text-gray-900 dark:text-white">Cantidad</label>
                                 <div class="relative flex items-center">
                                     <button type="button" id="decrement-button-{{productDetail.id}}" onclick="decrementCounterQuantity(`{{productDetail.id}}`)"  class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
@@ -103,7 +88,7 @@
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
                                         </svg>
                                     </button>
-                                    <input type="number"  id="counter-input-{{productDetail.id}}" class="flex-shrink-0 text-gray-900 dark:text-white border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center" value="1" required />
+                                    <input type="number"  min="1" max="{{productDetail.stock}}" id="counter-input-{{productDetail.id}}" class="flex-shrink-0 text-gray-900 dark:text-white border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center" value="1" required />
                                     <button type="button" id="increment-button-{{productDetail.id}}" onclick="incrementCounterQuantity(`{{productDetail.id}}`,`{{productDetail.stock}}`)"  class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
                                         <svg class="w-2.5 h-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
@@ -115,9 +100,13 @@
                             
                             <p class="text-sm text-gray-500 truncate dark:text-gray-400">({{productDetail.stock}} disponibles)</p>
                             
-                            <button id={{productDetail.id}} type="button" onclick="addThisProduct(event)"  class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Agregar al carrito</button>
-                        
-                        </form>
+                                 <button id={{productDetail.id}} type="button" onclick="addThisProduct(event)"  class="flex flex-row text-blue-500 hover:text-green-800 ">
+                                <svg class="w-3.5 h-2.5 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 21">
+                                    <path d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z"/>
+                                </svg>
+                               Agregar al carrito
+                            </button>
+                            <button id='button-{{productDetail.id}}' type="button" onclick="purchaseThisProduct(event)"  class="text-white bg-red-500 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-s px-5 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Comprar este producto</button>
 
 
                 </div>
@@ -132,47 +121,74 @@
 
 
 <script>
+    /*--MANEJO DEL AGREGADO DE PRODUCTOS AL CARRO Y MANIPULACION DEL DOM PARA QUE SE VEA REFLEJADO EN LA VISTA
+        -A travez de handlebars traje la iformacion del usuario logueado en la app.
+        -La plantilla renderiza una card por cada producto. Cada Boton 'agregar a carro' llevara por ID el product ID correspondiente
+    */
+    const loggedUserInfo = {{{loggedUserInfo}}}
+    const actualCart = loggedUserInfo.user.cart //console.log('User Info: ', loggedUserInfo)
+    const actualUserId = loggedUserInfo.user._id
+    
+    function addThisProduct(event){
+          //sabemos que el boton tiene el id del producto x lo tanto tenemos el id del producto a agregar
+        const productId = event.target.id
+         //sabemos que el input de cantidad se llama counter input y tiene el ID del producto. Tomamos su valor o sea la cantidad.
+        const selectedQuantity = document.getElementById(`counter-input-${productId}`).value
+        //Tenemos la cantidad seleccionada, el productID y el cart donde agregar, usamos fetch para llevar a cabo la operacacion haciendo solicitud.
+        //Y de acuerdo a lo que envia el server mando una notiicacion de tostify
+        //console.log(productId,selectedQuantity)
+        fetch(`/api/carts/${actualCart}/products/${productId}`,
+            {
+                method:'POST', 
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ quantity: Number(selectedQuantity) })
+               })
+                .then(result => result.json())
+                .then(res => {
+                    //showNotification(`Se agregaron ${selectedQuantity} unidades del producto seleccionado a su carrito !`)
+                    console.log(res)
+                   //Manipulando Dom el cambiamos la cantidad de carritos en el navbar
+                    document.getElementById('productsQuantityInUserCart').innerText = res.countProducts
+                })
+        }
 
 
-alert('Holaaaaa')
 
-   
-function decrementCounterQuantity(id){
-    //Ya tengo el id y el stock del producto a cual quiero modificar la cantidad de su contador.
-    //capturo su contador con su id ya que sabemos que su contador se llama id="decrement-button-{{this.id}}"
-    const selectedInput = document.getElementById(`counter-input-${id}`)
-    //Le resto y cambio el valor numerico si es mayor a 2
-    if (selectedInput.value >= 2) selectedInput.value = Number(selectedInput.value) - 1
-}
+     
+    function purchaseThisProduct(event){
+          //sabemos que el boton tiene el nombre boton+'-'iddelproducto' del producto x lo tanto tenemos el id del producto a agregar
+        const pressedButtonId = event.target.id //Hay que recortarlo a partir del '-'
+        const separatorPosition = pressedButtonId.indexOf('-')
+        const productId = pressedButtonId.substring(separatorPosition+1)
+        console.log(productId,'user: ', actualUserId)
+         //sabemos que el input de cantidad se llama counter input y tiene el ID del producto. Tomamos su valor o sea la cantidad.
+        const selectedQuantity = document.getElementById(`counter-input-${productId}`).value
+        //Tenemos la cantidad seleccionada, el productID y el cart donde agregar, usamos fetch para llevar a cabo la operacacion haciendo solicitud.
+        //Y de acuerdo a lo que envia el server mando una notiicacion de tostify
+        //console.log(productId,selectedQuantity)
+        window.location.href = `/views/${productId}/singlepurchase/${selectedQuantity}/${actualUserId}`
+       
+        }
+</script>
 
-function incrementCounterQuantity(id,stock){
-    //Ya tengo el id y el stock del producto a cual quiero modificar la cantidad de su contador.
-    //capturo su contador con su id ya que sabemos que su contador se llama id="decrement-button-{{this.id}}"
-    const selectedInput = document.getElementById(`counter-input-${id}`)
-    //Le resto y cambio el valor numerico si es mayor a 2
-    if (selectedInput.value < Number(stock)) selectedInput.value = Number(selectedInput.value) + 1
-}
 
-function addThisProduct(event){
- 
-      //sabemos que el boton tiene el id del producto x lo tanto tenemos el id del producto a agregar
-    //sabemos que el input quantity del producto se llama id="counter-input-{{this.id}}" entonces podemos obtener su valor
-    const productId = event.target.id
-    const selectedQuantityInput = document.getElementById(`counter-input-${productId}`)
+<script>
+    /*-- MANEJO BOTONES +/-----------------------------------------------------------------
+    //teniendo en cuenta estas caracteristicas de los input min="1" max="{{this.stock}}" id="counter-input-{{this.id}}"
+     -Cada input tiene un minimo de 1 y un maximo de cantidad de productos en stock igual que mercado libre.
+     -id="decrement-button-{{this.id}}" onclick="decrementCounterQuantity(`{{this.id}}`)"
+     -id="increment-button-{{this.id}}" onclick="incrementCounterQuantity(`{{this.id}}`)"
+     */
 
-    const selectedQuantity = selectedQuantityInput.value
-    console.log(selectedQuantity)
-  
-    //con estos datos podemos hacer la solicitud http usando fetch
-    //Y de acuerdo a lo que envia el server mando una notiicacion de tostify
-      fetch(`/api/carts/${cartId}/products/${productId}`,{method:'POST', headers: {'Content-Type': 'application/json'},body: JSON.stringify({ quantity: selectedQuantity })})
-      .then(result => result.json())
-      .then(json => {
-        showNotification(`Se agregaron ${selectedQuantityInput} unidades del producto seleccionado a su carrito !`)
-        console.log(json.message)
-        //redirijo para que se renderice tddo y actualice cantidades.
-        window.location.href = '/products';
-        })
-}
+    const decrementCounterQuantity = (id) => {
+       const selectedInput = document.getElementById(`counter-input-${id}`)
+        //Le resto y cambio el valor numerico si es mayor a 2
+        if (selectedInput.value >= 2) selectedInput.value = Number(selectedInput.value) - 1
+    }
 
+    const incrementCounterQuantity = (id,stock) => {
+        const selectedInput = document.getElementById(`counter-input-${id}`)
+        //Le resto y cambio el valor numerico si es mayor a 2
+        if (selectedInput.value < Number(stock)) selectedInput.value = Number(selectedInput.value) + 1
+    }
 </script>

@@ -148,7 +148,11 @@ async viewProductsListPaginate(req,res){
             thumbnails: product.thumbnails
         }
 
-       res.render('productdetail', {productDetail: productDetail})
+        const valuesToRender = {
+            productDetail: productDetail,
+            loggedUserInfo:JSON.stringify(res.locals.sessionData)
+        }
+       res.render('productdetail', valuesToRender)
         }catch(error){
             throw new Error('Error al intentar mostrar vista producto...')
         }
@@ -294,8 +298,7 @@ async viewPurchase(req,res){
 
 
 async viewSinglePurchase(req,res){
-    const {pid:productId,qid:quantity,uid:userId} = req.params
-    console.log(req.params)
+    const {pid:productId,qid:quantity,uid:userId} = req.params//console.log(req.params)
     try{
         const checkoutResult = await checkoutService.checkoutProductBuy(productId,quantity,userId)
          if (checkoutResult.success){//console.log('Detalle ticket: ', checkoutResult.ticket.details)

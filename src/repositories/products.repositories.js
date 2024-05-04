@@ -27,6 +27,15 @@ export class ProductRepository{
 
    }
 
+   async getProductStock(productId){
+    try {
+       const searchedProduct = await mongoProductsDAO.getProductStock(productId)
+       return searchedProduct
+   } catch (error) {
+       throw new Error('Error al obtener producto...')
+   }
+
+}
 
 
    async updateProductStock(productId,newStockQuantity){

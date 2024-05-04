@@ -24,6 +24,16 @@ export class MongoProductsDAO{
 
    }
 
+   async getProductStock(productId){
+    try {
+       const searchedProduct = await ProductModel.findById(productId)
+       if (!searchedProduct) return null
+       return searchedProduct._doc.stock
+   } catch (error) {
+       throw new Error('Error al intentar obtener producto...')
+   }
+
+}
    //Solamente modifica el stock...
    //SI el stock pasar a ser cero al ser modificado entonces el status pasara a inactivo/false.
    //Stock en cero producto inactivo, stock distinto de cero el producto puede, o no ,estar activo.
@@ -54,6 +64,8 @@ export class MongoProductsDAO{
         throw new Error('Error al intentar actualizar  stock producto...')
     }
    }
+
+   
 
 
    async updateProduct(productId,newProduct){

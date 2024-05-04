@@ -1,8 +1,5 @@
 import express from 'express'
 import { infoUserFromToken,middlewareIsAdmin,middlewareIsUser } from '../middlewares/infouserfromtoken.js'
-
-
-
 import { ViewsController } from '../controllers/views-controllers.js'
 
 //Creo la instancia de router.
@@ -25,7 +22,8 @@ router.post('/views/login', viewsController.viewLoginPost)
 router.get('/views/logout', viewsController.viewLogout)
 router.get('/views/profile', viewsController.viewProfile)
 router.get('/views/carts/:cid', viewsController.viewCart)
-router.get('/views/:cid/purchase', viewsController.viewPurchase)
+router.get('/views/:cid/purchase', viewsController.viewPurchase) //Compra un carro
+router.get('/views/:pid/singlepurchase/:qid/:uid', viewsController.viewSinglePurchase) //Compra un producto
 router.get('/views/tickets/:uid', viewsController.viewTickets)
 
 

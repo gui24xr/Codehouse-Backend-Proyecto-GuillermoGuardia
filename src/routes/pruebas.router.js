@@ -2,7 +2,7 @@ import express from 'express'
 
 import { MongoProductsDAO } from '../dao/mongo.products.dao.js'
 import { CartRepository } from '../repositories/cart.repositories.js'
-import { CheckoutService } from '../services/checkout-service.js'
+import { CheckoutService } from '../services/checkout/checkout-service.js'
 import { UsersRepository } from '../repositories/users.repositories.js'
 import { TicketsRepositories } from '../repositories/ticket.repositories.js'
 import { ProductRepository } from '../repositories/products.repositories.js'

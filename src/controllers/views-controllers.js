@@ -4,7 +4,7 @@ import { UsersRepository } from "../repositories/users.repositories.js"
 import { TicketsRepositories } from "../repositories/ticket.repositories.js"
 import { generateJWT } from "../utils/jwt.js"
 import { createHash } from "../utils/hashbcryp.js"
-import { CheckoutService } from "../services/checkout-service.js"
+import { CheckoutService } from "../services/checkout/checkout-service.js"
 
 import { transformDate } from "../utils/hour.js"
 const productsRepository = new ProductRepository()
@@ -291,6 +291,33 @@ async viewPurchase(req,res){
     }
     
 }
+
+
+async viewSinglePurchase(req,res){
+    const {pid:productId,qid:quantity,uid:userId} = req.params
+    console.log(req.params)
+    try{
+        const checkoutResult = await checkoutService.checkoutProductBuy(productId,quantity,userId)
+         if (checkoutResult.success){//console.log('Detalle ticket: ', checkoutResult.ticket.details)
+            const moment = transformDate(checkoutResult.ticket.purchase_datetime)
+            res.status(200).render('checkoutresult',{
+                detailsList: checkoutResult.ticket.details,
+                price: (checkoutResult.ticket.price).toFixed(1),
+                transactionDate: moment.date,
+                transactionHour: moment.hour,
+                ticketCode: checkoutResult.ticket.code,
+            })
+        }
+        else{
+            res.status(500).render('messagepage',{message: checkoutResult.message})
+        }
+        
+    }catch(error){
+        throw new Error('Error al intentar renderizar singlepurchaseview...')
+    }
+    
+}
+
 
 
 

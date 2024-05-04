@@ -17,8 +17,6 @@ import {router as routerSessions} from './routes/sessions.router.js'
 import {router as routerMocking} from './routes/mocking.router.js'
 import {router as routerPruebas} from './routes/pruebas.router.js' //Interno para pruebas
 
-
-import { addSessionData } from "./middlewares/middlewares.js";
 import { SocketManager } from "./socket/socketmanager.js";
 
 //PRUEBA SQLITE3

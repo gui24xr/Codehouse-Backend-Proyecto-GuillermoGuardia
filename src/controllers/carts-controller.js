@@ -1,6 +1,6 @@
 import { CartRepository } from "../repositories/cart.repositories.js"
 import { ProductRepository } from "../repositories/products.repositories.js"
-import { CheckoutService } from "../services/checkout-service.js"
+import { CheckoutService } from "../services/checkout/checkout-service.js"
 const cartRepository = new CartRepository()
 const checkoutService = new CheckoutService()
 

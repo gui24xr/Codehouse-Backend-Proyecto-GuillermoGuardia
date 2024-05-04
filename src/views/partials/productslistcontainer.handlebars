@@ -51,8 +51,8 @@
                                Agregar
                             </button>
 
-                            <button id='{comprar${{{this.id}}}' type="button" onclick="alert('Funcionalidad aun no implementada...')"  class="text-white bg-red-500 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-s px-5 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Comprar</button>
-                            
+                            <button id='button-{{this.id}}' type="button" onclick="purchaseThisProduct(event)"  class="text-white bg-red-500 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-s px-5 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Comprar</button>
+                             
                     </form>
                     </div>
 
@@ -73,6 +73,7 @@
     */
     const loggedUserInfo = {{{loggedUserInfo}}}
     const actualCart = loggedUserInfo.user.cart //console.log('User Info: ', loggedUserInfo)
+    const actualUserId = loggedUserInfo.user._id
     
     function addThisProduct(event){
           //sabemos que el boton tiene el id del producto x lo tanto tenemos el id del producto a agregar
@@ -95,6 +96,24 @@
                    //Manipulando Dom el cambiamos la cantidad de carritos en el navbar
                     document.getElementById('productsQuantityInUserCart').innerText = res.countProducts
                 })
+        }
+
+
+
+     
+    function purchaseThisProduct(event){
+          //sabemos que el boton tiene el nombre boton+'-'iddelproducto' del producto x lo tanto tenemos el id del producto a agregar
+        const pressedButtonId = event.target.id //Hay que recortarlo a partir del '-'
+        const separatorPosition = pressedButtonId.indexOf('-')
+        const productId = pressedButtonId.substring(separatorPosition+1)
+        console.log(productId,'user: ', actualUserId)
+         //sabemos que el input de cantidad se llama counter input y tiene el ID del producto. Tomamos su valor o sea la cantidad.
+        const selectedQuantity = document.getElementById(`counter-input-${productId}`).value
+        //Tenemos la cantidad seleccionada, el productID y el cart donde agregar, usamos fetch para llevar a cabo la operacacion haciendo solicitud.
+        //Y de acuerdo a lo que envia el server mando una notiicacion de tostify
+        //console.log(productId,selectedQuantity)
+        window.location.href = `/views/${productId}/singlepurchase/${selectedQuantity}/${actualUserId}`
+       
         }
 </script>
 

@@ -1,7 +1,6 @@
 import express from 'express'
 import { UsersController } from '../controllers/users-controller.js'
-import { middlewareCurrent } from '../middlewares/middlewares.js'
-import passport from 'passport'
+import { middlewareCurrent } from '../middlewares/infouserfromtoken.js'
 
 
 export const router = express.Router()

@@ -1,9 +1,14 @@
 import express from 'express'
-import { middlewareIsAdmin,middlewareIsUser } from '../middlewares/middlewares.js'
+import { infoUserFromToken,middlewareIsAdmin,middlewareIsUser } from '../middlewares/infouserfromtoken.js'
+
+
+
+import { ViewsController } from '../controllers/views-controllers.js'
 
 //Creo la instancia de router.
 export const router = express.Router()
-import { ViewsController } from '../controllers/views-controllers.js'
+router.use(infoUserFromToken)
+
 
 const viewsController = new ViewsController()
 

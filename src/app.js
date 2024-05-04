@@ -56,11 +56,11 @@ initDataBaseConnection()
 configHandlebars(app)
 //configSessionMongo(app) //Fuera de servicio por dejar de usar session
 //importante este middleware este aca xq tiene variables de session
-app.use(addSessionData)
+//app.use(addSessionData)
 
 //app.use(passport.initialize());
 initializePassport();
-//app.use(addSessionData)
+
 
 //Routes : le decimos a la app de express que debe usar las rutas de los router
 app.use('/',routerViews)

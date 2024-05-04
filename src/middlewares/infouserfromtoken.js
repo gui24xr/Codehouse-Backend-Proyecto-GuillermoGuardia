@@ -16,7 +16,7 @@ import passport from "passport";
 
 */
 
-async function addSessionData(req, res, next) {
+async function infoUserFromToken(req, res, next) {
   // Llamada a Passport para autenticar con la estrategia 'jwt'
   // Este middleware solo lo uso para a travez de objeto res hacer viajar los dtos de user logueado  
   //De esa manera no mandar a cada plantilla lo datos del token en cada res.render
@@ -96,7 +96,7 @@ async function middlewareIsAdmin(req,res,next){
   : res.render('messagepage',{message:`${email} NO ES administrador, no puede ezta permitido el ingreso a real time products !!!`})
 }
 
-export {addSessionData,middlewareCurrent,middlewareIsAdmin,middlewareIsUser}
+export {infoUserFromToken,middlewareCurrent,middlewareIsAdmin,middlewareIsUser}
 
 
 

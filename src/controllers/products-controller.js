@@ -80,7 +80,7 @@ async getProductsListPaginate(req,res){
         console.log('prrr: ', productToAdd)
         try{
             const addResult = await productRepository.addProduct(productToAdd)
-            !addResult.isSuccess 
+            !addResult.success 
             ? res.json(addResult)
             : res.json(addResult)
 

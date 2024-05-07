@@ -10,13 +10,20 @@
  
 
 </head>
-<body >
-  <header class="shadow-lg px-2 w-full bg-slate-700 flex justify-between">
-    
-    {{>headerbar}}
-    {{>sessionbar}}
+<body class="w-full flex flex-col"></body>
+
+   <header class="px-4 py-5 space-y-4 z-50 fixed w-full bg-slate-700 flex flex-col lg:flex-row justify-between lg:px-2 lg:py-0">
+           <div class="flex items-center  text-white">
+              <svg class="fill-current h-8 mr-2" width="54" height="54" viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg"><path d="M13.5 22.1c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05zM0 38.3c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05z"/></svg>
+               <span class="font-semibold text-xl tracking-tight">G-COMMERCE</span>
+          </div>
+
+          {{>sessionbar}}
+
+          {{>navbar}}
     
   </header>
+  
   <main>
     {{{body}}}
   </main>
@@ -25,7 +32,16 @@
   </footer>
 
 
-  
+  <script>
+    // Esperamos a que el DOM esté completamente cargado
+    document.addEventListener('DOMContentLoaded', function () {
+        // Obtenemos la altura del header
+        var headerHeight = document.querySelector('header').offsetHeight;
+        
+        // Aplicamos la altura del header como margen superior al main
+        document.querySelector('main').style.marginTop = headerHeight + 'px';
+    });
+</script>
 </body>
 </html>
 

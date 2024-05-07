@@ -106,16 +106,46 @@ export class MongoProductsDAO{
     }
    }
 
-   async getProductsPaginate(limit,page,sort,query){
+   async getProductsPaginate(limit,page,sort,filter){
     try {
-      //sort puede ser 1,-1 o undefined
-      const sortBy = sort == 1 ? {price:1} : sort == -1 ? {price:-1} : {}
-      const filterBy = query ? query : {status : true} //Provisorio hasta que se implemente el filtro visual
-      const products = await ProductModel.paginate(filterBy,{limit:limit,page:page, sort:sortBy})
+      const options = {}
+      if (limit !== undefined) {
+        options.limit = limit;
+    }
+      
+      let products = await ProductModel.paginate(filter,options)
       return products
 
     } catch (error) {
       console.log('Error al recuperar los productos...')
+      throw error
+    }
+  }
+
+
+  async getProductsByFilter(filter,pageSize,pageNumber){
+    try {
+        //Devuelve los productos filtrados, la cantidad de registros,numeros de pagina anterior , numero de registros por pagina
+        //Es una alternativa  a paginate
+        if (!pageSize) pageSize = 0
+        const totalProducts = await ProductModel.countDocuments()
+        const matchesQuantity = await ProductModel.countDocuments(filter)
+        const matches = await ProductModel.find(filter).skip((pageNumber-1)*pageSize).limit(pageSize)
+        
+        const filteredData = {
+            products:matches,
+            pageSize: pageSize,
+            pageNumber:pageNumber,
+            matches: matches,
+            totalMatches: matchesQuantity,
+            totalProducts: totalProducts
+
+        }
+        
+        return filteredData
+      
+    } catch (error) {
+      console.log('Error al intentar getproductsFilter...')
       throw error
     }
   }
@@ -182,7 +212,7 @@ export class MongoProductsDAO{
     }
 
     async getProductsCategoriesList(){
-        //Devuelve todas las diferentes categorias del catalogo de productos.
+        //Devuelve un string de objetostodas las diferentes categorias del catalogo de productos.
         try{
             const products = await this.getProducts()//Obtenemos el array.
             const categoriesSet = new Set();
@@ -191,8 +221,22 @@ export class MongoProductsDAO{
                 categoriesSet.add(item.category)
             });
 
-        return Array.from(categoriesSet)
-        
+        const arrayCategories = Array.from(categoriesSet)
+        const arrayWithInfo = []
+       
+        //Voy a transformar en objeto que sea {categoryName: nombre, quantityInCategory: x}
+        arrayCategories.forEach( categoryItem => {
+
+                let categoryQuantity = 0
+                let categoryQuantityStatusActive = 0
+                products.forEach( item => {
+                    if (item.category == categoryItem) categoryQuantity +=1
+                    if ((item.category == categoryItem) && item.status==true) categoryQuantityStatusActive +=1
+                })
+                arrayWithInfo.push({ categoryName: categoryItem,quantity: categoryQuantity, activeQuantity:categoryQuantityStatusActive})
+        })
+        //console.log('Array with info: ', arrayWithInfo)
+        return arrayWithInfo
           
         }catch(error){
             throw new Error(`Error al intentar obtener lista de categorias desde mongoDao...`)

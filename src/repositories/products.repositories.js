@@ -75,6 +75,17 @@ export class ProductRepository{
     }
   }
 
+  async getProductsByFilter(filter,pageSize,pageNumber){
+    try {
+        const result = await mongoProductsDAO.getProductsByFilter(filter,pageSize,pageNumber)
+        return result
+    } catch (error) {
+      console.log('Error al intentar getproductsFilter desde repository products...')
+      throw error
+    }
+  }
+
+
 
     async addProduct({title, description,price,img,code,category,stock,status,thumbnails}){
         

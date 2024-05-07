@@ -1,4 +1,5 @@
 import express from 'express'
+import fs from 'fs'
 
 import { MongoProductsDAO } from '../dao/mongo.products.dao.js'
 import { CartRepository } from '../repositories/cart.repositories.js'
@@ -6,7 +7,7 @@ import { CheckoutService } from '../services/checkout/checkout-service.js'
 import { UsersRepository } from '../repositories/users.repositories.js'
 import { TicketsRepositories } from '../repositories/ticket.repositories.js'
 import { ProductRepository } from '../repositories/products.repositories.js'
-
+import { MessagesService } from '../services/messages/messages-service.js'
 
 const mongoProductsDAO = new MongoProductsDAO()
 const cartsRepository = new CartRepository()
@@ -14,6 +15,9 @@ const checkoutService = new CheckoutService()
 const userRepositories = new UsersRepository()
 const ticketRepositories = new TicketsRepositories
 const productsRepository = new ProductRepository()
+
+
+
 
 export const router = express.Router()
 
@@ -109,4 +113,28 @@ router.get('/getcategories',async(req,res)=>{
     }catch(error){
         throw new Error('Error en prueba gettickets...')
     }
+})
+
+
+router.get('/paginate',async (req,res)=>{
+    const limit=24
+    const page=2
+    const sort = 1
+    const query = {}
+    const pagination = await mongoProductsDAO.getProductsPaginate(limit,page,sort,query)
+
+
+    fs.promises.writeFile('pagination.json',JSON.stringify(pagination,null,1))
+    res.json(pagination);
+})
+
+
+router.get('/wtsp',(req,res)=>{
+
+    MessagesService.sendWtsp('+5491159149165')
+    res.send('Enviando')
+})
+
+router.get('/mail',(req,res)=>{
+    MessagesService.sendMail('<p>Enviando eMail Gui</p>','guillermoxr24@gmail.com','Un email')
 })

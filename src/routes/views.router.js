@@ -11,7 +11,7 @@ const viewsController = new ViewsController()
 
 router.get('/',viewsController.viewHome)
 router.get('/views/products', viewsController.viewProductsList)
-router.get('/views/productslistpaginate', viewsController.viewProductsListPaginate)
+router.get('/views/mainproductslist', viewsController.viewMainProductsList)
 router.get('/views/product/:pid', viewsController.viewProduct)
 router.get('/views/realtimeproducts', middlewareIsAdmin,viewsController.viewRealTimeProducts)
 router.get('/views/chat',middlewareIsUser,viewsController.viewChat)

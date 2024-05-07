@@ -1,37 +1,59 @@
-
 <!--CONTAINER PAGE -->
 <div>
-     <!--BANNER SUPERIOR con informacion de los parametros de paginate -->
+    <!--BANNER SUPERIOR con informacion de los parametros de paginate -->
     <div class="px-4 py-2 w-full flex justify-between items-center pl-10 bg-blue-600 text-white object-fill">
-      <p class="text-2xl ">/products</p>
+        <p class="text-2xl ">/products</p>
     </div>
 
     <div class="px-4 w-full flex  space-x-10 bg-slate-600 py-2 text-teal-300">
-        <p class="text-sm font-small">Total productos: {{totalDocs}}</p>
-        <p class="text-sm font-small">Cantidad por pagina: {{limit}}</p>
+        <p class="text-sm font-small">Total productos en catalogo: {{totalDocs}}</p>
+        <p class="text-sm font-small">Cantidad productos solicitados: {{limit}}</p>
+        <p class="text-sm font-small">Ordenado: {{order}} </p>
         <p class="text-sm font-small">Total paginas: {{totalPages}}</p>
         <p class="text-sm font-small">Pagina actual: {{actualPage}}</p>
         <p class="text-sm font-small">Prev page: {{prevPage}}</p>
         <p class="text-sm font-small">Next page: {{nextPage}} </p>
-    </div>
-    
-      
-     <!--CONTAINER MANEJADOR DE PAGINACION -->
+        <p class="text-sm font-small">Categoria seleccionada: {{selectedCategory}} </p>
+     </div>
+
+         <div class="px-4 w-full flex  space-x-10 bg-slate-600 py-2 text-teal-300">
+            <button>Todas las categorias</button>
+             {{#each categoriesList}}
+                    
+                    <button>{{this.categoryName}}</button>
+             {{/each}}
+     </div>
+
+
+    <!--CONTAINER MANEJADOR DE PAGINACION -->
     <div class="">
-        <form id='paginationForm' action = '/products' method="get" class="px-4 py-2 flex justify-start space-x-3 shadow-lg bg-lime-400">
+        <form id='paginationForm' action='/views/productslistpaginate' method="get"
+            class="px-4 py-2 flex justify-start space-x-3 shadow-lg bg-lime-400">
+
+              <div class="w-full flex items-center gap-2">
+                <label for="reqQuantity" class="text-sm font-medium text-white">Cantidad de productos:</label>
+                <input type="number" name="reqQuantity" value={{limit}} min="1" max={{totalDocs}}
+                    class="text-black border rounded-md px-2 py-1 text-sm leading-5 focus:outline-none focus:ring focus:border-blue-300">
+            </div>
             <div class="w-full flex items-center gap-2">
                 <label for="sort" class="text-sm font-medium text-white">Ordenar por precio:</label>
-                <select type="select" id="sort" name="sort" class="text-black border rounded-md px-3 py-1 text-sm leading-5 focus:outline-none focus:ring focus:border-blue-300">
-                    
+                <select type="select" id="sort" name="sort"
+                    class="text-black border rounded-md px-3 py-1 text-sm leading-5 focus:outline-none focus:ring focus:border-blue-300">
                     <option value="1">Ascendente</option>
                     <option value="-1">Descendente</option>
                 </select>
             </div>
             <div class="w-full flex items-center gap-2">
-                <label for="inputLimit" class="text-sm font-medium text-white">Cantidad por pagina:</label>
-                <input type="number" id="inputLimit" name="limit" value={{limit}} min="10" max={{totalDocs}}
-                    class="text-black border rounded-md px-2 py-1 text-sm leading-5 focus:outline-none focus:ring focus:border-blue-300">
+                <label for="selectedCategory" class="text-sm font-medium text-white">Categoria</label>
+                <select type="select" id="selectedCategory" name="selectedCategory"
+                    class="text-black border rounded-md px-3 py-1 text-sm leading-5 focus:outline-none focus:ring focus:border-blue-300">
+                    <option value='todas'>Todas las categorias</option>
+                    {{#each categoriesList}}
+                    <option value={{this.categoryName}}>{{this.categoryName}}</option>
+                    {{/each}}
+                </select>
             </div>
+          
             <!--
             <div class="w-full flex flex-col items-center gap-2">
                 <label for="rangePrice" class="text-sm font-medium text-white">Rango de precio:</label>
@@ -44,18 +66,23 @@
             <div class="w-full flex items-center gap-2">
                 <label for="inputPage" class="text-sm font-medium text-white">Página:</label>
                 <input type="number" id="inputPage" name="page" value={{actualPage}} min="1" max={{totalPages}}
-                    class="text-black border rounded-md px-2 py-1 text-sm leading-5 focus:outline-none focus:ring focus:border-blue-300"/>
-                <button id ='buttonGo' type="submit" class="bg-blue-500 text-white px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300">
-                    Ir
-                </button>
-            </div>
-            <!--
+                    class="text-black border rounded-md px-2 py-1 text-sm leading-5 focus:outline-none focus:ring focus:border-blue-300" />
+
+                <div class="w-full flex items-center gap-2">
+
+                    <button id='buttonGo' type="submit"
+                        class="bg-blue-500 text-white px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300">
+                        Ir
+                    </button>
+                </div>
+
+                <!--
             <div class="flex space-x-2">
                 <button id ='buttonPrev' type="button" class="bg-green-300 text-gray-600 px-3  rounded-md hover:bg-gray-400 focus:outline-none focus:ring focus:border-blue-300">
                             ◀ Anterior 
                     </button>
             -->
-            <!--
+                <!--
                 <button id ='buttonNext' type="button" class="bg-green-300 text-gray-600 px-3  rounded-md hover:bg-gray-400 focus:outline-none focus:ring focus:border-blue-300">
                         Siguiente ▶
                 </button>
@@ -64,8 +91,8 @@
         </form>
     </div>
 
-            
-            {{>productslistcontainer}}
+
+    {{>productslistcontainer}}
 
 
 
@@ -73,8 +100,9 @@
 </div>
 
 
-<script>
+<!--
 
+<script>
     //Tomo los datos que me trae la plantilla y que usare para los renderizados y manejos de paginas
       //De la info del user logueado extraemos su cart que es donde agregaremos productos....
     const {docs,page,hasPrevPage,hasNextPage} = {{{paginateValuesToScript}}}
@@ -130,9 +158,8 @@
   });
  
 
-   
+   ->
 
 
 
 </script>
-

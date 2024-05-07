@@ -7,6 +7,8 @@ import { ProductRepository } from "../../repositories/products.repositories.js";
 import { CartRepository } from "../../repositories/cart.repositories.js";
 import { TicketsRepositories } from "../../repositories/ticket.repositories.js";
 import { UsersRepository } from "../../repositories/users.repositories.js";
+import { MessagesService } from "../messages/messages-service.js";
+
 
 const productsRepository = new ProductRepository();
 const cartsRepository = new CartRepository();
@@ -14,6 +16,7 @@ const ticketsRepository = new TicketsRepositories();
 const usersRepository = new UsersRepository();
 
 export class CheckoutService {
+  
   async checkOutCart(cartId) {
     const listToTicket = []; //LosProducto-cantidad que iran al ticket
     const listNoTicket = []; //Lo que no ira al ticket...
@@ -73,22 +76,31 @@ export class CheckoutService {
       //console.log('user dueño del carro: ',users[0].id)
 
       //Ya tenemos la operacion hecha y ahora podemos generar el ticket
-      const generatedTicket = await ticketsRepository.createTicket(
-        users[0].id,
-        listToTicket
-      );
+      const generatedTicket = await ticketsRepository.createTicket(users[0].id,listToTicket)
+
       if (!generatedTicket) {
         return {
           success: false,
           message: "Error en la creacion del ticket...",
         };
       } else
+      {
+        //Aca hay que generar texto html con la data del ticket para pasar a la plantilla
+     '<p>Compra satisfactoria !!!!</p>'
+        //Envio email de confirmacion de compra..
+        MessagesService.sendMail('noimporta',users[0].email,'Compra realizad con exito !')
+
+
         return {
           success: true,
           message: "Creacion de ticket exitosa...",
           ticket: generatedTicket,
           noStock: listNoTicket,
-        };
+        }
+      }
+
+        
+
     } catch {
       throw new Error(
         "Error al intentar checkout cart desde checkout Service..."
@@ -123,6 +135,10 @@ export class CheckoutService {
             message: "Error en la creacion del ticket...",
           };
         } else
+               //Aca hay que generar texto html con la data del ticket para pasar a la plantilla
+        '<p>Compra satisfactoria !!!!</p>'
+     //Envio email de confirmacion de compra..
+        MessagesService.sendMail('noimporta',users[0].email,'Compra realizad con exito !')
           return {
             success: true,
             message: "Creacion de ticket exitosa...",
@@ -144,4 +160,9 @@ export class CheckoutService {
       );
     }
   }
+
+
+  //Genera el texto html a partir de la lista del ticket
+
+ 
 }

@@ -1,42 +1,165 @@
-
-
 <!--CONTAINER PAGE -->
 <div>
-
-
-     <!--BANNER SUPERIOR -->
-    <div class="w-full flex items-center pl-10 bg-blue-600 text-white object-fill py-4">
-      <p class="text-2xl leading-none">/</p>
+    <!--BANNER SUPERIOR con informacion de los parametros de paginate -->
+    <div class="px-4 py-2 w-full flex justify-between items-center pl-10 bg-blue-600 text-white object-fill">
+        <p class="text-2xl ">/products</p>
     </div>
 
-    <!--TITULO -->
-    <div class="w-full flex items-center pl-10 bg-white text-white py-10">
-      <p class="text-black text-2xl leading-none">PRODUCTOS EN STOCK</p>
-    </div>
+    <div class="px-4 w-full flex  space-x-10 bg-slate-600 py-2 text-teal-300">
+        <p class="text-sm font-small">Total productos en catalogo: {{totalDocs}}</p>
+        <p class="text-sm font-small">Cantidad productos solicitados: {{limit}}</p>
+        <p class="text-sm font-small">Ordenado: {{order}} </p>
+        <p class="text-sm font-small">Total paginas: {{totalPages}}</p>
+        <p class="text-sm font-small">Pagina actual: {{actualPage}}</p>
+        <p class="text-sm font-small">Prev page: {{prevPage}}</p>
+        <p class="text-sm font-small">Next page: {{nextPage}} </p>
+        <p class="text-sm font-small">Categoria seleccionada: {{selectedCategory}} </p>
+     </div>
 
-    <!--CONTAINER GRIDS PRODUCTS -->
-    <div class="py-10 px-5 grid grid-cols-6 gap-4 pb-10">
-        
-         {{#each productsList}}
-            <div class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                <a href="/product/{{this.id}}">
-                    <img class="p-8 rounded-t-lg" src={{this.img}} alt={{this.title}} />
-                </a>
-                <div class="px-5 pb-5">
-                    <a href="#">
-                        <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{{this.title}}</h5>
-                    </a>
-                    <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-                        {{this.description}}
-                    </p>
-                    <div class="flex col items-center justify-between">
-                        <span class="text-3xl font-bold text-gray-900 dark:text-white">${{this.price}}</span>
-                       
-                    </div>
-                     <a href="#" class="text-white bg-blue-100 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add to cart</a>
+         <div class="px-4 w-full flex  space-x-10 bg-slate-600 py-2 text-teal-300">
+            <button>Todas las categorias</button>
+             {{#each categoriesList}}
+                    
+                    <button>{{this.categoryName}}</button>
+             {{/each}}
+     </div>
+
+
+    <!--CONTAINER MANEJADOR DE PAGINACION -->
+    <div class="">
+        <form id='paginationForm' action='/views/productslistpaginate' method="get"
+            class="px-4 py-2 flex justify-start space-x-3 shadow-lg bg-lime-400">
+
+              <div class="w-full flex items-center gap-2">
+                <label for="reqQuantity" class="text-sm font-medium text-white">Cantidad de productos:</label>
+                <input type="number" name="reqQuantity" value={{limit}} min="1" max={{totalDocs}}
+                    class="text-black border rounded-md px-2 py-1 text-sm leading-5 focus:outline-none focus:ring focus:border-blue-300">
+            </div>
+            <div class="w-full flex items-center gap-2">
+                <label for="sort" class="text-sm font-medium text-white">Ordenar por precio:</label>
+                <select type="select" id="sort" name="sort"
+                    class="text-black border rounded-md px-3 py-1 text-sm leading-5 focus:outline-none focus:ring focus:border-blue-300">
+                    <option value="1">Ascendente</option>
+                    <option value="-1">Descendente</option>
+                </select>
+            </div>
+            <div class="w-full flex items-center gap-2">
+                <label for="selectedCategory" class="text-sm font-medium text-white">Categoria</label>
+                <select type="select" id="selectedCategory" name="selectedCategory"
+                    class="text-black border rounded-md px-3 py-1 text-sm leading-5 focus:outline-none focus:ring focus:border-blue-300">
+                    <option value='todas'>Todas las categorias</option>
+                    {{#each categoriesList}}
+                    <option value={{this.categoryName}}>{{this.categoryName}}</option>
+                    {{/each}}
+                </select>
+            </div>
+          
+            <!--
+            <div class="w-full flex flex-col items-center gap-2">
+                <label for="rangePrice" class="text-sm font-medium text-white">Rango de precio:</label>
+                <div class="flex items-end text-sm font-medium text-white gap-2">
+                    <input name="rangePrice" class="w-full" type="range" id="rangePrice" min="0" max="500000" step="1" value="0">
+                    <span id="rangeValue">0</span>
                 </div>
             </div>
-        {{/each}}
+            -->
+            <div class="w-full flex items-center gap-2">
+                <label for="inputPage" class="text-sm font-medium text-white">Página:</label>
+                <input type="number" id="inputPage" name="page" value={{actualPage}} min="1" max={{totalPages}}
+                    class="text-black border rounded-md px-2 py-1 text-sm leading-5 focus:outline-none focus:ring focus:border-blue-300" />
+
+                <div class="w-full flex items-center gap-2">
+
+                    <button id='buttonGo' type="submit"
+                        class="bg-blue-500 text-white px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300">
+                        Ir
+                    </button>
+                </div>
+
+                <!--
+            <div class="flex space-x-2">
+                <button id ='buttonPrev' type="button" class="bg-green-300 text-gray-600 px-3  rounded-md hover:bg-gray-400 focus:outline-none focus:ring focus:border-blue-300">
+                            ◀ Anterior 
+                    </button>
+            -->
+                <!--
+                <button id ='buttonNext' type="button" class="bg-green-300 text-gray-600 px-3  rounded-md hover:bg-gray-400 focus:outline-none focus:ring focus:border-blue-300">
+                        Siguiente ▶
+                </button>
+                </div>
+            -->
+        </form>
     </div>
-    
+
+
+    {{>productslistcontainer}}
+
+
+
+
 </div>
+
+
+<!--
+
+<script>
+    //Tomo los datos que me trae la plantilla y que usare para los renderizados y manejos de paginas
+      //De la info del user logueado extraemos su cart que es donde agregaremos productos....
+    const {docs,page,hasPrevPage,hasNextPage} = {{{paginateValuesToScript}}}
+
+    console.log('Paginate Info: ', docs,page,hasPrevPage,hasNextPage)
+
+
+    //Capturo por DOM los botones que usare para manipular todo.
+    const paginationForm = document.getElementById('paginationForm')
+    const buttonGo = document.getElementById('buttonGo')
+    const buttonPrev = document.getElementById('buttonPrev')
+    const buttonNext = document.getElementById('buttonNext')
+    const inputLimit = document.getElementById('inputLimit')
+    const inputPage = document.getElementById('inputPage')
+
+    //Boton ir hace la solicitud normal.
+    buttonNext.addEventListener('click',(event)=>{
+        
+        //Antes de hacer el submit cambio el valor de page para que llegue 1 mas
+        event.preventDefault()
+        const numActualPage = inputPage.value
+        //Solo avanzo la pagina si existe pagina siguiente.
+        if (hasNextPage){
+                  inputPage.value = Number(numActualPage) + 1
+                    paginationForm.submit()
+        }  
+        })
+
+     buttonPrev.addEventListener('click',(event)=>{
+        
+        //Antes de hacer el submit cambio el valor de page para que llegue 1 mas
+        event.preventDefault()
+        const numActualPage = inputPage.value
+        //Solo avanzo la pagina si existe pagina siguiente.
+        if (hasPrevPage){
+                  inputPage.value = Number(numActualPage) - 1
+                    paginationForm.submit()
+        }  
+        })
+
+
+    //Range precio
+      // Obtener elementos del DOM
+        const rangePrice = document.getElementById('rangePrice');
+        const rangeValue = document.getElementById('rangeValue');
+
+  // Manejar el evento de cambio en el input tipo range
+  rangePrice.addEventListener('input', function() {
+    // Actualizar el valor en el label o input
+    rangeValue.textContent = this.value;
+    // Si prefieres usar un input en lugar de un span, puedes usar la siguiente línea:
+    // rangeValue.value = this.value;
+  });
+ 
+
+   ->
+
+
+
+</script>

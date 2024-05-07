@@ -5,10 +5,6 @@ import fs from 'fs'
 
 
 /*
-const twilioAuth ={
-    accountSid : 'ACb421537986a169eef222f739c4d3daed',
-    authToken : 'ecd24146e94438fcb1e7f0e2da63fc6a'
-}
 
 const appEmail = ''
 

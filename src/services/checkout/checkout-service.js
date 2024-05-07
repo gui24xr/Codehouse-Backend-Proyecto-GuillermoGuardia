@@ -129,6 +129,7 @@ export class CheckoutService {
             unitPrice: searchedProduct.price
            }]
         )
+        console.log('eeeeeeeeeeeeeeeeee')
         if (!generatedTicket) {
           return {
             success: false,
@@ -136,15 +137,14 @@ export class CheckoutService {
           };
         } else
                //Aca hay que generar texto html con la data del ticket para pasar a la plantilla
-        '<p>Compra satisfactoria !!!!</p>'
-     //Envio email de confirmacion de compra..
-        MessagesService.sendMail('noimporta',users[0].email,'Compra realizad con exito !')
+           
+        //Envio email de confirmacion de compra..  //'<p>Compra satisfactoria !!!!</p>'
+        //MessagesService.sendMail('noimporta',users[0].email,'Compra realizad con exito !')
           return {
             success: true,
             message: "Creacion de ticket exitosa...",
             ticket: generatedTicket,
-            
-          };
+           };
 
       }
       else{

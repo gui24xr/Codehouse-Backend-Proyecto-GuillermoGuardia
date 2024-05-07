@@ -4,7 +4,7 @@ import handlebars from 'handlebars';
 import fs from 'fs'
 
 
-
+/*
 const twilioAuth ={
     accountSid : 'ACb421537986a169eef222f739c4d3daed',
     authToken : 'ecd24146e94438fcb1e7f0e2da63fc6a'
@@ -13,7 +13,7 @@ const twilioAuth ={
 const appEmail = ''
 
 const twilioClient = twilio(twilioAuth.accountSid, twilioAuth.authToken);
-
+*/
 //Cliente twilio para wtsp
 const gmailClientPass = 'logi unrv nrfj adpo'
 
@@ -45,7 +45,7 @@ const html = template(ticketData);
 
 export class MessagesService{
 
-    static sendWtsp(content,destinationPhoneNumber){
+   /* static sendWtsp(content,destinationPhoneNumber){
        
         twilioClient.messages.create({
             body: content,
@@ -55,6 +55,7 @@ export class MessagesService{
         .then(message => console.log(message.sid))
         //Cuando configure sandbox podria guardar en BD la respuesta    
     }
+    */
 
     static async sendMail(htmlcontent,destinationMail,subject){
         transport.sendMail({

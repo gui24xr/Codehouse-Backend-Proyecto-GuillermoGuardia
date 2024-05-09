@@ -59,7 +59,7 @@ export class MessagesService{
                     html:html,//Lo generan desde afuera
                     attachments:[] //Aca van los archivos adjuntos...
                 })
-                .then ( res => console.log('Respuesta de email: ', res))
+                //.then ( res => console.log('Respuesta de email: ', res))
                 //Con esto puedo manejar las confirmaciones de llegada, etc
             }
 

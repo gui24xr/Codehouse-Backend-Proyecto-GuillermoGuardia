@@ -85,14 +85,9 @@ export class CheckoutService {
         };
       } else
       {
-        //Aca hay que generar texto html con la data del ticket para pasar a la plantilla
-     //'<p>Compra satisfactoria !!!!</p>'
         //Envio email de confirmacion de compra..
         await this.sendTicketMail(generatedTicket.id)
-
-        //MessagesService.sendMail('noimporta',users[0].email,'Compra realizad con exito !')
-
-
+        
         return {
           success: true,
           message: "Creacion de ticket exitosa...",
@@ -112,42 +107,7 @@ export class CheckoutService {
 
 
 
-  //-------------------------------------------------------------------
-    async sendTicketMail(ticketId){
-      //Recibe como parametro un ticketId y busca el ticket para generar el template con sus datos
-      //Va a generar usando hbs la plantilla que sera enviada al salir ok la compra.
-     try{
-        const resultTicket = await ticketsRepository.getTicketById(ticketId)
-        if (!resultTicket.success){
-          throw new Error('No existe ticket...')
-        }
 
-        //Proceso los valores para enviar...
-        const moment = transformDate(resultTicket.ticket.purchase_datetime);
-        const valuesToRender = {
-          detailsList: resultTicket.ticket.details,
-          price: resultTicket.ticket.price.toFixed(1),
-          transactionDate: moment.date,
-          transactionHour: moment.hour,
-          ticketCode: resultTicket.ticket.code,
-        }
-
-        const source = fs.readFileSync('./src/services/checkout/ticket_template.html', 'utf8');
-        const template = handlebars.compile(source);
-        const htmlForEmail = template(valuesToRender)
-
-
-        // Guardar HTML generado en un archivo
-        fs.writeFileSync('./ticket_generated.html', htmlForEmail, 'utf8');
-        MessagesService.sendHtmlMail(resultTicket.ticket.purchaser.email,'Tu Compra se realizo con exito !',htmlForEmail)
-
-      }catch(error){
-        throw new Error('Error intentando enviar mail con ticket desde checkout service...')
-      }
-
-      
-    }
-  //---------------------------------------------------------------------
 
   //Compra una o mas unidades de un producto en particular sin pasar por el carro.
   async checkoutProductBuy(productId, requiredQuantity, userId) {
@@ -170,7 +130,7 @@ export class CheckoutService {
             unitPrice: searchedProduct.price
            }]
         )
-        console.log('eeeeeeeeeeeeeeeeee')
+
         if (!generatedTicket) {
           return {
             success: false,
@@ -181,6 +141,7 @@ export class CheckoutService {
            
         //Envio email de confirmacion de compra..  //'<p>Compra satisfactoria !!!!</p>'
         //MessagesService.sendMail('noimporta',users[0].email,'Compra realizad con exito !')
+        await this.sendTicketMail(generatedTicket.id)
           return {
             success: true,
             message: "Creacion de ticket exitosa...",
@@ -204,6 +165,41 @@ export class CheckoutService {
 
 
   //Genera el texto html a partir de la lista del ticket
+
+  async sendTicketMail(ticketId){
+    //Recibe como parametro un ticketId y busca el ticket para generar el template con sus datos
+    //Va a generar usando hbs la plantilla que sera enviada al salir ok la compra.
+   try{
+      const resultTicket = await ticketsRepository.getTicketById(ticketId)
+      if (!resultTicket.success){
+        throw new Error('No existe ticket...')
+      }
+
+      //Proceso los valores para enviar...
+      const moment = transformDate(resultTicket.ticket.purchase_datetime);
+      const valuesToRender = {
+        detailsList: resultTicket.ticket.details,
+        price: resultTicket.ticket.price.toFixed(1),
+        transactionDate: moment.date,
+        transactionHour: moment.hour,
+        ticketCode: resultTicket.ticket.code,
+      }
+
+      const source = fs.readFileSync('./src/services/checkout/ticket_template.html', 'utf8');
+      const template = handlebars.compile(source);
+      const htmlForEmail = template(valuesToRender)
+
+
+      // Guardar HTML generado en un archivo
+      fs.writeFileSync('./ticket_generated.html', htmlForEmail, 'utf8');
+      MessagesService.sendHtmlMail(resultTicket.ticket.purchaser.email,'Tu Compra se realizo con exito !',htmlForEmail)
+
+    }catch(error){
+      throw new Error('Error intentando enviar mail con ticket desde checkout service...')
+    }
+
+    
+  }
 
  
 }

@@ -3,20 +3,24 @@
                 
                 {{#each productsList}}
                     <div class="w-full flex flex-col justify-between bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                        <a href="/views/product/{{this.id}}" class="px-3 mb-4">
+                        
+                        
+                        <a href="/views/product/{{this.id}}" class="flex flex-col items-center px-3 mb-4">
                             <img class="p-8 rounded-t-lg" src={{this.img}} alt={{this.title}} />
                             <p class="text-l font-semibold tracking-tight text-gray-900 dark:text-white">{{this.title}}</p>
                         </a>
                         <div>
                             <div class="px-5 mb-4">
-                                <p class="text-sm text-gray-500 truncate dark:text-gray-400">{{this.description}}</p>
-                                <div class="flex col items-center justify-between">
-                                    <span class="text-3xl font-bold text-gray-900 dark:text-white">${{this.price}}</span>
-                                </div>
+                             
+                                    <p class="text-sm text-gray-500 truncate dark:text-gray-400">{{this.description}}</p>
+                                    <div class="flex col items-center justify-between">
+                                        <span class="mx-auto text-xl font-bold text-pink-500 dark:text-white">${{this.price}}</span>
+                                    </div>
+                                
                             </div>  
 
-                            <form  class="bg-lime-100 py-8 border border-slate-200 p-3 flex flex-col items-center space-y-2">
-                                <div  class="flex w-full justify-around">
+                            <form  class="w-full bg-lime-100 py-8 border border-slate-200 p-3 flex flex-col items-center space-y-2">
+                                <div  class="flex mx-auto">
                                     <label for="counter-input" class="block text-sm font-medium text-gray-900 dark:text-white">Cantidad</label>
                                     <div class="relative flex items-center">
                                         <button type="button" id="decrement-button-{{this.id}}" onclick="decrementCounterQuantity(`{{this.id}}`)"  class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
@@ -40,7 +44,7 @@
                                     <svg class="w-3.5 h-2.5 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 21">
                                         <path d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z"/>
                                     </svg>
-                                Agregar
+                                Agregar al carrito
                                 </button>
 
                                 <button id='button-{{this.id}}' type="button" onclick="purchaseThisProduct(event)"  class="text-white bg-red-500 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-s px-5 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Comprar</button>

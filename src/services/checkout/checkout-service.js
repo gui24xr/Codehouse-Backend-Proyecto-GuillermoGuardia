@@ -8,6 +8,9 @@ import { CartRepository } from "../../repositories/cart.repositories.js";
 import { TicketsRepositories } from "../../repositories/ticket.repositories.js";
 import { UsersRepository } from "../../repositories/users.repositories.js";
 import { MessagesService } from "../messages/messages-service.js";
+import handlebars from 'handlebars';
+import fs from 'fs'
+import { transformDate } from "../../utils/hour.js";
 
 
 const productsRepository = new ProductRepository();
@@ -23,7 +26,6 @@ export class CheckoutService {
     try {
       //Obtengo el cart a procesar...
       const searchedCart = await cartsRepository.getCartById(cartId);
-
       //Antes que nada si el carro es un carro vacio entonces no se puede hacer el proceso y salimos..
       if (searchedCart.products.length < 1) {
         return {
@@ -31,7 +33,6 @@ export class CheckoutService {
           message: "El carro esta vacio, no se genera ticket,....",
         };
       }
-
       //Recorro cart.products y consulto stock y divido caminos.
       for (let item in searchedCart.products) {
         const requiredQuantity = searchedCart.products[item].quantity;
@@ -74,7 +75,6 @@ export class CheckoutService {
       const users = await usersRepository.getUsers({ cart: cartId });
       //Ya que devuelve un array y sabemos que es solo uno...
       //console.log('user dueño del carro: ',users[0].id)
-
       //Ya tenemos la operacion hecha y ahora podemos generar el ticket
       const generatedTicket = await ticketsRepository.createTicket(users[0].id,listToTicket)
 
@@ -86,9 +86,11 @@ export class CheckoutService {
       } else
       {
         //Aca hay que generar texto html con la data del ticket para pasar a la plantilla
-     '<p>Compra satisfactoria !!!!</p>'
+     //'<p>Compra satisfactoria !!!!</p>'
         //Envio email de confirmacion de compra..
-        MessagesService.sendMail('noimporta',users[0].email,'Compra realizad con exito !')
+        await this.sendTicketMail(generatedTicket.id)
+
+        //MessagesService.sendMail('noimporta',users[0].email,'Compra realizad con exito !')
 
 
         return {
@@ -107,6 +109,45 @@ export class CheckoutService {
       );
     }
   }
+
+
+
+  //-------------------------------------------------------------------
+    async sendTicketMail(ticketId){
+      //Recibe como parametro un ticketId y busca el ticket para generar el template con sus datos
+      //Va a generar usando hbs la plantilla que sera enviada al salir ok la compra.
+     try{
+        const resultTicket = await ticketsRepository.getTicketById(ticketId)
+        if (!resultTicket.success){
+          throw new Error('No existe ticket...')
+        }
+
+        //Proceso los valores para enviar...
+        const moment = transformDate(resultTicket.ticket.purchase_datetime);
+        const valuesToRender = {
+          detailsList: resultTicket.ticket.details,
+          price: resultTicket.ticket.price.toFixed(1),
+          transactionDate: moment.date,
+          transactionHour: moment.hour,
+          ticketCode: resultTicket.ticket.code,
+        }
+
+        const source = fs.readFileSync('./src/services/checkout/ticket_template.html', 'utf8');
+        const template = handlebars.compile(source);
+        const htmlForEmail = template(valuesToRender)
+
+
+        // Guardar HTML generado en un archivo
+        fs.writeFileSync('./ticket_generated.html', htmlForEmail, 'utf8');
+        MessagesService.sendHtmlMail(resultTicket.ticket.purchaser.email,'Tu Compra se realizo con exito !',htmlForEmail)
+
+      }catch(error){
+        throw new Error('Error intentando enviar mail con ticket desde checkout service...')
+      }
+
+      
+    }
+  //---------------------------------------------------------------------
 
   //Compra una o mas unidades de un producto en particular sin pasar por el carro.
   async checkoutProductBuy(productId, requiredQuantity, userId) {

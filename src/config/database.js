@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
-import { configObject } from "./config.js";
 
-const {mongo_url} = configObject
+
+//import { configObject } from "./env-config.js";
+//const {mongo_url} = configObject
+const mongo_url = process.env.MONGO_URL
+
 
 //Me conecto a la BD
 //console.log('VIno del env: ', configObject)

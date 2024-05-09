@@ -69,16 +69,20 @@ export class ViewsController {
   }
 
   async viewMainProductsList(req, res) {
-    const {selectedCategory,pageNumber} = req.query
+    const {selectedCategory,selectedQuantityPerPage,selectedPage} = req.query
+    const defaultQuantityPerPage = 15
+    const defaultPage = 1
+    console.log('query: ', req.query)
 
       try {
-        const filter = !selectedCategory ? {status:true} : {category:selectedCategory,status:true}
-        
-        
-        
+        const filter = !selectedCategory ? {status:true} : {category:selectedCategory.toLowerCase(),status:true}
+        const quantityPerPage = !selectedQuantityPerPage ? defaultQuantityPerPage : selectedQuantityPerPage
+        const page = !selectedPage ? defaultPage : selectedPage    
+        console.log('page: ', page )
+
         const categoriesList = await productsRepository.getProductsCategoriesList() 
-        const filteredData = await productsRepository.getProductsByFilter(filter,undefined,1)
-        //console.log('Filtrados: ',filteredData)
+        const filteredData = await productsRepository.getProductsByFilter(filter,quantityPerPage,page)
+       // console.log('Filtrados: ',filteredData)
       //Hago un mapeo de docs para mandar a rendrizar en handlebars.
       const mappedProducts = filteredData.matches.map((item) => ({
         id: item.id,
@@ -95,14 +99,26 @@ export class ViewsController {
 
       //Valores que necesito para renderizar con handlebars.
       const valuesToRender = {
-        categoriesList:categoriesList,
-        selectedCategory: !selectedCategory ? 'Todas las categorias ': selectedCategory.toUpperCase(),
+        //AH categories list le agrego productsPerPage para el renderizado de hbs que no permite inresar directo.
+        categoriesList:categoriesList.map(item => ({...item,productsPerPage:!selectedQuantityPerPage ? defaultQuantityPerPage : selectedQuantityPerPage,})),
+        selectedCategory: !selectedCategory ? 'Todas las categorias': selectedCategory.toUpperCase(),
+        selectedPage: !selectedPage ? defaultPage : selectedPage,
         productsQuantity: filteredData.totalMatches,
+        productsPerPage: !selectedQuantityPerPage ? defaultQuantityPerPage : selectedQuantityPerPage,
         productsList: mappedProducts,
+        pagesQuantity: filteredData.pagesQuantity,
+        pagesNumberArray: Array.from({ length: filteredData.pagesQuantity }, (_, indice) => indice + 1),
         //En esta propiedad viaja la ifnromacion del user logueado.
         loggedUserInfo: JSON.stringify(res.locals.sessionData),
+        selectedValueFilters : JSON.stringify({
+          actualSelectedCategory: !selectedCategory ? undefined : selectedCategory,
+          actualSelectedPage: !selectedPage ? defaultPage : selectedPage,
+          actualProductsPerPage: !selectedQuantityPerPage ? defaultQuantityPerPage : selectedQuantityPerPage,
+          actualPagesQuantity: filteredData.pagesQuantity,
+        })
       };
 
+      
       res.render("mainproducts", valuesToRender);
     } catch (error) {
       res.status(500).json({ error: "Error del servidor" });

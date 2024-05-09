@@ -1,3 +1,5 @@
+import './config/env-config.js' //Para levantar variables de enteono.
+
 import express  from "express";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
@@ -19,14 +21,10 @@ import {router as routerPruebas} from './routes/pruebas.router.js' //Interno par
 
 import { SocketManager } from "./socket/socketmanager.js";
 
-//PRUEBA SQLITE3
-//import { connectToSqlite3 } from "./config/sqliteconnect.js";
-//import { SQLProductsDAO } from "./dao/sqlite.products.dao.js";
-//const unaInstancia = new SQLProductsDAO()
-//console.log(unaInstancia.getProducts())
+
 
 //crecion de instancia de express.
-const PUERTO = 8080
+const PUERTO = process.env.PORT || 8081
 export const app = express()
 
 

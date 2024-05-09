@@ -7,7 +7,7 @@ import  FileStore  from 'session-file-store'
 import MongoStore from 'connect-mongo'
 
 //firma para las sesiones
-const firmaSesiones = 'secretcoder'
+const firmaSesiones = process.env.SECRET_SESSIONS_KEY //'secretcoder'
 
 //Configuracion basica
 function configSession(app){

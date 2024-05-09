@@ -138,7 +138,8 @@ export class MongoProductsDAO{
             pageNumber:pageNumber,
             matches: matches,
             totalMatches: matchesQuantity,
-            totalProducts: totalProducts
+            totalProducts: totalProducts,
+            pagesQuantity: Math.ceil(matchesQuantity / pageSize)
 
         }
         

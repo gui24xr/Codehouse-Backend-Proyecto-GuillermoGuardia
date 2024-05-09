@@ -1,30 +1,150 @@
 <!--CONTAINER PAGE -->
     
-    <div class="w-full">
+   
     <!--BANNER SUPERIOR con informacion de los parametros de paginate -->
         <div class="px-4 py-2 w-full flex justify-between items-center pl-10 bg-blue-600 text-white object-fill">
             <p class="text-2xl ">/products</p>
         </div>
 
-        <div class="uppercase px-4 w-full flex  space-x-10 bg-red-600 py-2 text-white text-medium">
-            <a href="/views/mainproductslist">Todas las categorias</a>
-            {{#each categoriesList}}
-            <a href='/views/mainproductslist?selectedCategory={{this.categoryName}}'>{{this.categoryName}}</a>
+        <div>
+            
+              <div class="md:hidden">
+               <button id="menu-button-categories" class="w-full bg-white text-purple-600 px-4 py-2">
+                    Categorias
+                </button>
+            </div>
+
+            <div id='menucategorias' class="hidden md:block">
+             <div class="uppercase px-4 space-y-3 w-full flex-col bg-red-600 text-white text-medium md:flex-row md:w-full md:space-x-4">
+                <a id='linktodaslascategorias' href="/views/mainproductslist/?selectedQuantityPerPage={{productsPerPage}}">Todas las categorias</a>
+                {{#each categoriesList}}
+                <a  href='/views/mainproductslist?selectedCategory={{this.categoryName}}&selectedQuantityPerPage={{this.productsPerPage}}'>{{this.categoryName}}</a>
+        
             {{/each}}
+            </div>
+            </div>
+    
+      </div>
+
+
+        <div class="md:hidden">
+               <button id="menu-button-filters" class="w-full bg-white text-purple-600 px-4 py-2">
+                    Filtros
+                </button>
+            </div>
+
+        <div id='menufiltros' class="hidden md:block">
+            <div class="flex flex-col space-y-4 px-4 w-full space-x-10 bg-slate-600 py-2 text-medium md:flex-row">
+                <p class="text-white">CATEGORIA: <span id='selectedcategoryname'>{{selectedCategory}}</span></p>
+                <p class="text-white" >PRODUCTOS EN STOCK: {{productsQuantity}}</p>
+                
+                <div class="flex flex-row space-x-4">
+                    <label class="text-white" for="selectquantity">Cantidad por pagina</label>
+                    <select id ="selecterquantity" name="selectquantity" class="px-2 border-rounded">
+                        <option value="" disabled selected>{{productsPerPage}}</option>
+                        <option value="10">10</option>
+                        <option value="10">15</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                        <option value="40">40</option>
+                        <option value="50">50</option>
+                        <option value="60">60</option>
+                    </select>
+                </div>
+
+
+                
+                <div class = "flex flex-row space-x-3">
+                    <button type="submit" onClick="pageGoBack()" class="text-white hover:text-yellow-200"> ← Anterior</button>
+                    <label class="text-white" for="selectquantity">Pagina</label>
+                    <select id ="selecterpage" name="selectpage" class="border-rounded">
+                        <option value={{selectedPage}} disabled selected>{{selectedPage}}</option>
+                    {{#each pagesNumberArray}}
+                            <option value={{this}}>{{this}}</option>
+                    {{/each}}
+                    </select>
+                    <p class="text-white"> de {{pagesQuantity}}</p>
+                    <button type="submit" onClick="pageGoNext()" class="text-white hover:text-yellow-200">Siguiente →</button>
+                </div>
+        </div>
+        </div>
+                   
+
+      
+
+        {{>productslistcontainer}}
+
+
+
+     
+
+   
     
 
-        </div>
+<script>
 
-        
-        <div class="px-4 w-full flex  space-x-10 bg-slate-600 py-2 text-white text-medium ">
-        
-            <p>CATEGORIA: {{selectedCategory}}</p>
-            <p>PRODUCTOS EN STOCK: {{productsQuantity}}</p>
-        </div>
+    const { actualSelectedCategory, actualSelectedPage, actualProductsPerPage, actualPagesQuantity}= {{{selectedValueFilters}}}
+    console.log(actualSelectedCategory, actualSelectedPage, actualProductsPerPage)
+    const selecterQuantity =   document.getElementById("selecterquantity")
+    const selecterPage =   document.getElementById("selecterpage")
+  
+   
+     
+  selecterQuantity.addEventListener('change',()=> {
+    //Siu cambio la cantidad por pagina se veulve a la pagina 1
+   
+   if (actualSelectedCategory)
+    window.location.href=`/views/mainproductslist?selectedCategory=${actualSelectedCategory}&selectedQuantityPerPage=${selecterQuantity.value}&selectedPage=1`
+    else
+      window.location.href=`/views/mainproductslist?selectedQuantityPerPage=${selecterQuantity.value}&selectedPage=1`
+              
+    })
 
 
-
-       <!-- {{>productslistcontainer}} -->
-
-    </div>
+    selecterPage.addEventListener('change',()=>{
     
+       if (actualSelectedCategory)
+    window.location.href=`/views/mainproductslist?selectedCategory=${actualSelectedCategory}&selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${selecterPage.value}`
+    else
+    window.location.href=`/views/mainproductslist?selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${selecterPage.value}`
+
+    })
+
+
+    function pageGoBack(){
+        const backPage = Number(actualSelectedPage) - 1
+        if (backPage>=1){
+            if (actualSelectedCategory)
+            window.location.href=`/views/mainproductslist?selectedCategory=${actualSelectedCategory}&selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${backPage}`
+            else
+            window.location.href=`/views/mainproductslist?selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${backPage}`
+        }
+    }
+
+      function pageGoNext(){
+          const nextPage = Number(actualSelectedPage) + 1
+        if (nextPage<=actualPagesQuantity){
+            if (actualSelectedCategory)
+            window.location.href=`/views/mainproductslist?selectedCategory=${actualSelectedCategory}&selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${nextPage}`
+            else
+            window.location.href=`/views/mainproductslist?selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${nextPage}`
+        }
+    }
+
+
+
+</script>
+
+<script>
+
+    document.getElementById('menu-button-categories').addEventListener('click', function() {
+  let menucategorias = document.getElementById('menucategorias');
+  menuCategorias.classList.toggle('hidden');
+})
+
+    document.getElementById('menu-button-filters').addEventListener('click', function() {
+  let menuFiltros = document.getElementById('menufiltros');
+  menuFiltros.classList.toggle('hidden');
+})
+
+</script>

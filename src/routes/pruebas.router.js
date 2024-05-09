@@ -128,13 +128,13 @@ router.get('/paginate',async (req,res)=>{
     res.json(pagination);
 })
 
-/*
+
 router.get('/wtsp',(req,res)=>{
 
-    MessagesService.sendWtsp('+5491159149165')
+    MessagesService.sendWtsp('Hola aqui enviando un mensaje...','+5491159149165')
     res.send('Enviando')
 })
-*/
+
 router.get('/mail',(req,res)=>{
     MessagesService.sendMail('<p>Enviando eMail Gui</p>','guillermoxr24@gmail.com','Un email')
 })

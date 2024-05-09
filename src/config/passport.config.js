@@ -14,7 +14,7 @@ export const initializePassport = () => {
     //Lee el JWT
     passport.use("jwt", new JWTStrategy({
         jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
-        secretOrKey: "coderhouse"
+        secretOrKey: process.env.SECRET_TOKENS_KEY //"coderhouse"
         //Misma palabra que tenemos en la App.js! No se olviden! 
     }, async (jwt_payload, done) => {
         try {

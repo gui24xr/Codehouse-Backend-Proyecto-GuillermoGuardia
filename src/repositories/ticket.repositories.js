@@ -13,6 +13,17 @@ export class TicketsRepositories{
         }
     }
 
+    async getTicketById(ticketId){
+        try {
+            const ticket = await TicketModel.findById(ticketId).populate('purchaser') 
+            if (!ticket) return {success: true, message: 'No existe ticket para esta busqueda'}
+            else return {success: true, message: 'Ticket obtenido correctament...', ticket:ticket._doc}
+        } catch (error) {
+            throw new Error('Error al intentar obtener tickets desde ticketRepositories...')
+        }
+    
+    }
+
     async getTicketsByPurchaser(purchaserId){
         try {
             const ticketsList = await TicketModel.find({purchaser:purchaserId}) 

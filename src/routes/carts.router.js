@@ -5,12 +5,12 @@ import { CartsController } from '../controllers/carts-controller.js'
 export const router = express.Router()
 const cartsController = new CartsController()
 
-router.get('/api/carts/:cid', cartsController.getCartById)
-router.post('/api/carts',cartsController.createCart)
-router.post('/api/carts/:cid/products/:pid',cartsController.addProductInCart)
-router.delete('/api/carts/:cid/products/:pid',cartsController.deleteProductInCart)
-router.delete('/api/carts/:cid',cartsController.clearCart)
-router.put('/api/carts/:cid',cartsController.addProductListInCart)
+router.get('/carts/:cid', cartsController.getCartById)
+router.post('/carts',cartsController.createCart)
+router.post('/carts/:cid/products/:pid',cartsController.addProductInCart)
+router.delete('/carts/:cid/products/:pid',cartsController.deleteProductInCart)
+router.delete('/carts/:cid',cartsController.clearCart)
+router.put('/carts/:cid',cartsController.addProductListInCart)
 
 //purchaseRoutes.
 router.post('/:cid/purchase', cartsController.cartCheckout)

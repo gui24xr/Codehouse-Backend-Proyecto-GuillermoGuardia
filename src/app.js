@@ -1,10 +1,12 @@
 import './config/env-config.js' //Para levantar variables de enteono.
 
+
 import express  from "express";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import passport from 'passport'
 
+import { addLogger } from './middlewares/logger-middleware.js';
 import cors from 'cors'
 import { configHandlebars } from "./config/handlebars-config.js"
 import { initDataBaseConnection } from "./config/database.js";
@@ -16,7 +18,7 @@ import {router as routerViews} from './routes/views.router.js'
 import {router as routerCarts } from './routes/carts.router.js'
 import {router as routerProducts} from './routes/products.router.js'
 import {router as routerSessions} from './routes/sessions.router.js'
-import {router as routerMocking} from './routes/mocking.router.js'
+import {router as routerTesting} from './routes/testing.router.js'
 import {router as routerPruebas} from './routes/pruebas.router.js' //Interno para pruebas
 
 import { SocketManager } from "./socket/socketmanager.js";
@@ -27,7 +29,8 @@ import { SocketManager } from "./socket/socketmanager.js";
 const PUERTO = process.env.PORT || 8081
 export const app = express()
 
-
+app.use(addLogger)
+//console.log(process.env)
 
 //Configuracion carpeta public
 app.use(express.static('./src/public'));
@@ -60,10 +63,10 @@ initializePassport();
 
 //Routes : le decimos a la app de express que debe usar las rutas de los router
 app.use('/',routerViews)
-app.use('/',routerCarts) 
-app.use('/',routerProducts)
-app.use('/',routerSessions)
-app.use('/',routerMocking)
+app.use('/api',routerCarts) 
+app.use('/api',routerProducts)
+app.use('/api',routerSessions)
+app.use('/',routerTesting)
 app.use('/pruebas', routerPruebas)
 
  ////////////////////////////////////////////////////////

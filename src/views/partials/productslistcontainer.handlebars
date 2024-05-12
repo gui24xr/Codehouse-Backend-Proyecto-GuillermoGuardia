@@ -1,8 +1,8 @@
 <!--CONTAINER GRIDS PRODUCTS -->
-            <div class='px-4 py-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-10 gap-4'>
+            <div class='px-4 py-4 grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4'>
                 
                 {{#each productsList}}
-                    <div class="w-full flex flex-col justify-between bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                    <div class="w-full flex flex-col justify-between bg-white border border-gray-200 rounded-lg">
                         
                         
                         <a href="/views/product/{{this.id}}" class="flex flex-col items-center px-3 mb-4">
@@ -12,23 +12,23 @@
                         <div>
                             <div class="px-5 mb-4">
                              
-                                    <p class="text-sm text-gray-500 truncate dark:text-gray-400">{{this.description}}</p>
+                                    <p class="text-sm text-gray-500 truncate">{{this.description}}</p>
                                     <div class="flex col items-center justify-between">
-                                        <span class="mx-auto text-xl font-bold text-pink-500 dark:text-white">${{this.price}}</span>
+                                        <span class="mx-auto text-xl font-bold text-pink-500">${{this.price}}</span>
                                     </div>
                                 
                             </div>  
 
                             <form  class="w-full bg-lime-100 py-8 border border-slate-200 p-3 flex flex-col items-center space-y-2">
                                 <div  class="flex mx-auto">
-                                    <label for="counter-input" class="block text-sm font-medium text-gray-900 dark:text-white">Cantidad</label>
+                                    <label for="counter-input" class="block text-sm font-medium text-gray-900">Cantidad</label>
                                     <div class="relative flex items-center">
                                         <button type="button" id="decrement-button-{{this.id}}" onclick="decrementCounterQuantity(`{{this.id}}`)"  class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
                                             <svg class="w-2.5 h-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
                                             </svg>
                                         </button>
-                                        <input type="number"  min="1" max="{{this.stock}}" id="counter-input-{{this.id}}" class="flex-shrink-0 text-gray-900 dark:text-white border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center" value="1" required />
+                                        <input type="number"  min="1" max="{{this.stock}}" id="counter-input-{{this.id}}" class="flex-shrink-0 text-gray-900 border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center" value="1" required />
                                         <button type="button" id="increment-button-{{this.id}}" onclick="incrementCounterQuantity(`{{this.id}}`,`{{this.stock}}`)"  class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
                                             <svg class="w-2.5 h-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>

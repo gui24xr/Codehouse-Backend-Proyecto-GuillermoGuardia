@@ -7,9 +7,9 @@ export const router = express.Router()
 const usersController = new UsersController
 
 
-router.post('/api/sessions/registrarse',usersController.createUser)
-router.post('/api/sessions/login',usersController.authenticateUser)
-router.post('/api/sessions/logout', usersController.clearTokenSession)
-router.get('/current',middlewareCurrent,usersController.currentRoute)
+router.post('/sessions/registrarse',usersController.createUser)
+router.post('/sessions/login',usersController.authenticateUser)
+router.post('/sessions/logout', usersController.clearTokenSession)
+
 
 

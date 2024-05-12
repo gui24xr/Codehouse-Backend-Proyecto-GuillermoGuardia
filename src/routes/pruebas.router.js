@@ -1,3 +1,8 @@
+
+//PARA HACER PRUEAS FUERA DE LAS CONSIGNAS
+
+
+
 import express from 'express'
 import fs from 'fs'
 
@@ -137,4 +142,10 @@ router.get('/wtsp',(req,res)=>{
 
 router.get('/mail',(req,res)=>{
     MessagesService.sendMail('<p>Enviando eMail Gui</p>','guillermoxr24@gmail.com','Un email')
+	res.send('Enviando')
+})
+
+router.get('/log',(req,res)=>{
+    console.log('ALgo llego desde afuera !')
+	res.send('Recibido')
 })

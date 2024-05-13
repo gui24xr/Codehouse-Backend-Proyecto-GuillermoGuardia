@@ -1,16 +1,24 @@
 import { UsersRepository } from "../repositories/users.repositories.js";
 import {createHash, isValidPassword} from "../utils/hashbcryp.js"
 import { generateJWT } from "../utils/jwt.js";
+import { IncompleteFieldsError, usersServiceError, AuthServiceError } from "../services/errors/custom-errors.js";
+import { getMissingFields } from "../utils/getMissingFields.js";
+
 
 const usersRepository = new UsersRepository()
 
 export class UsersController{
     
-    async createUser(req,res){
+    async createUser(req,res,next){
         const {first_name, last_name, email, password,age, role} = req.body;
-        console.log(req.body)
-        try {
-            //Armo tanto los datos como el carro que le asignare
+        const requiredFields = ['first_name', 'last_name', 'email', 'password','age']
+        const missingFields = getMissingFields(req.body,requiredFields)
+       
+         try {
+             //Controlamos que no falten datos necesarios para crear un user....
+            if (missingFields.length > 0)  throw new IncompleteFieldsError(`Faltan ingresar los siguientes campos: ${missingFields}`)
+             //SI Estan todos los campos necesarios entonces se procede...
+                
             const createdUser = await usersRepository.createUser({
                 first_name : first_name,
                 last_name : last_name,
@@ -19,39 +27,55 @@ export class UsersController{
                 age: age,
                 role: role
             })
-            if (createdUser.isSuccess) res.status(200).json(createdUser)
-            else res.status(500).json(createdUser)
-            
+      
+           res.status(200).json({
+            status: "success", 
+            message: "El usuario ha sido creado correctamente.",
+            user:createdUser
+            })
+                    
         }
         catch(error){
-            throw new Error('Error al intentar crear usuario...')
+            if (error instanceof IncompleteFieldsError) next(error)
+            if (error instanceof  usersServiceError) next(error)
         }
     }
 
-    async authenticateUser(req,res){
+    async authenticateUser(req,res,next){
         const {email,password} = req.body 
-        console.log(req.body) 
+        const requiredFields = [ 'email', 'password']
+        const missingFields = getMissingFields(req.body,requiredFields)
+       
         try {
-            const authenticateResult = await usersRepository.authenticateUser(email,password)
-            if (authenticateResult.isSuccess){
-                //Salio Ok entonces envio token con la informacion del usuario
-                //const token = jwt.sign({user: {...authenticateResult.user}},'coderhouse',{expiresIn:"1h"})
-                res.cookie("sessiontoken", generateJWT(authenticateResult.user), {maxAge: 3600000,  httpOnly: true  })
-               //res.redirect('/products') //Envio a la raiz y va a aparecer logueado y la barra de sesion con su info gracias a la lectura del token y el middleware
-                res.json(authenticateResult)
-             }
-            else{
-                res.json(authenticateResult)
-            }
+             //Controlamos que no falten datos necesarios para iniciar sesion...
+            if (missingFields.length > 0)  throw new IncompleteFieldsError(`Faltan ingresar los siguientes campos: ${missingFields}`)
+             //SI Estan todos los campos necesarios entonces se procede...
+             const authenticateUser = await usersRepository.authenticateUser(email,password)
+             res.cookie(process.env.COOKIE_AUTH_TOKEN, generateJWT(authenticateUser), {maxAge: 3600000,  httpOnly: true  })
+              
+             res.status(200).json({
+                status: "success", 
+                message: `El usuario ${authenticateUser.email} ha iniciado sesion correctamente...`,
+                user:authenticateUser
+                })
+                        
         } catch (error) {
-            throw new Error('Error al intentar logear usuario...')
+            if (error instanceof IncompleteFieldsError) next(error)
+            if (error instanceof  usersServiceError) next(error)
+            if (error instanceof  AuthServiceError) next(error)
         }
        
     }
 
     async clearTokenSession(req,res){
-        //Redirecciona home
-        res.redirect('/')
+        res.clearCookie(process.env.COOKIE_AUTH_TOKEN);
+        res.locals.sessionData.login = false;
+        res.status(200).json({
+            status: "success", 
+            message: `Se ha cerrado sesion.`,
+           
+            })
+     
     }
 
 

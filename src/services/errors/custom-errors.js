@@ -21,3 +21,28 @@ export class validationError extends Error{
         this.name = 'validationError'
     }
 }
+
+
+//Para cuando falta se ingresen campos.
+export class IncompleteFieldsError extends Error{
+    constructor(message){
+        super(message)
+        this.name = 'IncompleteFieldsError'
+    }
+}
+
+//Errores relacionados al servicio de usuarios
+export class usersServiceError extends Error{
+    constructor(message){
+        super(message)
+        this.name = 'usersServiceErrors'
+    }
+}
+
+//Errores relacionados al errores de autenticacion
+export class AuthServiceError extends Error{
+    constructor(message){
+        super(message)
+        this.name = 'usersServiceErrors'
+    }
+}

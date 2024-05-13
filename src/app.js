@@ -22,7 +22,7 @@ import {router as routerTesting} from './routes/testing.router.js'
 import {router as routerPruebas} from './routes/pruebas.router.js' //Interno para pruebas
 
 import { SocketManager } from "./socket/socketmanager.js";
-
+import { manejadorError } from './middlewares/errors.js';
 
 
 //crecion de instancia de express.
@@ -68,6 +68,8 @@ app.use('/api',routerProducts)
 app.use('/api',routerSessions)
 app.use('/',routerTesting)
 app.use('/pruebas', routerPruebas)
+
+app.use(manejadorError)
 
  ////////////////////////////////////////////////////////
 

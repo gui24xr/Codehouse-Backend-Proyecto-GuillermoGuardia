@@ -2,6 +2,7 @@
 import { UserModel } from "../models/user.models.js";
 import { CartRepository } from "./cart.repositories.js";
 import { isValidPassword } from "../utils/hashbcryp.js";
+import { usersServiceError, AuthServiceError } from "../services/errors/custom-errors.js";
 
 const cartsRepository = new CartRepository()
 
@@ -10,40 +11,44 @@ export class UsersRepository{
         //console.log('LLego:',user)
        try{
             const existUser = await UserModel.findOne({email:user.email})
-            if (existUser) return {isSuccess: false, message:'Ya existe un usuario con este email'}
+            if (existUser) throw new usersServiceError(`El usuario ${user.email} ya existe en nuestra base de datos !!`)
             else  {
                 //Creo un carro para el user.
                 const cartForNewUser = await cartsRepository.createCart()
                 const newUser = new UserModel({...user,cart:cartForNewUser})
                 await newUser.save()
-                return {isSuccess: true, message:`Se creo usuario...`, user: newUser}
+                return newUser
             }
         }catch(error){
-            throw new Error('Error al crear usuario...')
+            throw error
         }
     }
+
+
+
+
 
     //Comprueba si existen mail y contraseña y coinciden
     async authenticateUser(email,password){
         try{
             const searchedUser = await UserModel.findOne({email:email})
             if (searchedUser) {
-                if (isValidPassword(password,searchedUser.password))
-                {
-                    return {isSuccess: true, message:`Usuario autorizado para ingreso...`, user:searchedUser}
-                }
-               else{
-                return {isSuccess: false, message:`Ingreso no autorizado, no coinciden usuario y contraseña...`, user: null}
-               } 
+                if (isValidPassword(password,searchedUser.password))  return searchedUser
+                else throw new AuthServiceError('Error de autenticacion: Password Incorrecto !!!')
             }
             else{//No existe user con dicho email.
-                return {isSuccess: false, message:`Usuario no existe...`, user:null}
+                throw new AuthServiceError(`Error de autenticacion: No existe el usuario con email ${email}.`)
             }
-        
-        }catch(error){
-            throw new Error('Error al intentar comprobar usuario...')
+        }
+        catch(error){
+            throw error //lanzo el error a la funcion que la llamo
         }
     }
+
+
+
+
+
 
     async getUser(email){
         //Si existe el user lo devuelve, de lo contrario devuelve null

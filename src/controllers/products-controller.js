@@ -1,5 +1,7 @@
 import { ProductRepository } from "../repositories/products.repositories.js";
 import { mySocketServer } from "../app.js";
+import { IncompleteFieldsError } from "../services/errors/custom-errors.js";
+import { getMissingFields } from "../utils/getMissingFields.js";
 
 const productRepository = new ProductRepository()
 
@@ -75,17 +77,29 @@ async getProductsListPaginate(req,res){
         }
     }
 
-    async addProduct(req,res){
-        const productToAdd =req.body
-        console.log('prrr: ', productToAdd)
+    async addProduct(req,res,next){
+        const productToAdd = req.body
+        const requiredFields = ['title', 'description', 'price', 'img', 'code', 'category', 'stock', 'status']
+        const missingFields = getMissingFields(req.body,requiredFields)
         try{
+            //Si no se ingresan todos los campos entonces se va al middleware de error.
+            if (missingFields.length > 0)  throw new IncompleteFieldsError(`Faltan ingresar los siguientes campos: ${missingFields}`)
+        
+            //Estan todos los campos entonces se procede...
             const addResult = await productRepository.addProduct(productToAdd)
             !addResult.success 
             ? res.json(addResult)
             : res.json(addResult)
 
         }catch(error){
-            res.status(500).send(`Error al intentar agregar producto...`)
+
+
+            if (error instanceof IncompleteFieldsError){
+                //console.log('Manejando erroressss')
+                //res.status(500).json({message: error.message})
+                next(error)
+            } 
+            
         }
     }
 
@@ -93,6 +107,10 @@ async getProductsListPaginate(req,res){
         //const productToAdd = req.body
         console.log('prrr: ', req.body)
         const {title,description,code,price,stock,category,status,img} = req.body
+
+
+
+
         try{
            const addProductResult = await productRepository.addProduct({
                 title:title,

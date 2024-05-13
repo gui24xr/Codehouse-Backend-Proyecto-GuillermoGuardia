@@ -1,1 +1,12 @@
 ***[LOGGER]*** [error at 24-05-12 18:05:80] Log: Una info
+***[LOGGER]*** [error at 24-05-12 22:05:98] Log: Faltan ingresar los siguientes campos: price --from-- /api/products
+***[LOGGER]*** [error at 24-05-12 22:05:15] Log: undefined --from-- /api/products
+***[LOGGER]*** [error at 24-05-12 22:05:84] Log: Error Type:IncompleteFieldsError in POST - /api/products from ::1
+***[LOGGER]*** [error at 24-05-12 22:05:38] Log: Error Type:IncompleteFieldsError in POST - /api/products from ::1
+***[LOGGER]*** [error at 24-05-12 22:05:93] Log: Error Type:IncompleteFieldsError in POST - /api/products from ::1
+***[LOGGER]*** [error at 24-05-12 22:05:27] Log: Error Type:IncompleteFieldsError in POST - /api/products from ::1
+***[LOGGER]*** [error at 24-05-12 22:05:66] Log: Error Type:IncompleteFieldsError in POST - /api/sessions/registrarse from ::1
+***[LOGGER]*** [error at 24-05-13 00:05:20] Log: Type:usersServiceErrors in POST - /api/sessions/login from ::1
+***[LOGGER]*** [error at 24-05-13 00:05:79] Log: Type:usersServiceErrors in POST - /api/sessions/login from ::1
+***[LOGGER]*** [error at 24-05-13 00:05:47] Log: Type:usersServiceErrors in POST - /api/sessions/login from ::1
+***[LOGGER]*** [error at 24-05-13 01:05:05] Log: Type:usersServiceErrors in POST - /api/sessions/login from ::1

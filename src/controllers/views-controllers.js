@@ -5,6 +5,8 @@ import { TicketsRepositories } from "../repositories/ticket.repositories.js";
 import { generateJWT } from "../utils/jwt.js";
 import { createHash } from "../utils/hashbcryp.js";
 import { CheckoutService } from "../services/checkout/checkout-service.js";
+import { getMissingFields } from "../utils/getMissingFields.js";
+import { IncompleteFieldsError, usersServiceError, AuthServiceError } from "../services/errors/custom-errors.js";
 
 import { transformDate } from "../utils/hour.js";
 const productsRepository = new ProductRepository();
@@ -240,7 +242,7 @@ export class ViewsController {
     //Este logou es para vistas, hace lo mismo pero ademas redirigje y acomdoda variables
     //Limpia de las cookies el token existente
     //Busca el token que tiene el nombre de los token de nuestra app.
-    res.clearCookie("sessiontoken");
+    res.clearCookie(process.env.COOKIE_AUTH_TOKEN);
     //Limpio mis variables de sesion
     res.locals.sessionData.login = false;
     res.redirect("/");
@@ -251,34 +253,32 @@ export class ViewsController {
     //Si home detecta que hay un jwt valido entonces reenvia a products
     //No es necesario setear las variablesd e sesion xq de eso se encarga el middleware que fabrique y extrae los datos del JWT y los pone en req.sessions.global
     const { email, password } = req.body; // console.log(req.body)
+    const requiredFields = ['email', 'password']
+    const missingFields = getMissingFields(req.body,requiredFields)
     try {
-      const authenticateResult = await usersRepository.authenticateUser(
-        email,
-        password
-      );
-      if (authenticateResult.isSuccess) {
-        //Salio Ok entonces envio token con la informacion del usuario
-        //const token = jwt.sign({user: {...authenticateResult.user}},'coderhouse',{expiresIn:"1h"})
-        res.cookie("sessiontoken", generateJWT(authenticateResult.user), {
-          maxAge: 3600000,
-          httpOnly: true,
-        });
-        //res.redirect('/products') //Envio a la raiz y va a aparecer logueado y la barra de sesion con su info gracias a la lectura del token y el middleware
-        res.redirect("/");
-      } else {
-        res.render("messagepage", {
-          message: `El usuario ${email} no se encuentra registrado en nuestra tienda....`,
-        });
-      }
+      if (missingFields.length > 0)  throw new IncompleteFieldsError(`Faltan ingresar los siguientes campos: ${missingFields}`)
+      const authenticateUser = await usersRepository.authenticateUser(email,password)
+      //Salio Ok entonces envio token con la informacion del usuario
+      res.cookie(process.env.COOKIE_AUTH_TOKEN, generateJWT(authenticateUser), {maxAge: 3600000,  httpOnly: true  })
+      //Redirijo a la raiz y va a aparecer logueado y la barra de sesion con su info gracias a la lectura del token y el middleware
+      res.redirect("/")
+      
     } catch (error) {
-      throw new Error("Error al intentar logear usuario...");
+      if (error instanceof IncompleteFieldsError) res.status(400).render("messagepage", { message: error.message });
+      if (error instanceof  AuthServiceError) res.status(409).render("messagepage", { message: error.message });
     }
   }
 
   async viewRegisterPost(req, res) {
-    const { first_name, last_name, email, password, age, role } = req.body;
-    // console.log(req.body,'4545445454')
+    //Por ahora vamos a bloquear que desde el fron se puedan crear admin
+    const {first_name, last_name, email, password,age, role} = req.body;
+    const requiredFields = ['first_name', 'last_name', 'email', 'password','age']
+    const missingFields = getMissingFields(req.body,requiredFields)
+
     try {
+      //Controlamos que no falten datos necesarios para crear un user....
+      if (missingFields.length > 0)  throw new IncompleteFieldsError(`Faltan ingresar los siguientes campos: ${missingFields}`)
+      //SI Estan todos los campos necesarios entonces se procede...
       const createdUser = await usersRepository.createUser({
         first_name: first_name,
         last_name: last_name,
@@ -287,13 +287,11 @@ export class ViewsController {
         age: age,
         role: role,
       });
-
-      if (createdUser.isSuccess)
-        res.render("messagepage", { message: createdUser.message });
-      else
-        res.status(500).render("messagepage", { message: createdUser.message });
-    } catch (error) {
-      throw new Error("Error al intentar crear usuario...");
+     //Salio todo Ok entonces procedo a renderizar....
+        res.status(200).render("messagepage", { message: `Se ha creado correctamente el usuario ${createdUser.email} !!` });
+     } catch (error) {
+      if (error instanceof IncompleteFieldsError) res.status(400).render("messagepage", { message: error.message });
+      if (error instanceof  usersServiceError) res.status(409).render("messagepage", { message: error.message });
     }
   }
 

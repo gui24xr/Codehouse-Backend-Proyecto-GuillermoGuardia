@@ -1,6 +1,6 @@
 import { ProductRepository } from "../repositories/products.repositories.js";
 import { mySocketServer } from "../app.js";
-import { IncompleteFieldsError } from "../services/errors/custom-errors.js";
+import { IncompleteFieldsError, InternalServerError } from "../services/errors/custom-errors.js";
 import { getMissingFields } from "../utils/getMissingFields.js";
 
 const productRepository = new ProductRepository()
@@ -8,34 +8,51 @@ const productRepository = new ProductRepository()
 export class ProductController{
 
     //Devuelve todos los productos
-    async getProducts(req,res){
-        const limit = req.query.limit
+    async getProducts(req,res,next){
+        const {limit} = req.query
         try{
-            const productsList = await productRepository.getProducts()    
-            limit 
-            ? res.json(productsList.slice(0,limit))
-            : res.json(productsList)
+            const productsList = await productRepository.getProducts()  
+            if (limit){
+                res.status(200).json({
+                    status: "success", 
+                    message: `Productos obtenidos satisfactoriamente Limit: ${limit}!!`,
+                    products: productsList.slice(0,limit)
+                    })
+                }
+            else{
+                res.status(200).json({
+                    status: "success", 
+                    message: `Productos obtenidos satisfactoriamente.`,
+                    products: productsList
+                    })
+            }
         }catch(error){
-            res.status(500).send(`Error al obtener productos...`)
+            //Aca podria llegar a venir un error del productsSerVICE a futuro cuando sea implementado.
+            next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||productsController.getProducts||...'))
         }
     }
 
    
+
     //Devuelve los productos paginados pero devuelve solo los que tienen status true.
-async getProductsListPaginate(req,res){
+async getProductsListPaginate(req,res,next){
     const {limit,page,sort,query} = req.query     
     try{
          const sortValue = sort == '1' ? 1 : sort == '-1' ? -1 : 0   //console.log('SortValue', sortValue)
         const paginate = await productRepository.getProductsPaginate(limit ? limit : 10,page ? page : page,sortValue,query)
-        res.json(paginate)
+        res.status(200).json({
+            status: "success", 
+            message: `Productos obtenidos satisfactoriamente.`,
+            products: paginate
+            })
 
     }catch(error){
-         res.status(500).json({error: 'Error del servidor'})
-        throw new Error('Error al intentar obtener productos con paginacion...')
+         //Aca podria llegar a venir un error del productsSerVICE a futuro cuando sea implementado.
+         next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||productsController.getProductsListPaginate||...'))
     }
 }
 
-    async getProductById(req,res){
+    async getProductById(req,res,next){
         const {pid:productId} = req.params
         try{
             const searchedProduct = await productRepository.getProductById(productId)
@@ -45,11 +62,13 @@ async getProductsListPaginate(req,res){
             : res.json(searchedProduct)
            
         }catch(error){
-            res.status(500).send(`Error al intentar obtener producto...`)
+              //Aca podria llegar a venir un error del productsSerVICE a futuro cuando sea implementado.
+         next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||productsController.getProductById||...'))
         }
     }
 
-    async deleteProduct(req, res){
+
+    async deleteProduct(req, res,next){
         const {pid:productIdToDelete} = req.params
            try{
              const deleteResult = await productRepository.deleteProduct(productIdToDelete)
@@ -59,11 +78,12 @@ async getProductsListPaginate(req,res){
             : res.json(deleteResult)
       
         } catch(error){
-            res.status(500).send(`Error al intentar eliminar producto...`)
+              //Aca podria llegar a venir un error del productsSerVICE a futuro cuando sea implementado.
+         next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||productsController.deleteProduct||...'))
         }
     }
 
-    async updateProduct(req,res){
+    async updateProduct(req,res,next){
         const {pid:productIdToUpdate} = req.params
         const itemsToUpdateObject = req.body  //console.log(req.params,req.body)
         try{
@@ -73,7 +93,8 @@ async getProductsListPaginate(req,res){
             : res.json(updateResult)
             
         }catch(error){
-            res.status(500).send(`Error al intentar editar producto...`)
+            //Aca podria llegar a venir un error del productsSerVICE a futuro cuando sea implementado.
+            next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||productsController.updateProduct||...'))
         }
     }
 
@@ -81,35 +102,34 @@ async getProductsListPaginate(req,res){
         const productToAdd = req.body
         const requiredFields = ['title', 'description', 'price', 'img', 'code', 'category', 'stock', 'status']
         const missingFields = getMissingFields(req.body,requiredFields)
+        
         try{
             //Si no se ingresan todos los campos entonces se va al middleware de error.
             if (missingFields.length > 0)  throw new IncompleteFieldsError(`Faltan ingresar los siguientes campos: ${missingFields}`)
         
-            //Estan todos los campos entonces se procede...
+            //SI Estan todos los campos entonces se procede...
             const addResult = await productRepository.addProduct(productToAdd)
             !addResult.success 
             ? res.json(addResult)
             : res.json(addResult)
 
         }catch(error){
-
-
             if (error instanceof IncompleteFieldsError){
-                //console.log('Manejando erroressss')
-                //res.status(500).json({message: error.message})
+    
                 next(error)
             } 
+              else{
+                next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||productsController.getProductById||...'))
+              }
+         
             
         }
     }
 
-    async addProductFromRealTimeProductsView(req,res){
+    async addProductFromRealTimeProductsView(req,res,next){
         //const productToAdd = req.body
         console.log('prrr: ', req.body)
         const {title,description,code,price,stock,category,status,img} = req.body
-
-
-
 
         try{
            const addProductResult = await productRepository.addProduct({
@@ -135,12 +155,13 @@ async getProductsListPaginate(req,res){
         }
 
         }catch(error){
-            throw new Error(`Error al intentar agregar producto from realTimeView...`)
+              //Aca podria llegar a venir un error del productsSerVICE a futuro cuando sea implementado.
+         next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||productsController.addProductFromRealTimView||...'))
         }
      
     }
 
-async changeProductStatus(req,res){
+async changeProductStatus(req,res,next){
     //Se encarga de cambiar de activo/inactivo el estado del producto para que aparezca o no en la tienda.
     const {id:productId} = req.params
     console.log(`Cambiar estado a productID ${productId}`)
@@ -156,7 +177,9 @@ async changeProductStatus(req,res){
         }
         
     }catch(error){
-        throw new Error(`Error al intentar cambiar estado del producto id${productId}`)
+          //Aca podria llegar a venir un error del productsSerVICE a futuro cuando sea implementado.
+          next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||productsController.getProductStatus||...'))
+
     }
 }
 

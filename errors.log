@@ -10,3 +10,6 @@
 ***[LOGGER]*** [error at 24-05-13 00:05:79] Log: Type:usersServiceErrors in POST - /api/sessions/login from ::1
 ***[LOGGER]*** [error at 24-05-13 00:05:47] Log: Type:usersServiceErrors in POST - /api/sessions/login from ::1
 ***[LOGGER]*** [error at 24-05-13 01:05:05] Log: Type:usersServiceErrors in POST - /api/sessions/login from ::1
+***[LOGGER]*** [error at 24-05-14 01:05:63] Log: Type:UsersServiceErrors in POST - /api/sessions/login from ::1
+***[LOGGER]*** [error at 24-05-14 01:05:14] Log: Type:UsersServiceErrors in POST - /api/sessions/login from ::1
+***[LOGGER]*** [error at 24-05-14 01:05:64] Log: Type:UsersServiceErrors in POST - /api/sessions/registrarse from ::1

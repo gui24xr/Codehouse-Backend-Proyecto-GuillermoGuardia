@@ -10,7 +10,8 @@ const productController = new ProductController()
 
 
 router.get('/products',productController.getProductsListPaginate)//Deveulve paginado
-router.get('/products/:pid',productController.getProductById)//Devuelve listado entero
+router.get('/productslist',productController.getProducts) //Devuelve lista con o sin limite
+router.get('/products/:pid',productController.getProductById)
 router.post('/products',productController.addProduct)
 router.put('/products/:pid',productController.updateProduct)
 router.delete('/products/:pid',productController.deleteProduct)

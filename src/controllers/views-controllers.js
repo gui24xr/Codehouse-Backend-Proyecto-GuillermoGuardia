@@ -6,7 +6,7 @@ import { generateJWT } from "../utils/jwt.js";
 import { createHash } from "../utils/hashbcryp.js";
 import { CheckoutService } from "../services/checkout/checkout-service.js";
 import { getMissingFields } from "../utils/getMissingFields.js";
-import { IncompleteFieldsError, usersServiceError, AuthServiceError } from "../services/errors/custom-errors.js";
+import { IncompleteFieldsError, UsersServiceError, AuthServiceError } from "../services/errors/custom-errors.js";
 
 import { transformDate } from "../utils/hour.js";
 const productsRepository = new ProductRepository();
@@ -291,7 +291,7 @@ export class ViewsController {
         res.status(200).render("messagepage", { message: `Se ha creado correctamente el usuario ${createdUser.email} !!` });
      } catch (error) {
       if (error instanceof IncompleteFieldsError) res.status(400).render("messagepage", { message: error.message });
-      if (error instanceof  usersServiceError) res.status(409).render("messagepage", { message: error.message });
+      if (error instanceof  UsersServiceError) res.status(409).render("messagepage", { message: error.message });
     }
   }
 

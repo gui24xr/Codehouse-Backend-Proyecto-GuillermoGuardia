@@ -32,12 +32,32 @@ export class IncompleteFieldsError extends Error{
 }
 
 //Errores relacionados al servicio de usuarios
-export class usersServiceError extends Error{
-    constructor(message){
+export class UsersServiceError extends Error{
+    //Constantes tipo de errores servicio de usuarios.
+    static INTERNAL_ERROR = 0
+    static AUTH_ERROR = 1
+    static REGISTER_ERROR = 2
+    
+    constructor(errorCode,message){
         super(message)
-        this.name = 'usersServiceErrors'
+        this.name = 'UsersServiceErrors'
+        this.errorCode = errorCode
     }
+   
 }
+
+//Errores relacionados al servicio de usuarios
+export class InternalServerError extends Error{
+    //Constantes tipo de errores servicio de usuarios.
+    static GENERIC_ERROR = 0
+    constructor(errorCode,message){
+        super(message)
+        this.name = 'InternalServerError'
+        this.errorCode = errorCode
+    }
+   
+}
+
 
 //Errores relacionados al errores de autenticacion
 export class AuthServiceError extends Error{

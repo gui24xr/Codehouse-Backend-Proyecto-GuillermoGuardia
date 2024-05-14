@@ -1,7 +1,7 @@
 import { UsersRepository } from "../repositories/users.repositories.js";
 import {createHash, isValidPassword} from "../utils/hashbcryp.js"
 import { generateJWT } from "../utils/jwt.js";
-import { IncompleteFieldsError, usersServiceError, AuthServiceError } from "../services/errors/custom-errors.js";
+import { IncompleteFieldsError, UsersServiceError, InternalServerError } from "../services/errors/custom-errors.js";
 import { getMissingFields } from "../utils/getMissingFields.js";
 
 
@@ -36,8 +36,10 @@ export class UsersController{
                     
         }
         catch(error){
-            if (error instanceof IncompleteFieldsError) next(error)
-            if (error instanceof  usersServiceError) next(error)
+            if (error instanceof IncompleteFieldsError || error instanceof  UsersServiceError) next(error)
+            else {
+                next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||usersController.createUser||...'))
+            }
         }
     }
 
@@ -60,9 +62,10 @@ export class UsersController{
                 })
                         
         } catch (error) {
-            if (error instanceof IncompleteFieldsError) next(error)
-            if (error instanceof  usersServiceError) next(error)
-            if (error instanceof  AuthServiceError) next(error)
+            if (error instanceof IncompleteFieldsError || error instanceof  UsersServiceError) next(error)
+                else {
+                    next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||usersController.createUser||...'))
+                }
         }
        
     }

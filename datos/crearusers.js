@@ -16,6 +16,9 @@ const usuarios = [
    {first_name : 'User 02', last_name : 'lastname2', email: 'email2@gmail.com', password: '123456',age: 24, role: 'admin'},
    {first_name : 'User 03', last_name : 'lastname3', email: 'email3@gmail.com', password: '123456',age: 38, role: 'user'},
    {first_name : 'User 04', last_name : 'lastname4', email: 'email4@gmail.com', password: '123456',age: 52, role: 'admin'},
+   {first_name : 'User 01', last_name : 'Premium01', email: 'premium1@gmail.com', password: '123456',age: 24, role: 'premium'},
+   {first_name : 'User 02', last_name : 'Premium02', email: 'premium2@gmail.com', password: '123456',age: 38, role: 'premium'},
+   {first_name : 'User 03', last_name : 'Premium03', email: 'premium3@gmail.com', password: '123456',age: 52, role: 'premium'},
 ]
 
 usuarios.forEach(item =>{

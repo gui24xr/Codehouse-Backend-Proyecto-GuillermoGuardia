@@ -6,7 +6,7 @@ import { generateJWT } from "../utils/jwt.js";
 import { createHash } from "../utils/hashbcryp.js";
 import { CheckoutService } from "../services/checkout/checkout-service.js";
 import { getMissingFields } from "../utils/getMissingFields.js";
-import { IncompleteFieldsError, UsersServiceError, AuthServiceError } from "../services/errors/custom-errors.js";
+import { IncompleteFieldsError, UsersServiceError, CartsServiceError, InternalServerError, CheckoutServiceError, ProductsServiceError, TicketsServiceError } from "../services/errors/custom-errors.js";
 
 import { transformDate } from "../utils/hour.js";
 const productsRepository = new ProductRepository();
@@ -248,7 +248,7 @@ export class ViewsController {
     res.redirect("/");
   }
 
-  async viewLoginPost(req, res) {
+  async viewLoginPost(req, res,next) {
     //Hace lo mismo que api/login pero si esta todo Ok redirecciona a home
     //Si home detecta que hay un jwt valido entonces reenvia a products
     //No es necesario setear las variablesd e sesion xq de eso se encarga el middleware que fabrique y extrae los datos del JWT y los pone en req.sessions.global
@@ -265,7 +265,11 @@ export class ViewsController {
       
     } catch (error) {
       if (error instanceof IncompleteFieldsError) res.status(400).render("messagepage", { message: error.message });
-      if (error instanceof  AuthServiceError) res.status(409).render("messagepage", { message: error.message });
+      else 
+      if (error instanceof  UsersServiceError) res.status(409).render("messagepage", { message: error.message });
+      else
+      next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||viewsController.viewLoginPost||...'))
+
     }
   }
 
@@ -291,7 +295,10 @@ export class ViewsController {
         res.status(200).render("messagepage", { message: `Se ha creado correctamente el usuario ${createdUser.email} !!` });
      } catch (error) {
       if (error instanceof IncompleteFieldsError) res.status(400).render("messagepage", { message: error.message });
+      else 
       if (error instanceof  UsersServiceError) res.status(409).render("messagepage", { message: error.message });
+      else
+      next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||usersController.createUser||...'))
     }
   }
 
@@ -317,98 +324,104 @@ export class ViewsController {
     res.render("profile");
   }
 
-  async viewCart(req, res) {
-    const { cid: cartId } = req.params; //console.log(req.params)
-    try {
-      const searchedCart = await cartsRepository.getCartById(cartId); //console.log('Cart:', searchedCart )
 
-      // Mapeo para entregar a hbds
+  async viewCart(req, res) {
+    const { cid: cartId } = req.params; 
+    try {
+      const searchedCart = await cartsRepository.getCartById(cartId); 
+     // Mapeo con lo que necesito para renderizar y para entregar a hbds
       const productsInCart = searchedCart.products.map((item) => ({
-        id: item.product._id,
+        id: item.product.indice,
         img: item.product.img,
         title: item.product.title,
         price: item.product.price,
         quantity: item.quantity,
-        totalAmount: (
-          Number(item.quantity) * Number(item.product.price)
-        ).toFixed(2),
-      })); //console.log('Produclist: ',productsList)
+        totalAmount: (Number(item.quantity) * Number(item.product.price)).toFixed(2),})); 
+      
+      
       res.render("cart", {
         cartId: cartId,
         productsList: productsInCart,
         cartAmount: searchedCart.cartAmount,
-      });
+      })
+
     } catch (error) {
-      throw new Error(
-        "Error al intentar renderizar vista cart desde funcion viewcart..."
-      );
+      if (error instanceof  CartsServiceError) res.status(409).render("messagepage", { message: error.message });
+      else
+      next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||viewsController.ViewCart||...'))
     }
   }
 
-  async viewPurchase(req, res) {
+  async viewPurchase(req, res,next) {
     const { cid: cartId } = req.params;
     try {
       const checkoutResult = await checkoutService.checkOutCart(cartId);
       //Tomo todo de checkout result para renderizar.
-      if (checkoutResult.success) {
+      const moment = transformDate(checkoutResult.ticket.purchase_datetime);
+      
+      const valuesToRender = {
+        detailsList: checkoutResult.ticket.details,
+        price: checkoutResult.ticket.price.toFixed(1),
+        transactionDate: moment.date,
+        transactionHour: moment.hour,
+        ticketCode: checkoutResult.ticket.code,
+      }
+      
+      res.status(200).render("checkoutresult",valuesToRender );  
+      
+    } catch (error) {
+     if (
+        error instanceof CartsServiceError ||
+        error instanceof CheckoutServiceError ||
+        error instanceof ProductsServiceError ||
+        error instanceof TicketsServiceError
+    ) {
+        res.status(400).render("messagepage", { message: error.message });
+    } else {
+        next(new InternalServerError(InternalServerError.GENERIC_ERROR, 'Error in ||viewsController.viewPurchase||...'));
+    }
+    
+    }  
+    }
+
+
+
+
+
+  async viewSinglePurchase(req, res,next) {
+    const { pid: productId, qid: quantity, uid: userId } = req.params; //console.log(req.params)
+    try {
+      const purchaseTicket = await checkoutService.checkoutProductBuy(productId,quantity,userId)
+    
         //console.log('Detalle ticket: ', checkoutResult.ticket.details)
-        const moment = transformDate(checkoutResult.ticket.purchase_datetime);
-        res.status(200).render("checkoutresult", {
-          detailsList: checkoutResult.ticket.details,
-          price: checkoutResult.ticket.price.toFixed(1),
+        const moment = transformDate(purchaseTicket.purchase_datetime);
+        const valuesToRender =  {
+          detailsList: purchaseTicket.details,
+          price:purchaseTicket.price.toFixed(1),
           transactionDate: moment.date,
           transactionHour: moment.hour,
-          ticketCode: checkoutResult.ticket.code,
-        });
-      } else {
-        res
-          .status(500)
-          .render("messagepage", { message: checkoutResult.message });
-      }
+          ticketCode: purchaseTicket.code,
+        }
+        res.status(200).render("checkoutresult",valuesToRender);
+     
     } catch (error) {
-      throw new Error("Error al intentar renderizar purchaseview...");
+      if (error instanceof (CartsServiceError || CheckoutServiceError ||ProductsServiceError ||TicketsServiceError ))  res.status(400).render("messagepage", { message: error.message })
+        else {
+            next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||viewsController.viewSinglePurchase||...'))
+        }
     }
   }
 
-  async viewSinglePurchase(req, res) {
-    const { pid: productId, qid: quantity, uid: userId } = req.params; //console.log(req.params)
-    try {
-      const checkoutResult = await checkoutService.checkoutProductBuy(
-        productId,
-        quantity,
-        userId
-      );
-      if (checkoutResult.success) {
-        //console.log('Detalle ticket: ', checkoutResult.ticket.details)
-        const moment = transformDate(checkoutResult.ticket.purchase_datetime);
-        res.status(200).render("checkoutresult", {
-          detailsList: checkoutResult.ticket.details,
-          price: checkoutResult.ticket.price.toFixed(1),
-          transactionDate: moment.date,
-          transactionHour: moment.hour,
-          ticketCode: checkoutResult.ticket.code,
-        });
-      } else {
-        res
-          .status(500)
-          .render("messagepage", { message: checkoutResult.message });
-      }
-    } catch (error) {
-      throw new Error("Error al intentar renderizar singlepurchaseview...");
-    }
-  }
 
   async viewTickets(req, res) {
     const { uid: userId } = req.params;
     try {
       //const searchResult = await ticketRepositories.getTickets({purchaser:'663120ceda09d7ad646a4000'})
-      const result = await ticketRepositories.getTicketsByPurchaser(userId);
-      //Obtengo un array tengo que procesarlo.
+      const ticketsList = await ticketRepositories.getTicketsByPurchaser(userId);
+      //Obtengo un array tengo que procesarlo para mostrar en hdbs.
       const ticketsFromPurchaser = [];
-      if (result.success) {
-        //console.log('Detalle ticket: ', checkoutResult.ticket.details)
-
-        result.tickets.forEach((item) => {
+      //console.log('Detalle ticket: ', checkoutResult.ticket.details)
+      ticketsList.forEach((item) => {
           const moment = transformDate(item.purchase_datetime);
           ticketsFromPurchaser.push({
             detailsList: item.details,
@@ -419,14 +432,15 @@ export class ViewsController {
           });
         });
         ticketsFromPurchaser.reverse();
-        res
-          .status(200)
-          .render("tickets", { ticketsList: ticketsFromPurchaser });
-      } else {
-        res.status(500).render("messagepage", { message: result.message });
-      }
+        res.status(200).render("tickets", { ticketsList: ticketsFromPurchaser });
+    
+      
     } catch (error) {
-      throw new Error("Error en prueba gettickets...");
-    }
+      if (error instanceof TicketsServiceError )  res.status(400).render("messagepage", { message: error.message })
+        else {
+            next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||viewsController.viewTickets||...'))
+        }
   }
+}
+
 }

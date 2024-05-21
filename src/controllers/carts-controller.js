@@ -1,106 +1,140 @@
 import { CartRepository } from "../repositories/cart.repositories.js"
-import { ProductRepository } from "../repositories/products.repositories.js"
 import { CheckoutService } from "../services/checkout/checkout-service.js"
+import { CheckoutServiceError,CartsServiceError,InternalServerError, ProductsServiceError, TicketsServiceError } from "../services/errors/custom-errors.js"
 const cartRepository = new CartRepository()
 const checkoutService = new CheckoutService()
 
+
 export class CartsController{
-    async getCartById(req,res){
+    async getCartById(req,res,next){
         const {cid} = req.params
         try {
-            //va ap obtener el cart y lo devolvera
             const cart = await cartRepository.getCartById(cid)
-            if(!cart){
-                console.log(`No existe carrito id${cid}`)
-                res.send(`No existe carrito id${cid}`)
-            }
-           res.json(cart)
+            res.status(200).json({
+                status: "success", 
+                message: `Carrito obtenido satisfactoriamente con ID${cart.id}`,
+                cart:cart
+                })   
         } catch (error) {
-           res.status(500).send(`Error al obtener carrito.`)
+            if (error instanceof CartsServiceError) next(error)
+            else {
+                next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsController.getCartById||...'))
+            }
         }
     }
 
-    async createCart(req,res){
+    async createCart(req,res,next){
         try {
-            //va ap obtener el cart y lo devolvera
             const newCart = await cartRepository.createCart()
-            res.json(newCart)
+            res.status(201).json({
+                status: "success", 
+                message: `Carrito creado satisfactoriamente con ID${newCart.id}`,
+                cart:newCart
+                })   
         } catch (error) {
-           res.status(500).send(`Error al obtener carrito.`)
+            if (error instanceof CartsServiceError) next(error)
+                else {
+                    next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsController.getCartById||...'))
+                }
         }
     }
 
-    async addProductInCart(req,res){
+    async addProductInCart(req,res,next){
         const {cid:cartId,pid:productId} = req.params
-        const {quantity} = req.body    //console.log(req.body)
+        const {quantity} = req.body    
         try {
-            const cart = await cartRepository.addProductInCart(cartId,productId,quantity)
-            //console.log('Desde repository: ',cart)
-            if(!cart){
-                console.log(`No existe carrito id${cid}`)
-                res.send(`No existe carrito id${cid}`)
-            }
-            //En este caso ademas de devolver el cart enviare ya la info de cantidad de productos.
-           res.json(cart)
+            const resultCart = await cartRepository.addProductInCart(cartId,productId,quantity)
+            res.status(201).json({
+                status: "success", 
+                message: `Productos agregados satisfactoriametente en carrito ID${resultCart.id}`,
+                cart:resultCart
+                })   
         } catch (error) {
-            res.status(500).send(`Error al agregar productos al carrito.`)
+            if (error instanceof CartsServiceError) next(error)
+            else {
+                next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsController.AddProductInCart||...'))
+            }
         }
     }
 
-    async addProductListInCart(req,res){
+    //Agrega una lista de productos a un carro y devuelve el carro actualizado.
+    async addProductListInCart(req,res,next){
         const {cid:cartId} = req.params
-        const {productsArray} = req.body         //console.log('AA: ', productsArray)
-        try {
-            const modifiedCart = await cartRepository.addProductsListInCart(cartId,productsArray)
-            if ( !modifiedCart.isSuccess ) {
-                res.json(modifiedCart) 
-            }
-            else{
-                res.json(modifiedCart)
-            }
+        const {productsArray} = req.body 
+        const resultCart = await cartRepository.addProductsListInCart(cartId,productsArray)
+        res.status(201).json({
+                status: "success", 
+                message: `Productos agregados satisfactoriametente en carrito ID${resultCart.id}`,
+                cart:resultCart
+                })   
         } catch (error) {
-            res.status(500).send(`Error al agregar lista de productos al carrito.`)
-        }
+            if (error instanceof CartsServiceError) next(error)
+            else {
+                next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsController.AddProductInCart||...'))
+            }
+        
     }
 
-
-    async deleteProductInCart(req,res){
-        const {cid,pid} = req.params // Obtengo los parametros.
-    
+    //Elimina una lista de productos a un carro y devuelve el carro actualizado.
+    async deleteProductInCart(req,res,next){
+        const {cid,pid} = req.params 
         try {
             const deleteResult = await cartRepository.deleteProductInCart(cid,pid)
-            if (deleteResult.isSuccess) res.json(deleteResult.cart)
-            else{
-                if (!deleteResult.cart) res.send('No existe el carrito...')
-                else res.send('No existe un producto con dicho id en este carrito...')
+            res.status(201).json({
+                status: "success", 
+                message: `Producto eliminados satisfactoriametente en carrito ID${resultCart.id}`,
+                cart:deleteResult
+                })  
+            } 
+        catch(error){
+            if (error instanceof CartsServiceError) next(error)
+            else {
+               next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsController.AddProductInCart||...'))
             }
         }
-        catch{
-            console.log('Error al ingresar el producto carrito !.', error)
-            res.status(500).json({error: 'Error del servidor'})
-        }
     }
 
 
-    async clearCart(req,res){
-        const {cid} = req.params //Obtengo el id del carro a limpiar
+    async clearCart(req,res,next){
+        const {cid:cartId} = req.params //Obtengo el id del carro a limpiar
         try{
-            const clearResult = await cartRepository.clearCart(cid)
-            if (!clearResult.isSuccess) res.send(`No existe carrito id${cid}`)
-            else res.status(200).send(`Carrito id${cid} ah quedado vacio !!`)
+            const clearedCart = await cartRepository.clearCart(cartId)
+            res.status(200).json({
+                status: "success", 
+                message: `Carrito ID ${clearedCart.id} ah sido vaciado correctamente !`,
+                cart:clearedCart
+                })   
         }  catch (error) {
-           res.status(500).send(`Error al vaciar carrito.`)
-        }
+            if (error instanceof CartsServiceError) next(error)
+                else {
+                    next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsController.clearCart||...'))
+                }
+            }  
     }
 
-    async cartCheckout(req,res){
+
+    async cartCheckout(req,res,next){
         const {cid:cartId} = req.params
         try{
            const checkoutResult = await checkoutService.checkOutCart(cartId)
-           res.status(200).json(checkoutResult)
+           res.status(200).json({
+            status: "success", 
+            message: `Checkout Carrito ID ${cartId} generado correctamente...`,
+            checkoutResult: checkoutResult
+            })   
         }catch(error){
-            throw new Error('Error al intentar checkout desde controller carts...')
+            if (
+                error instanceof CartsServiceError ||
+                error instanceof CheckoutServiceError ||
+                error instanceof ProductsServiceError ||
+                error instanceof TicketsServiceError
+            ) {
+                
+                res.status(400).render("messagepage", { message: error.message });
+            } else {
+                next(new InternalServerError(InternalServerError.GENERIC_ERROR, 'Error in ||viewsController.cartCheckout||...'));
+            }
+            }  
         }
     }
 
-}

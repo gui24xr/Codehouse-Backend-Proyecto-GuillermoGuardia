@@ -1,4 +1,5 @@
 import { TicketModel } from "../models/ticket.model.js";
+import { InternalServerError, TicketsServiceError } from "../services/errors/custom-errors.js";
 
 export class TicketsRepositories{
 
@@ -6,20 +7,22 @@ export class TicketsRepositories{
     async getTickets(filter){
         try {
             const ticketsList = await TicketModel.find(filter) 
-            if (!ticketsList) return {success: true, message: 'No existen tickets para esta busqueda'}
-            else return {success: true, message: 'Tickets obtenidos correctamente...', tickets:ticketsList}
+            if (!ticketsList) throw new TicketsServiceError(TicketsServiceError.NO_EXIST, 'No Existen tickets para la busqueda ingresada...')
+            return ticketsList
         } catch (error) {
-            throw new Error('Error al intentar obtener tickets desde ticketRepositories...')
+            if (error instanceof TicketsServiceError) throw error
+            else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||TicketRepositories.getTickets||...')
         }
     }
 
     async getTicketById(ticketId){
         try {
-            const ticket = await TicketModel.findById(ticketId).populate('purchaser') 
-            if (!ticket) return {success: true, message: 'No existe ticket para esta busqueda'}
-            else return {success: true, message: 'Ticket obtenido correctament...', ticket:ticket._doc}
+            const searchedTicket = await TicketModel.findById(ticketId).populate('purchaser') 
+            if (!searchedTicket) throw new TicketsServiceError(TicketsServiceError.NO_EXIST, 'No Existe ticket para la busqueda ingresada...')
+            return searchedTicket._doc
         } catch (error) {
-            throw new Error('Error al intentar obtener tickets desde ticketRepositories...')
+            if (error instanceof TicketsServiceError) throw error
+            else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||TicketRepositories.getTicketById||...')
         }
     
     }
@@ -27,13 +30,13 @@ export class TicketsRepositories{
     async getTicketsByPurchaser(purchaserId){
         try {
             const ticketsList = await TicketModel.find({purchaser:purchaserId}) 
-            if (!ticketsList) return {success: false, message: `No existen tickets para purchaser ${purchaserId}`}
-            else return {success: true, message: `Tickets para purchaser ${purchaserId} obtenidos correctamente...`, tickets:ticketsList}
+            if (!ticketsList) throw new TicketsServiceError(TicketsServiceError.NO_EXIST, 'No Existen tickets para la busqueda ingresada...')
+            return ticketsList
         } catch (error) {
-            throw new Error('Error al intentar obtener tickets desde ticketRepositories...')
+            if (error instanceof TicketsServiceError) throw error
+            else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||TicketRepositories.getTicketById||...')
         }
     }
-
 
 
     async createTicket(purchaserId,detailsList){
@@ -43,14 +46,11 @@ export class TicketsRepositories{
             const detailListWithSubtotal = detailsList.map(item => (
                 {...item,subTotalPrice: item.unitPrice * item.requiredQuantity}
             ))
-
             //console.log('Listsa detlla: ',detailListWithSubtotal)
-
             let totalAmount = 0
             detailListWithSubtotal.forEach(item => {
                 totalAmount = totalAmount + item.subTotalPrice
                 //console.log('acum: ', totalAmount)
-            
             })
             //console.log('TOTAL: ', totalAmount)
 
@@ -59,7 +59,7 @@ export class TicketsRepositories{
             return generatedTicket
            
         } catch (error) {
-            throw new Error('Error al intentar crear tickets desde ticketRepositories...')
+            throw new TicketsServiceError(TicketsServiceError.CREATE_ERROR,'Error al intentar crear ticket...')
         }
     }
     

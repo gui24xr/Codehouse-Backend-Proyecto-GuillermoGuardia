@@ -40,8 +40,14 @@ const productSchema = new mongoose.Schema({
     },
     thumbnails: { 
         type:[String],
+        default:[]
         //required: true
     },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+        default: null
+    }, //Detalles del ticket.
     
 })
 

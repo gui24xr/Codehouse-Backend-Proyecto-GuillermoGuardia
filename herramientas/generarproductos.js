@@ -54,6 +54,7 @@ MOTO_PRODUCTS.forEach(item => {
     img: item.imageSrc,
     code: generarCodigo(),
     category: item.category,
+    owner: null,
     stock:stockQuantity,
     status:stockQuantity >= 1 ? true : false,
     thumbnails: [item.imageSrc,item.imageSrc,item.imageSrc,item.imageSrc]

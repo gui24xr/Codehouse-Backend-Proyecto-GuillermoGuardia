@@ -90,7 +90,7 @@
                     //showNotification(`Se agregaron ${selectedQuantity} unidades del producto seleccionado a su carrito !`)
                     console.log(res)
                    //Manipulando Dom el cambiamos la cantidad de carritos en el navbar
-                    document.getElementById('productsQuantityInUserCart').innerText = res.countProducts
+                    document.getElementById('productsQuantityInUserCart').innerText = res.cart.countProducts
                 })
         }
 

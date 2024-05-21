@@ -28,7 +28,7 @@ export class UsersController{
                 role: role
             })
       
-           res.status(200).json({
+           res.status(201).json({
             status: "success", 
             message: "El usuario ha sido creado correctamente.",
             user:createdUser

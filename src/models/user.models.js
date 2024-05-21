@@ -26,7 +26,7 @@ const userSchema =  mongoose.Schema({
     },
     role:{
         type: String,
-        enum: ["admin", "user"], //Enumera los roles permitidos
+        enum: ["admin", "user","premium"], //Enumera los roles permitidos
         default: "user", //Asignamos por default "user"
         required: true,
     },

@@ -23,6 +23,10 @@ export class validationError extends Error{
 }
 
 
+
+
+
+
 //Para cuando falta se ingresen campos.
 export class IncompleteFieldsError extends Error{
     constructor(message){
@@ -47,6 +51,66 @@ export class UsersServiceError extends Error{
 }
 
 //Errores relacionados al servicio de usuarios
+export class ProductsServiceError extends Error{
+    //Constantes tipo de errores servicio de usuarios.
+    static PRODUCT_EXIST = 0
+    static PROCUT_NO_EXIST = 1
+    static PRODUCT_NO_STOCK = 2
+   
+    
+    constructor(errorCode,message){
+        super(message)
+        this.name = 'ProductsServiceError'
+        this.errorCode = errorCode
+    }
+   
+}
+
+export class CartsServiceError extends Error{
+    //Constantes tipo de errores servicio de usuarios.
+    static NO_EXIST = 0
+    static CREATE_ERROR = 1
+    static PRODUCT_NO_DELETED = 2
+    static PRODUCT_NO_ADD = 3
+   
+    
+    constructor(errorCode,message){
+        super(message)
+        this.name = 'CartsServiceError'
+        this.errorCode = errorCode
+    }
+
+   
+}
+
+export class TicketsServiceError extends Error{
+    //Constantes tipo de errores servicio de usuarios.
+    static NO_EXIST = 0
+    static CREATE_ERROR = 1
+     
+    
+    constructor(errorCode,message){
+        super(message)
+        this.name = 'TicketsServiceError'
+        this.errorCode = errorCode
+    }
+
+}
+export class CheckoutServiceError extends Error{
+    //Constantes tipo de errores servicio de usuarios.
+    static NULL_CART = 0
+    static CREATE_ERROR = 1
+    static NO_STOCK = 2
+     
+    
+    constructor(errorCode,message){
+        super(message)
+        this.name = 'CheckoutServiceError'
+        this.errorCode = errorCode
+    }
+
+}
+//Errores relacionados al servicio de usuarios
 export class InternalServerError extends Error{
     //Constantes tipo de errores servicio de usuarios.
     static GENERIC_ERROR = 0
@@ -59,10 +123,4 @@ export class InternalServerError extends Error{
 }
 
 
-//Errores relacionados al errores de autenticacion
-export class AuthServiceError extends Error{
-    constructor(message){
-        super(message)
-        this.name = 'usersServiceErrors'
-    }
-}
+

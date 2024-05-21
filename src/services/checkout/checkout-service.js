@@ -11,7 +11,8 @@ import { MessagesService } from "../messages/messages-service.js";
 import handlebars from 'handlebars';
 import fs from 'fs'
 import { transformDate } from "../../utils/hour.js";
-
+import { CartsServiceError, ProductsServiceError,TicketsServiceError, InternalServerError, CheckoutServiceError } from "../errors/custom-errors.js";
+import { throws } from "assert";
 
 const productsRepository = new ProductRepository();
 const cartsRepository = new CartRepository();
@@ -23,22 +24,16 @@ export class CheckoutService {
   async checkOutCart(cartId) {
     const listToTicket = []; //LosProducto-cantidad que iran al ticket
     const listNoTicket = []; //Lo que no ira al ticket...
+
+
     try {
       //Obtengo el cart a procesar...
       const searchedCart = await cartsRepository.getCartById(cartId);
-      //Antes que nada si el carro es un carro vacio entonces no se puede hacer el proceso y salimos..
-      if (searchedCart.products.length < 1) {
-        return {
-          success: false,
-          message: "El carro esta vacio, no se genera ticket,....",
-        };
-      }
+       //Antes que nada si el carro es un carro vacio entonces no se puede hacer el proceso y salimos..
+      if (searchedCart.products.length < 1)  throw new CheckoutService(CheckoutServiceError.NULL_CART,`El carrito ID ${cartId} esta vacio, imposible generar ticket...`)
       //Recorro cart.products y consulto stock y divido caminos.
       for (let item in searchedCart.products) {
         const requiredQuantity = searchedCart.products[item].quantity;
-        //console.log('Products Id en este cart: ',productId, ' Quantity: ', requiredQuantity)
-
-        //const product = await productsRepository.getProductById(productId)
         if (requiredQuantity <= searchedCart.products[item].product.stock) {
           //console.log('Restamos stock...')
           //Resto del stock
@@ -53,11 +48,9 @@ export class CheckoutService {
             img: searchedCart.products[item].product.img,
             unitPrice: searchedCart.products[item].product.price,
             //subtotalPrice: Number(searchedCart.products[item].product.price * requiredQuantity).toFixed(2),
-          });
-          await cartsRepository.deleteProductInCart(
-            cartId,
-            searchedCart.products[item].product.id
-          );
+          })
+          //Borro el producto del carrito
+          await cartsRepository.deleteProductInCart(cartId,searchedCart.products[item].product._id)
         } else {
           //console.log('No agregamos a la compra, no restamos del stock...')
           //Junto en el array la lista de productos que no hay stock
@@ -66,43 +59,35 @@ export class CheckoutService {
             requiredQuantity: requiredQuantity,
             img: searchedCart.products[item].product.img,
             unitPrice: searchedCart.products[item].product.price,
-            //subtotalPrice: Number(searchedCart.products[item].product.price * requiredQuantity).toFixed(2),
           });
         }
       }
 
+      
+
       //Dado que al ticket le vamos a estampar el id del user dueño del cartId, buscamos el user por cartId.
       const users = await usersRepository.getUsers({ cart: cartId });
       //Ya que devuelve un array y sabemos que es solo uno...
-      //console.log('user dueño del carro: ',users[0].id)
-      //Ya tenemos la operacion hecha y ahora podemos generar el ticket
+     //Ya tenemos la operacion hecha y ahora podemos generar el ticket
       const generatedTicket = await ticketsRepository.createTicket(users[0].id,listToTicket)
-
-      if (!generatedTicket) {
+    
+     //Envio email de confirmacion de compra..
+        await this.sendTicketMail(generatedTicket._id)
+       
         return {
-          success: false,
-          message: "Error en la creacion del ticket...",
-        };
-      } else
-      {
-        //Envio email de confirmacion de compra..
-        await this.sendTicketMail(generatedTicket.id)
-        
-        return {
-          success: true,
-          message: "Creacion de ticket exitosa...",
           ticket: generatedTicket,
           noStock: listNoTicket,
         }
-      }
-
-        
+              
 
     } catch {
-      throw new Error(
-        "Error al intentar checkout cart desde checkout Service..."
-      );
-    }
+      if ( error instanceof CartsServiceError ||  error instanceof CheckoutServiceError || error instanceof ProductsServiceError ||
+        error instanceof TicketsServiceError) throw error
+        else {
+           throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||CheckoutService.checkoutCart||...')
+        }
+    }  
+    
   }
 
 
@@ -114,52 +99,33 @@ export class CheckoutService {
     try {
       //revisa que haya stock, si hay sigue, si no , sale...
       //si compra entonces actualiza stock
-      //genera un ticket
+      //genera y devuelve un ticket
       const searchedProduct = await productsRepository.getProductById(productId)
-      if (searchedProduct.stock >= requiredQuantity){
-         //Actualizo stock restandole requiredQuantity
-        await productsRepository.updateProductStock(productId,searchedProduct.stock-requiredQuantity)
-        //Genero el ticket y en la lista envio producto y cantidad
-        //Dado que al ticket le vamos a estampar el id del user dueño del cartId, buscamos el user por cartId.
-       const generatedTicket = await ticketsRepository.createTicket(
-          userId,
-          [{
+      //No hay stock salgo
+      if (!searchedProduct.stock >= requiredQuantity) throw new CheckoutServiceError(CheckoutService.NO_STOCK,'En este momento no tenemos stock del producto...')
+      //De haber stock, continuamos...
+      //Actualizo stock restandole requiredQuantity
+       await productsRepository.updateProductStock(productId,searchedProduct.stock,requiredQuantity)
+      //Genero el ticket.
+      const generatedTicket = await ticketsRepository.createTicket(
+            userId,[{
             productTitle: searchedProduct.title,
             requiredQuantity: requiredQuantity,
             img: searchedProduct.img,
             unitPrice: searchedProduct.price
            }]
         )
-
-        if (!generatedTicket) {
-          return {
-            success: false,
-            message: "Error en la creacion del ticket...",
-          };
-        } else
-               //Aca hay que generar texto html con la data del ticket para pasar a la plantilla
-           
-        //Envio email de confirmacion de compra..  //'<p>Compra satisfactoria !!!!</p>'
-        //MessagesService.sendMail('noimporta',users[0].email,'Compra realizad con exito !')
-        await this.sendTicketMail(generatedTicket.id)
-          return {
-            success: true,
-            message: "Creacion de ticket exitosa...",
-            ticket: generatedTicket,
-           };
-
-      }
-      else{
-        return {
-          success: false,
-          message: "No hay stock suficiente en este momento !!",
-        }
-      }
+        //Se envia el email de confirmacion
+      await this.sendTicketMail(generatedTicket._id)
+         
+      return  generatedTicket
       
-    } catch {
-      throw new Error(
-        "Error al intentar single checkout desde checkout Service..."
-      );
+    }
+    catch(error){
+      if (error instanceof (CheckoutServiceError ||ProductsServiceError ||TicketsServiceError )) throw error
+      else {
+         throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||CheckoutService.checkoutProductBuy||...')
+      }
     }
   }
 
@@ -170,19 +136,18 @@ export class CheckoutService {
     //Recibe como parametro un ticketId y busca el ticket para generar el template con sus datos
     //Va a generar usando hbs la plantilla que sera enviada al salir ok la compra.
    try{
-      const resultTicket = await ticketsRepository.getTicketById(ticketId)
-      if (!resultTicket.success){
-        throw new Error('No existe ticket...')
-      }
 
+     
+      const resultTicket = await ticketsRepository.getTicketById(ticketId)
+      
       //Proceso los valores para enviar...
-      const moment = transformDate(resultTicket.ticket.purchase_datetime);
+      const moment = transformDate(resultTicket.purchase_datetime);
       const valuesToRender = {
-        detailsList: resultTicket.ticket.details,
-        price: resultTicket.ticket.price.toFixed(1),
+        detailsList: resultTicket.details,
+        price: resultTicket.price.toFixed(1),
         transactionDate: moment.date,
         transactionHour: moment.hour,
-        ticketCode: resultTicket.ticket.code,
+        ticketCode: resultTicket.code,
       }
 
       const source = fs.readFileSync('./src/services/checkout/ticket_template.html', 'utf8');
@@ -192,7 +157,7 @@ export class CheckoutService {
 
       // Guardar HTML generado en un archivo
       fs.writeFileSync('./ticket_generated.html', htmlForEmail, 'utf8');
-      MessagesService.sendHtmlMail(resultTicket.ticket.purchaser.email,'Tu Compra se realizo con exito !',htmlForEmail)
+      MessagesService.sendHtmlMail(resultTicket.purchaser.email,'Tu Compra se realizo con exito !',htmlForEmail)
 
     }catch(error){
       throw new Error('Error intentando enviar mail con ticket desde checkout service...')

@@ -3,7 +3,7 @@
     
     <div class="flex items-center justify-center h-screen bg-blue-800">
         <div class="w-full max-w-lg">
-            <form action="/views/registrarse" method="post" enctype="application/x-www-form-urlencoded"
+            <form id='main-register-form' method="post" enctype="application/x-www-form-urlencoded"
             
             class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <h1 class="block text-gray-700 text-sm font-bold mb-8">REGISTRO DE NUEVO USUARIO</h1>
@@ -63,3 +63,75 @@
     </div>
 
  
+
+
+ <script>
+    //console.log('Script Register cargado !')
+
+    function getFormValues(receivedForm){
+        //Devuelve un objeto prop-valor con los nombres y valores de cada campo del form pasado por parametro.
+        const formData = new FormData(receivedForm)
+        return Object.fromEntries(formData)
+    }
+
+
+
+
+    //--- MANEJO REGISTROUSUARIOS LADO VISTAS
+    const registerForm = document.getElementById('main-register-form')
+    registerForm.addEventListener('submit',(e)=>{
+    e.preventDefault() //Evito comportamiento por default.
+    const queryParamsFromForm = getFormValues(e.target) //Obtengo parametros del form.
+    console.log(queryParamsFromForm)
+    //Hago la peticion al api 
+    fetch('/api/sessions/register',{
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(queryParamsFromForm)
+    })
+    .then( res => {
+        console.log(res)
+        if (res.ok){
+            //Salio OK entonces ya el token fue entregado al cliente
+            //Mostramos notificacion que nos trae el server en la res y Redirigimos a login
+           res.json()
+           .then(result =>{
+
+                console.log(result)
+                 Swal.fire({
+                 title: result.message,
+                    text: `${result.user.email} ya puede iniciar sesion !`,
+                    icon: 'success',
+                    confirmButtonText: 'Continuar',
+                    allowOutsideClick: false, // No permitir cerrar al hacer clic fuera del diálogo
+                    allowEscapeKey: false     // No permitir cerrar con la tecla Escape
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        //Cuando el user de aceptar se redirige a vista login.
+                        window.location.href ='/views/login'
+                    }
+                })
+           })
+            
+        }
+        else{
+            //Mediante notificacion avisamos que algo salio mal y damos el error.
+            res.json()
+            .then( result => {
+                Swal.fire({icon: 'error',title: 'Registro fallido',text: result.message});
+            })
+        }
+    })
+})
+
+
+
+
+
+
+
+
+
+ </script>

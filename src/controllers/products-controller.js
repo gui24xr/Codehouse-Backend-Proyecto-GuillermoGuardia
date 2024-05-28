@@ -110,8 +110,8 @@ async getProductsListPaginate(req,res,next){
             //SI Estan todos los campos entonces se procede...
             const addResult = await productRepository.addProduct(productToAdd)
             !addResult.success 
-            ? res.json(addResult)
-            : res.json(addResult)
+            ? res.status(201).json(addResult)
+            : res.status(201).json(addResult)
 
         }catch(error){
             if (error instanceof IncompleteFieldsError){

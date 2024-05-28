@@ -14,7 +14,14 @@ import { configSessionMongo } from "./config/sessions-config.js";
 import { initializePassport } from "./config/passport.config.js";
 
 // Importacion de rutas.
-import {router as routerViews} from './routes/views.router.js'
+//import {router as routerViews} from './routes/views.router.js'
+import { verifyTokenMiddleware } from './middlewares/authTokenMiddlewares.js';
+import {routerHome} from './routes/views.router.js'
+import { routerPublicViews } from './routes/views.router.js';
+import { routerProtectedViews } from './routes/views.router.js';
+
+
+
 import {router as routerCarts } from './routes/carts.router.js'
 import {router as routerProducts} from './routes/products.router.js'
 import {router as routerSessions} from './routes/sessions.router.js'
@@ -60,9 +67,10 @@ configHandlebars(app)
 //app.use(passport.initialize());
 initializePassport();
 
-
+app.use(verifyTokenMiddleware)
 //Routes : le decimos a la app de express que debe usar las rutas de los router
-app.use('/',routerViews)
+app.use('/',routerPublicViews)
+app.use('/',routerProtectedViews)
 app.use('/api',routerCarts) 
 app.use('/api',routerProducts)
 app.use('/api',routerSessions)

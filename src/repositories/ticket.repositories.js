@@ -27,6 +27,8 @@ export class TicketsRepositories{
     
     }
 
+  
+
     async getTicketsByPurchaser(purchaserId){
         try {
             const ticketsList = await TicketModel.find({purchaser:purchaserId}) 

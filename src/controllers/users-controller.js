@@ -43,11 +43,12 @@ export class UsersController{
         }
     }
 
+    //Si autenticamos metemos al req el currentUser
     async authenticateUser(req,res,next){
         const {email,password} = req.body 
         const requiredFields = [ 'email', 'password']
         const missingFields = getMissingFields(req.body,requiredFields)
-       
+        console.log('llego a authenticate')
         try {
              //Controlamos que no falten datos necesarios para iniciar sesion...
             if (missingFields.length > 0)  throw new IncompleteFieldsError(`Faltan ingresar los siguientes campos: ${missingFields}`)

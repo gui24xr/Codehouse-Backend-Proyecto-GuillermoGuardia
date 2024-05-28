@@ -70,7 +70,7 @@ export class CheckoutService {
       //Ya que devuelve un array y sabemos que es solo uno...
      //Ya tenemos la operacion hecha y ahora podemos generar el ticket
       const generatedTicket = await ticketsRepository.createTicket(users[0].id,listToTicket)
-    
+  
      //Envio email de confirmacion de compra..
         await this.sendTicketMail(generatedTicket._id)
        
@@ -164,6 +164,24 @@ export class CheckoutService {
     }
 
     
+  }
+
+
+  async getTicketInfoByCode(ticketCode){
+        
+    try{
+      const matchesList = await ticketsRepository.getTickets({code:ticketCode})
+      //No existe ticket o sea no hay coincidencias salgo y envio error.
+      if (matchesList.length < 1) throw new CheckoutService(CheckoutServiceError.NO_TICKET,`No existe un ticket con ${ticketCode}...`)
+      //console.log('TicketByCode: ',matchesList[0])
+      //Dado que el ticket es unico cada codigo y tengo un array entonces devuelvo posicion cero.
+      return matchesList[0]
+    }catch(error){
+      if (error instanceof (CheckoutServiceError ||ProductsServiceError ||TicketsServiceError )) throw error
+      else {
+         throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||CheckoutService.getTicketInfoByCodey||...')
+      }
+    }
   }
 
  

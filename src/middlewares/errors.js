@@ -1,4 +1,10 @@
-import { IncompleteFieldsError, UsersServiceError, CartsServiceError, InternalServerError } from "../services/errors/custom-errors.js";
+import { 
+    IncompleteFieldsError, 
+    UsersServiceError, 
+    CartsServiceError, 
+    InternalServerError,
+    UnauthorizedError
+ } from "../services/errors/custom-errors.js";
 import { logger } from "../utils/loggers/logger.js";
 
 
@@ -32,6 +38,14 @@ export const manejadorError = (error, req, res, next) => {
         res.status(500).json({message: `Error en el CartServices - ${error.message}`})
         
     } 
+
+    if (error instanceof UnauthorizedError){
+        //console.log('LLego al middleware Manejando erroressss')
+        logger.error(`Type:${error.name} in ${req.method} - ${req.originalUrl} from ${req.ip}`)
+        res.status(403).json({message: `Unauthorized Error.  - ${error.message}`})
+        
+    } 
+
 
 
 

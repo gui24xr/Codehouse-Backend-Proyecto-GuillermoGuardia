@@ -13,6 +13,7 @@ import { UsersRepository } from '../repositories/users.repositories.js'
 import { TicketsRepositories } from '../repositories/ticket.repositories.js'
 import { ProductRepository } from '../repositories/products.repositories.js'
 import { MessagesService } from '../services/messages/messages-service.js'
+import { middlewareCurrent, authMiddleware } from '../middlewares/authTokenMiddlewares.js'
 
 const mongoProductsDAO = new MongoProductsDAO()
 const cartsRepository = new CartRepository()
@@ -30,6 +31,15 @@ router.get('/prueba',async(req,res)=>{
 
     res.send('pruebas')
 })
+
+router.get('/middlewarecurrent',middlewareCurrent,(req,res)=>{
+    res.send('Accedido por tener credenciales...')
+})
+
+router.get('/authmiddleware',authMiddleware,(req,res)=>{
+    res.send(res.locals.sessionData)
+})
+
 
 router.get('/changeproductstatus/:id',async(req,res)=>{
     const {id} = req.params

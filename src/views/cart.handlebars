@@ -82,9 +82,10 @@
 
         <!-- Botón Checkout -->
         <div class="flex justify-center mt-4">
-            <a href="/views/{{cartId}}/purchase" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
-                Confirmar compra
-            </a>
+            <button onclick="checkoutCartFromClient('{{cartId}}')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
+                Confirmar compra 
+            </button>
+              
         </div>
 
 
@@ -92,3 +93,41 @@
     </div>
     
 
+    <script>
+        function checkoutCartFromClient(cartId){
+            //Hacemos el fetch correspondiente y de acuerdo a su respuestan accionamos.
+            fetch(`/api/${cartId}/purchase`,{method: 'POST'})
+            .then( response => {
+                if (response.ok){
+                    //Tomo los datos para dar un mensaje y redirigir 
+                    response.json()
+                    
+                    .then(data => {
+                    console.log(data)
+                    Swal.fire({
+                        title: 'Compra exitosa !',
+                        text: `Tu compra se realizo con exito. Se enviaran los detalles a tu email. Se genero el ticket ${data.checkoutResult.ticket.code}.`,
+                        icon: 'success',
+                        confirmButtonText: 'Continuar',
+                        allowOutsideClick: false, // No permitir cerrar al hacer clic fuera del diálogo
+                        allowEscapeKey: false     // No permitir cerrar con la tecla Escape
+                })
+                .then((swalResult)=>{
+                    //Se redirige a la vista del ticket con el correspodiente codigo.
+                    window.location.href = `/views/${data.checkoutResult.ticket.code}/purchase`
+                })
+
+                    })
+                }
+                else{
+                    //Muestro error con swal
+                     response.json()
+                    .then(data => {
+                        Swal.fire({icon: 'error',title: 'Error en compra',text: data.message})
+                    })
+                }
+            })
+            
+
+        }
+    </script>

@@ -1,11 +1,12 @@
 import express from 'express'
-
+import { authMiddleware } from '../middlewares/authTokenMiddlewares.js'
 import { ProductController } from '../controllers/products-controller.js'
 
 //Creo mi router.
 export const router = express.Router()
+//Todas estas rutas estaran protegidas, se necesita estar con un token valido para ejecutar estos endpoint.
+router.use(authMiddleware)
 //Creo la instancia.
-
 const productController = new ProductController()
 
 

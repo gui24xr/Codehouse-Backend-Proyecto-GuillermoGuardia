@@ -1,31 +1,51 @@
 import express from 'express'
-import { infoUserFromToken,middlewareIsAdmin,middlewareIsUser } from '../middlewares/infouserfromtoken.js'
+import { infoUserFromToken, authMiddleware,blockRoleAccessMiddleware } from '../middlewares/authTokenMiddlewares.js'
 import { ViewsController } from '../controllers/views-controllers.js'
-
-//Creo la instancia de router.
-export const router = express.Router()
-router.use(infoUserFromToken)
 
 
 const viewsController = new ViewsController()
 
-router.get('/',viewsController.viewHome)
-router.get('/views/products', viewsController.viewProductsList)
-router.get('/views/mainproductslist', viewsController.viewMainProductsList)
-router.get('/views/product/:pid', viewsController.viewProduct)
-router.get('/views/realtimeproducts', middlewareIsAdmin,viewsController.viewRealTimeProducts)
-router.get('/views/chat',middlewareIsUser,viewsController.viewChat)
-router.get('/views/registrarse', viewsController.viewRegisterGet)
-router.post('/views/registrarse', viewsController.viewRegisterPost)
-router.get('/views/login', viewsController.viewLoginGet)
-router.post('/views/login', viewsController.viewLoginPost)
-router.get('/views/logout', viewsController.viewLogout)
-router.get('/views/profile', viewsController.viewProfile)
-router.get('/views/carts/:cid', viewsController.viewCart)
-router.get('/views/:cid/purchase', viewsController.viewPurchase) //Compra un carro
-router.get('/views/:pid/singlepurchase/:qid/:uid', viewsController.viewSinglePurchase) //Compra un producto
-router.get('/views/tickets/:uid', viewsController.viewTickets)
+//Divido en 3 routers las vistas por una cuestion de middlewares y diferentes usos.
+
+export const routerHome = express.Router()
+export const routerPublicViews = express.Router()
+export const routerProtectedViews = express.Router()
+
+
+routerPublicViews.use(infoUserFromToken)
 
 
 
 
+
+//Vistas publicas
+routerPublicViews.get('/',viewsController.viewMainProductsList)
+
+//Si hay un usuario con token valido hay que proteger estas vistas
+routerPublicViews.get('/views/register', viewsController.viewRegisterGet)
+routerPublicViews.get('/views/login', viewsController.viewLoginGet)
+
+
+
+
+routerProtectedViews.use(authMiddleware)
+//vistas privadas
+//SI no hay user no se puede acceder 
+routerProtectedViews.get('/views/logout', viewsController.viewLogout)
+routerProtectedViews.get('/views/realtimeproducts', blockRoleAccessMiddleware('user'),viewsController.viewRealTimeProducts)
+routerProtectedViews.get('/views/chat',blockRoleAccessMiddleware('admin'),viewsController.viewChat)
+routerProtectedViews.get('/views/profile', viewsController.viewProfile)
+routerProtectedViews.get('/views/carts/:cid', viewsController.viewCart)
+routerProtectedViews.get('/views/:tcode/purchase', viewsController.viewPurchase) //Muestra el resultado de una compra ticket
+routerProtectedViews.get('/views/:pid/singlepurchase/:qid/:uid', viewsController.viewSinglePurchase) //Compra un producto
+routerProtectedViews.get('/views/tickets/:uid', viewsController.viewTickets) //Muestra todos los tickets de userId
+
+routerProtectedViews.get('/views/products', viewsController.viewProductsList)
+routerProtectedViews.get('/views/mainproductslist', viewsController.viewMainProductsList)
+routerProtectedViews.get('/views/product/:pid', viewsController.viewProduct)
+
+
+
+//Anuladas por cambios en implementacion
+//router.post('/views/registrarse', viewsController.viewRegisterPost)
+//router.post('/views/login', viewsController.viewLoginPost)

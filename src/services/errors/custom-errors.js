@@ -101,6 +101,7 @@ export class CheckoutServiceError extends Error{
     static NULL_CART = 0
     static CREATE_ERROR = 1
     static NO_STOCK = 2
+    static NO_TICKET = 3
      
     
     constructor(errorCode,message){
@@ -119,6 +120,21 @@ export class InternalServerError extends Error{
         this.name = 'InternalServerError'
         this.errorCode = errorCode
     }
+}
+//Errores relacionados al servicio de usuarios
+export class UnauthorizedError extends Error{
+    //Constantes tipo de errores servicio de usuarios.
+    static GENERIC_ERROR = 0
+    static INVALID_CREDENTIALS = 1
+    static NO_USER = 2
+    //Role no autorizado para la funcion.
+    static INVALID_ROLE = 3
+    constructor(errorCode,message){
+        super(message)
+        this.name = 'InternalServerError'
+        this.errorCode = errorCode
+    }   
+
    
 }
 

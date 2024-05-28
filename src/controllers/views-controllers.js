@@ -248,6 +248,7 @@ export class ViewsController {
     res.redirect("/");
   }
 
+  /*
   async viewLoginPost(req, res,next) {
     //Hace lo mismo que api/login pero si esta todo Ok redirecciona a home
     //Si home detecta que hay un jwt valido entonces reenvia a products
@@ -272,7 +273,8 @@ export class ViewsController {
 
     }
   }
-
+  */
+/*
   async viewRegisterPost(req, res) {
     //Por ahora vamos a bloquear que desde el fron se puedan crear admin
     const {first_name, last_name, email, password,age, role} = req.body;
@@ -301,8 +303,10 @@ export class ViewsController {
       next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||usersController.createUser||...'))
     }
   }
+  */
 
   viewLoginGet(req, res) {
+    console.log('Entro a viewloginget')
     res.render("login");
   }
 
@@ -340,7 +344,7 @@ export class ViewsController {
       
       
       res.render("cart", {
-        cartId: cartId,
+        cartId:cartId,
         productsList: productsInCart,
         cartAmount: searchedCart.cartAmount,
       })
@@ -352,6 +356,8 @@ export class ViewsController {
     }
   }
 
+
+  /*
   async viewPurchase(req, res,next) {
     const { cid: cartId } = req.params;
     try {
@@ -383,6 +389,43 @@ export class ViewsController {
     
     }  
     }
+  */
+ 
+    
+  async viewPurchase(req, res,next) {
+    const { tcode: ticketCode } = req.params;
+    try {
+      const searchedTicket = await checkoutService.getTicketInfoByCode(ticketCode)
+      //Tomo todo de checkout result para renderizar.
+      const moment = transformDate(searchedTicket.purchase_datetime);
+      
+      const valuesToRender = {
+        detailsList: searchedTicket.details,
+        price: searchedTicket.price.toFixed(1),
+        transactionDate: moment.date,
+        transactionHour: moment.hour,
+        ticketCode: searchedTicket.code,
+      }
+      
+      res.status(200).render("checkoutresult",valuesToRender );  
+      
+    } catch (error) {
+     if (
+       
+        error instanceof CheckoutServiceError ||
+        error instanceof ProductsServiceError ||
+        error instanceof TicketsServiceError
+    ) {
+        res.status(400).render("messagepage", { message: error.message });
+    } else {
+        next(new InternalServerError(InternalServerError.GENERIC_ERROR, 'Error in ||viewsController.viewPurchase||...'));
+    }
+    
+    }  
+    }
+
+    
+  
 
 
 

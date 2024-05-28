@@ -67,11 +67,38 @@
         -A travez de handlebars traje la iformacion del usuario logueado en la app.
         -La plantilla renderiza una card por cada producto. Cada Boton 'agregar a carro' llevara por ID el product ID correspondiente
     */
-    const loggedUserInfo = {{{loggedUserInfo}}}
-    const actualCart = loggedUserInfo.user.cart //console.log('User Info: ', loggedUserInfo)
+    const loggedUserInfo = {{{loggedUserInfo}}} 
+    console.log('User Info: ', loggedUserInfo)
+    const actualCart = loggedUserInfo.user.cart 
     const actualUserId = loggedUserInfo.user._id
+
+    function redirectToLogin(event){
+        //Tomo el event porque voy a guardar esos datos en localstorage para al iniciar sesion hacer con el producto lo que el user queria hacer ejemplo agregar al carro o ir a comprar.
+          
+          //Muestro notificacion que para hacer la operacion es necesario estar logueado y redirijo.
+          
+           Swal.fire({
+                
+                    text: `Es necesario iniciar sesion para guardar productos en el carrito !`,
+                    icon: 'info',
+                    confirmButtonText: 'Continuar',
+                    allowOutsideClick: false, // No permitir cerrar al hacer clic fuera del diálogo
+                    allowEscapeKey: false     // No permitir cerrar con la tecla Escape
+                })
+                .then(()=>{
+                    window.location.href = `/views/login`
+                })
+                
+          
+          
+    }
     
     function addThisProduct(event){
+
+        //Con esta condicion si el user no esta logueado lo mando a iniciar sesion.
+        if (!loggedUserInfo.login) return redirectToLogin(event)
+       
+
           //sabemos que el boton tiene el id del producto x lo tanto tenemos el id del producto a agregar
         const productId = event.target.id
          //sabemos que el input de cantidad se llama counter input y tiene el ID del producto. Tomamos su valor o sea la cantidad.
@@ -79,25 +106,45 @@
         //Tenemos la cantidad seleccionada, el productID y el cart donde agregar, usamos fetch para llevar a cabo la operacacion haciendo solicitud.
         //Y de acuerdo a lo que envia el server mando una notiicacion de tostify
         //console.log(productId,selectedQuantity)
+       
+       
+       //Dado que tenemos programado para que nuestro endpoint devuelva 201 si puede agregarse al carro y 403 si no se puede (Ejemplo caso user premium)
+       
         fetch(`/api/carts/${actualCart}/products/${productId}`,
             {
                 method:'POST', 
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ quantity: Number(selectedQuantity) })
                })
-                .then(result => result.json())
-                .then(res => {
-                    //showNotification(`Se agregaron ${selectedQuantity} unidades del producto seleccionado a su carrito !`)
-                    console.log(res)
-                   //Manipulando Dom el cambiamos la cantidad de carritos en el navbar
-                    document.getElementById('productsQuantityInUserCart').innerText = res.cart.countProducts
+                .then(response => {
+                    console.log(response)
+                   //Segun la respuesta mostramos un alert o finalmente actualizamos el carro en el dom en la barra
+                    if (!response.ok){
+                        response.json()
+                        .then(res=> alert(res.message))
+                    }
+                    else{
+                        response.json().
+                        then( res => {
+                     
+                             console.log(res)
+                            document.getElementById('productsQuantityInUserCart').innerText = res.cart.countProducts
+                        })
+                        //Si el estado es OK puedo agregar al carro...
+                        //Manipulando Dom el cambiamos la cantidad de carritos en el navbar
+                       
+                    }
+
                 })
+                
         }
 
 
 
      
     function purchaseThisProduct(event){
+        //Con esta condicion si el user no esta logueado lo mando a iniciar sesion.
+        if (!loggedUserInfo.login) return redirectToLogin(event)
           //sabemos que el boton tiene el nombre boton+'-'iddelproducto' del producto x lo tanto tenemos el id del producto a agregar
         const pressedButtonId = event.target.id //Hay que recortarlo a partir del '-'
         const separatorPosition = pressedButtonId.indexOf('-')
@@ -112,6 +159,13 @@
        
         }
 </script>
+
+
+
+
+
+
+
 
 
 <script>

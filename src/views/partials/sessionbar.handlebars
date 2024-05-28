@@ -1,5 +1,6 @@
 
             {{#if sessionData.login}}
+               
                <div class="flex-col items-center justify-between flex-wrap">
                      <div class="px-4 py-4 flex items-center justify-between space-x-4">
                         
@@ -42,11 +43,31 @@
                  
                    <div class="space-x-10 text-sm px-4 py-2 leading-none text-white">   
                         <a href="/views/login" class="hover:text-teal-500">Ingresa a nuestra tienda</a>
-                        <a href="/views/registrarse" class=" hover:text-teal-500">Crea tu cuenta</a>
+                        <a href="/views/register" class=" hover:text-teal-500">Crea tu cuenta</a>
+
+                        
+<button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="hover:text-teal-500" type="button">
+    Miembros Premium 
+ 
+</button>
+
+<!-- Dropdown menu -->
+<div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+      <li>
+        <a href="/views/realtimeproducts" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">realTimeProducts</a>
+      </li>
+      <li>
+        <a href="/views/chat" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Chat</a>
+      </li>
+     
+    </ul>
+</div>
+
                     </div> 
                     
                
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 
                                 
                 {{/if}}

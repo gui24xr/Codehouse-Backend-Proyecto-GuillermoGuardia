@@ -84,7 +84,7 @@ function blockRoleAccessMiddleware(blockedRole) {
  
   return (req, res, next) => {
      
-  console.log(`Entro a blockMiddleware con parametro ${blockedRole}`,req.currentUser)
+  //console.log(`Entro a blockMiddleware con parametro ${blockedRole}`,req.currentUser)
     if (!req.currentUser) {
       return next(new UnauthorizedError(UnauthorizedError.NO_USER, 'No hay usuario con sesión iniciada...'));
     }
@@ -111,7 +111,7 @@ function verifyTokenMiddleware(req,res,next){
     }
     //No hay usuario
     if (!user) { 
-      console.log('Se ejecuto verifyTokenMiddleware y no encontro user: ')
+      //console.log('Se ejecuto verifyTokenMiddleware y no encontro user: ')
       next() //No hay user se sigue normal
        //Si no hay user porque no es valido o nunca inicio sesion entonces va al middleware manejador de errores
        //Ewcordar que cuando a travez de next enviamos una intancia de Error o heredada, salta todos los middlewares que no contienen el parametro error y va a parar al primero que tenga el parametro error.

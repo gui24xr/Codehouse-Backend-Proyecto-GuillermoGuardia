@@ -19,3 +19,4 @@ router.delete('/products/:pid',productController.deleteProduct)
 router.post('/products/addProductFromRealTimeProductsView', productController.addProductFromRealTimeProductsView)
 router.get('/products/:id/changestatus',productController.changeProductStatus)
 
+

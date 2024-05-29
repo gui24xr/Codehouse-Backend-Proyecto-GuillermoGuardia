@@ -37,7 +37,7 @@ routerProtectedViews.get('/views/chat',blockRoleAccessMiddleware('admin'),viewsC
 routerProtectedViews.get('/views/profile', viewsController.viewProfile)
 routerProtectedViews.get('/views/carts/:cid', viewsController.viewCart)
 routerProtectedViews.get('/views/:tcode/purchase', viewsController.viewPurchase) //Muestra el resultado de una compra ticket
-routerProtectedViews.get('/views/:pid/singlepurchase/:qid/:uid', viewsController.viewSinglePurchase) //Compra un producto
+
 routerProtectedViews.get('/views/tickets/:uid', viewsController.viewTickets) //Muestra todos los tickets de userId
 
 routerProtectedViews.get('/views/products', viewsController.viewProductsList)
@@ -49,3 +49,6 @@ routerProtectedViews.get('/views/product/:pid', viewsController.viewProduct)
 //Anuladas por cambios en implementacion
 //router.post('/views/registrarse', viewsController.viewRegisterPost)
 //router.post('/views/login', viewsController.viewLoginPost)
+
+//Eliminar cuando pase al api completamente
+//routerProtectedViews.get('/views/:pid/singlepurchase/:qid/:uid', viewsController.viewSinglePurchase) //Compra un producto

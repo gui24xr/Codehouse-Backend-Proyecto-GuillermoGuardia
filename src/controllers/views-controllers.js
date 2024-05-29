@@ -2,8 +2,6 @@ import { ProductRepository } from "../repositories/products.repositories.js";
 import { CartRepository } from "../repositories/cart.repositories.js";
 import { UsersRepository } from "../repositories/users.repositories.js";
 import { TicketsRepositories } from "../repositories/ticket.repositories.js";
-import { generateJWT } from "../utils/jwt.js";
-import { createHash } from "../utils/hashbcryp.js";
 import { CheckoutService } from "../services/checkout/checkout-service.js";
 import { getMissingFields } from "../utils/getMissingFields.js";
 import { IncompleteFieldsError, UsersServiceError, CartsServiceError, InternalServerError, CheckoutServiceError, ProductsServiceError, TicketsServiceError } from "../services/errors/custom-errors.js";
@@ -430,7 +428,7 @@ export class ViewsController {
 
 
 
-
+/*
   async viewSinglePurchase(req, res,next) {
     const { pid: productId, qid: quantity, uid: userId } = req.params; //console.log(req.params)
     try {
@@ -454,6 +452,7 @@ export class ViewsController {
         }
     }
   }
+*/
 
 
   async viewTickets(req, res) {

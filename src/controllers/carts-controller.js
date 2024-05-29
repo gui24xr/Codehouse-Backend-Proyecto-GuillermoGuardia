@@ -130,7 +130,7 @@ export class CartsController{
                 error instanceof TicketsServiceError
             ) {
                 
-                res.status(400).render("messagepage", { message: error.message });
+                next(error)
             } else {
                 next(new InternalServerError(InternalServerError.GENERIC_ERROR, 'Error in ||viewsController.cartCheckout||...'));
             }

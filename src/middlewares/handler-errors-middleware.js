@@ -8,7 +8,7 @@ import {
 import { logger } from "../utils/loggers/logger.js";
 
 
-export const manejadorError = (error, req, res, next) => {
+export const handlerErrorsMiddleware = (error, req, res, next) => {
     //console.log('LLego al middleware Manejando erroressss')
     if (error instanceof IncompleteFieldsError){
         //console.log('LLego al middleware Manejando erroressss')

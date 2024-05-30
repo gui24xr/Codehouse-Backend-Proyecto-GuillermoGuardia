@@ -10,6 +10,7 @@ const usersController = new UsersController
 
 router.post('/sessions/register',usersController.createUser)
 router.post('/sessions/login',usersController.authenticateUser)
+router.get('/sessions/current',usersController.currentRoute)
 
 //Para poder hacer logout es necesario estar con un token o sesion activa
 router.post('/sessions/logout', authMiddleware, usersController.clearTokenSession)

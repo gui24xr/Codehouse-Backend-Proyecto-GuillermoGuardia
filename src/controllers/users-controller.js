@@ -71,7 +71,7 @@ export class UsersController{
        
     }
 
-    async clearTokenSession(req,res){
+    async clearTokenSession(req,res,next){
         res.clearCookie(process.env.COOKIE_AUTH_TOKEN);
         res.locals.sessionData.login = false;
         res.status(200).json({
@@ -83,9 +83,26 @@ export class UsersController{
     }
 
 
-    async currentRoute(req,res){
-        //Voy a tomar el user que viene en middleware
-        res.json(req.user)
+    async currentRoute(req,res,next){
+        //Voy a tomar el currentUer que viene en middleware que extrae la data del token.
+        //Hay currentuser? devuelvo la data
+        //No hay currentUser? devuelvo 'No Hay currentUser'
+        //Hay error en el middleware que extrae los datos del token? se va por catch al handler de errores.
+        try{
+            //console.log(req.currentUser)
+            req.currentUser 
+            ? 
+            res.json({
+                message: 'Existe user con token activo...',
+                user: req.currentUser
+            })
+            :
+            res.json({
+                message: 'No Existe user con token activo...'
+            })
+        }catch(error){
+            next(error)
+        }
     }
     
 

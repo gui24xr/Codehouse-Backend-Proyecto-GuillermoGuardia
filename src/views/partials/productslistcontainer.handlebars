@@ -118,17 +118,19 @@
                 body: JSON.stringify({ quantity: Number(selectedQuantity) })
                })
                 .then(response => {
-                    console.log(response)
+                    //console.log(response)
                    //Segun la respuesta mostramos un alert o finalmente actualizamos el carro en el dom en la barra
                     if (!response.ok){
                         response.json()
-                        .then(res=> alert(res.message))
+                        .then(data =>{
+                             Swal.fire({icon: 'error',title: 'Error al intentar comprar...',text: data.message})
+                        })
                     }
                     else{
                         response.json().
                         then( res => {
-                     
-                             console.log(res)
+                            //Se agrega al carrito.
+                            //console.log(res)
                             document.getElementById('productsQuantityInUserCart').innerText = res.cart.countProducts
                         })
                         //Si el estado es OK puedo agregar al carro...
@@ -168,7 +170,7 @@
                 //Tomo los datos para dar un mensaje y redirigir 
                 response.json()
                 .then(data => {
-                    console.log(data)
+                    //console.log(data)
                     Swal.fire({
                         title: 'Compra exitosa !',
                         text: `Tu compra se realizo con exito. Se enviaran los detalles a tu email. Se genero el ticket ${data.ticket.code}.`,

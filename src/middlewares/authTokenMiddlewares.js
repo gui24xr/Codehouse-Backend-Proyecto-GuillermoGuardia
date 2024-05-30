@@ -3,7 +3,7 @@ import { UsersRepository } from "../repositories/users.repositories.js";
 const cartsRepository = new CartRepository()
 const usersRepository = new UsersRepository()
 import passport from "passport";
-import { UnauthorizedError } from "../services/errors/custom-errors.js";
+import { UnauthorizedError, TokenVerificationError } from "../services/errors/custom-errors.js";
 
 
 //Este middleware lo utilizare para enviar a handlebars siempre los datos de sesion
@@ -23,7 +23,7 @@ async function infoUserFromToken(req, res, next) {
   //De esa manera no mandar a cada plantilla lo datos del token en cada res.render
   //Por lo tanto solo lo usaran las views y el routes de views
   passport.authenticate('jwt', { session: false }, async (err, user, info) => {
-      if (err) { return next(err); }
+      if (err) { return next(new TokenVerificationError.GENERIC_ERROR, err.message) }
       if (!user) { 
         res.locals.sessionData  = {
           login: false
@@ -45,33 +45,29 @@ async function infoUserFromToken(req, res, next) {
 
 
 
-
-
-
-function authMiddleware(req,res,next){
-  //Va a mirar si en req hay currentUser y propiuedad authenticated... si hay,deja continuar, 
-  //Si no hay nos envia a error xq se intentaria avanzar a una ruta protegida
-  if (req.isAuthenticated) next()
-  else  return next(new UnauthorizedError(UnauthorizedError.NO_USER, 'No hay usuario con sesión iniciada...'));
-}
-
-
 function blockRoleAccessMiddleware(blockedRole) {
-//Mira el currentUser y segun su role deja pasar o manda a
-
- 
+//Mira el currentUser y segun su role hago next a la siguiente solicitud o no.
   return (req, res, next) => {
      
   //console.log(`Entro a blockMiddleware con parametro ${blockedRole}`,req.currentUser)
-    if (!req.currentUser) {
-      return next(new UnauthorizedError(UnauthorizedError.NO_USER, 'No hay usuario con sesión iniciada...'));
-    }
+
     if (req.currentUser.role == blockedRole) {
       return next(new UnauthorizedError(UnauthorizedError.INVALID_ROLE, `Los usuarios con el rol ${blockedRole} no pueden realizar esta función...`));
     }
-    next();
-  };
+    next()
+  }
 }
+
+//Permite solo continuar a los roles de usuario que estan en lista
+function allowAccessRolesMiddleware(allowedRolesList) {
+  //Mira el currentUser y si su rol no esta en la lista salgo desviando a handlererrormiddleware, de lo contrario lo dejo continuar.
+    return (req, res, next) => {
+      if (!allowedRolesList.includes(req.currentUser.role)) {
+        return next(new UnauthorizedError(UnauthorizedError.INVALID_ROLE, `Los usuarios con rol ${req.currentUser.role} no tienen acceso a esta funcionalidad...`));
+      }
+      next()
+    }
+  }
 
 
 
@@ -83,22 +79,20 @@ function verifyTokenMiddleware(req,res,next){
   passport.authenticate('jwt', { session: false }, async (err, user, info) => {
     if (err) { 
       //Si hay un error por parte de passport vamos al manejador de errores.
-      //Recordar darle tipo de instancia mas luego para manejarlo correctamente.
-      //Esto seria un passport error y graVE
-      return next(err) 
+      return next(new TokenVerificationError.GENERIC_ERROR, err.message)
     }
     //No hay usuario
     if (!user) { 
+      //No hay user se sigue normal, pues el middleware authMiddleware se encarga de rechazar rutas sin user logueados.
       //console.log('Se ejecuto verifyTokenMiddleware y no encontro user: ')
-      next() //No hay user se sigue normal
-       //Si no hay user porque no es valido o nunca inicio sesion entonces va al middleware manejador de errores
-       //Ewcordar que cuando a travez de next enviamos una intancia de Error o heredada, salta todos los middlewares que no contienen el parametro error y va a parar al primero que tenga el parametro error.
-       //return next(new UnauthorizedError(UnauthorizedError.INVALID_CREDENTIALS,'Credenciales invalidas, Accedo denegado...'))
+      next() 
+        //Ewcordar que cuando a travez de next enviamos una intancia de Error o heredada, salta todos los middlewares que no contienen el parametro error y va a parar al primero que tenga el parametro error.
+
     }
     else{
       //Si hay un usuario con credenciales validas adjunto al objeto req esos datos en una propiedad para tenerlo a mano.
       req.currentUser = user.user
-      req.isAuthenticated = true
+      req.isAuthenticated = true //Lo vamos a usar para las plantillas cuando borremos infoUserFromToken y estandaricemos.
       //De este modo tengo los datos del user activo.
     next()
      //Luego mediente roleMiddleware (que viene luego de este authMiddleware concedo o deniego acceso segun rol)
@@ -108,7 +102,14 @@ function verifyTokenMiddleware(req,res,next){
 })(req, res, next)
 }
 
-export {verifyTokenMiddleware,authMiddleware,blockRoleAccessMiddleware,infoUserFromToken}
+function authMiddleware(req,res,next){
+  //Va a mirar si en req hay currentUser y propiuedad authenticated... si hay,deja continuar, 
+  //Si no hay nos envia a error xq se intentaria avanzar a una ruta protegida
+  if (req.isAuthenticated) next()
+  else  return next(new UnauthorizedError(UnauthorizedError.NO_USER, 'No hay usuario con sesión iniciada/token valido...'));
+}
+
+export {verifyTokenMiddleware,authMiddleware,allowAccessRolesMiddleware,blockRoleAccessMiddleware,infoUserFromToken}
 
 
 

@@ -434,3 +434,16 @@
 ***[LOGGER]*** [error at 24-05-30 11:05:81] Log: Type:InternalServerError in POST - /api/carts/66450823eee3a0e616f3bf4c/products/664504dc6cccb495261b2fcd from ::1
 ***[LOGGER]*** [error at 24-05-30 11:05:64] Log: Type:InternalServerError in POST - /api/purchases/singlepurchase from ::1
 ***[LOGGER]*** [error at 24-05-30 12:05:97] Type:UsersServiceErrors in POST - /api/sessions/login from ::1
+***[LOGGER]*** [error at 24-05-30 13:05:19] Type:UnauthorizedError in POST - /api/purchases/cartpurchase/66450823eee3a0e616f3bf44 from ::1
+***[LOGGER]*** [error at 24-05-30 13:05:09] Type:UnauthorizedError in POST - /api/purchases/cartpurchase/66450823eee3a0e616f3bf44 from ::1
+***[LOGGER]*** [fatal at 24-05-30 14:05:74] Type:InternalServerError in GET - /api/purchases/tickets?purchaser=1234 from ::1
+***[LOGGER]*** [fatal at 24-05-30 14:05:87] Type:InternalServerError in GET - /api/purchases/tickets?purchaser=1234 from ::1
+***[LOGGER]*** [fatal at 24-05-30 14:05:26] Type:InternalServerError in GET - /api/purchases/tickets?purchaser=1234 from ::1
+***[LOGGER]*** [fatal at 24-05-30 14:05:14] Type:InternalServerError in GET - /api/purchases/tickets?purchaser=1234 from ::1
+***[LOGGER]*** [fatal at 24-05-30 14:05:98] Type:InternalServerError in GET - /api/purchases/tickets?purchaser=66450 from ::1
+***[LOGGER]*** [error at 24-05-30 14:05:38] Type:UnauthorizedError in POST - /api/carts/66450823eee3a0e616f3bf4c/products/664504dc6cccb495261b2fdb from ::1
+***[LOGGER]*** [error at 24-05-30 14:05:81] Type:UnauthorizedError in POST - /api/purchases/singlepurchase from ::1
+***[LOGGER]*** [error at 24-05-30 14:05:35] Type:UnauthorizedError in POST - /api/purchases/singlepurchase from ::1
+***[LOGGER]*** [error at 24-05-30 14:05:35] Type:UnauthorizedError in POST - /api/carts/66450823eee3a0e616f3bf4c/products/664504dc6cccb495261b2fdb from ::1
+***[LOGGER]*** [error at 24-05-30 15:05:37] Type:UnauthorizedError in POST - /api/products from ::1
+***[LOGGER]*** [error at 24-05-30 15:05:17] Type:UnauthorizedError in POST - /api/products from ::1

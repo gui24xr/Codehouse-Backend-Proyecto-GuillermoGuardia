@@ -84,7 +84,7 @@ export class UsersController{
 
 
     async currentRoute(req,res,next){
-        //Voy a tomar el currentUer que viene en middleware que extrae la data del token.
+        //Voy a tomar el currentUer que viene en middleware que extrae la data del token 'verifyTokenMiddleware'.
         //Hay currentuser? devuelvo la data
         //No hay currentUser? devuelvo 'No Hay currentUser'
         //Hay error en el middleware que extrae los datos del token? se va por catch al handler de errores.
@@ -101,7 +101,7 @@ export class UsersController{
                 message: 'No Existe user con token activo...'
             })
         }catch(error){
-            next(error)
+            next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||usersController.currentRoute||...'))
         }
     }
     

@@ -126,15 +126,24 @@ export class UnauthorizedError extends Error{
     //Constantes tipo de errores servicio de usuarios.
     static GENERIC_ERROR = 0
     static INVALID_CREDENTIALS = 1
-    static NO_USER = 2
-    //Role no autorizado para la funcion.
-    static INVALID_ROLE = 3
+    static NO_USER = 2 
+    static PASSPORT_ERROR = 3 //Problema al leer JWT por parte de passport.
+    static INVALID_ROLE = 4   //Role no autorizado para la funcion.
     constructor(errorCode,message){
         super(message)
-        this.name = 'InternalServerError'
+        this.name = 'UnauthorizedError'
         this.errorCode = errorCode
     }   
+}
 
+    export class TokenVerificationError extends Error{
+        //Constantes tipo de errores servicio de usuarios.
+        static GENERIC_ERROR = 0
+         constructor(errorCode,message){
+            super(message)
+            this.name = 'TokenVerificationError'
+            this.errorCode = errorCode
+        }   
     
    
 }

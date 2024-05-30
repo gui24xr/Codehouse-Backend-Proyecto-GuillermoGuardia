@@ -3,7 +3,8 @@ import {
     UsersServiceError, 
     CartsServiceError, 
     InternalServerError,
-    UnauthorizedError
+    UnauthorizedError,
+    TokenVerificationError
  } from "../services/errors/custom-errors.js";
 import { logger } from "../utils/loggers/logger.js";
 
@@ -26,7 +27,7 @@ export const handlerErrorsMiddleware = (error, req, res, next) => {
 
     if (error instanceof InternalServerError){
         //console.log('LLego al middleware Manejando erroressss')
-        logger.error(`Type:${error.name} in ${req.method} - ${req.originalUrl} from ${req.ip}`)
+        logger.fatal(`Type:${error.name} in ${req.method} - ${req.originalUrl} from ${req.ip}`)
         res.status(500).json({message: `Error interno del servidor - ${error.message}`})
         
     } 
@@ -46,11 +47,13 @@ export const handlerErrorsMiddleware = (error, req, res, next) => {
         
     } 
 
+    if (error instanceof TokenVerificationError){
+        //console.log('LLego al middleware Manejando erroressss')
+        logger.error(`Type:${error.name} in ${req.method} - ${req.originalUrl} from ${req.ip}`)
+        res.status(500).json({message: `TokenVerificationError - ${error.message}`})
+        
+    } 
 
-
-
-   
-
-    else res.status(500).json({message: 'otro error'})
+    //else res.status(500).json({message: 'otro error'})
 }
 

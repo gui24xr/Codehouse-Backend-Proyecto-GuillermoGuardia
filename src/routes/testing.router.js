@@ -1,16 +1,11 @@
 import express from 'express'
 import { generateProducts } from '../utils/faker.js'
-import { middlewareCurrent } from '../middlewares/authTokenMiddlewares.js'
 import { UsersController } from '../controllers/users-controller.js'
-import { logger } from '../utils/loggers/logger.js'
 
 
-const usersController = new UsersController
 export const router = express.Router()
 
 
-
-router.get('/current',middlewareCurrent,usersController.currentRoute)
 
 
 router.get('/mockingproducts',(req,res)=>{
@@ -27,6 +22,3 @@ router.get('/loggertest',(req,res)=>{
     })
 
 
-router.get('/middleware',middlewareCurrent,(req,res)=>{
-    res.send('Entre xq hay user logueado...')
-})

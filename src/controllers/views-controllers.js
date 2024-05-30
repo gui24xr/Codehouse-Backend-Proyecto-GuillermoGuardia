@@ -14,7 +14,9 @@ const checkoutService = new CheckoutService();
 const ticketRepositories = new TicketsRepositories();
 
 export class ViewsController {
-  async viewHome(req, res) {
+  
+  
+  /*async viewHome(req, res) {
     //Teniendo en cuenta que en res.locals.sessionData tenemos datos de si hay token activo
     //SI al entrar a home encontramos que hay user logueado lo redirijo a la vista viewproductspaginate
     //Si no hay user con token.
@@ -43,8 +45,9 @@ export class ViewsController {
       }
     }
   }
+  */
 
-  async viewProductsList(req, res) {
+  async viewProductsList(req, res,next) {
     console.log(res);
     try {
       const productsList = await productsRepository.getProducts();
@@ -68,7 +71,7 @@ export class ViewsController {
     }
   }
 
-  async viewMainProductsList(req, res) {
+  async viewMainProductsList(req, res,next) {
     const {selectedCategory,selectedQuantityPerPage,selectedPage} = req.query
     const defaultQuantityPerPage = 15
     const defaultPage = 1
@@ -129,7 +132,7 @@ export class ViewsController {
 
 
   //Aca buscamos el
-  async viewSearchPage(req, res) {
+  async viewSearchPage(req, res,next) {
     const {requiredFilter} = req.params
     const { reqQuantity, page, sort, selectedCategory } = req.query;
     console.log('Parametros que llegaron', req.query)
@@ -203,7 +206,7 @@ export class ViewsController {
 
 
 
-  async viewProduct(req, res) {
+  async viewProduct(req, res,next) {
     const { pid: productId } = req.params;
     try {
       const product = await productsRepository.getProductById(productId);
@@ -235,7 +238,7 @@ export class ViewsController {
     res.render("realTimeProducts");
   }
 
-  viewLogout(req, res) {
+  viewLogout(req, res,next) {
     //Diferente a logout de api
     //Este logou es para vistas, hace lo mismo pero ademas redirigje y acomdoda variables
     //Limpia de las cookies el token existente
@@ -303,23 +306,23 @@ export class ViewsController {
   }
   */
 
-  viewLoginGet(req, res) {
+  viewLoginGet(req, res,next) {
     console.log('Entro a viewloginget')
     res.render("login");
   }
 
-  viewRegisterGet(req, res) {
+  viewRegisterGet(req, res,next) {
     res.render("register");
   }
 
-  viewChat(req, res) {
+  viewChat(req, res,next) {
     //SI estamos sin token pedira el email para corroborar que no sea admin ya que los mismos no puden ingresar al chat
     const { email } = req.query;
     //Le mandamos el mail/nombre de usuario
     res.render("chat/chat", { activeUser: email });
   }
 
-  async viewProfile(req, res) {
+  async viewProfile(req, res,next) {
     /*Esta vista envia a los datos de perfil del usuario renderizando la plantilla profile.
     en este caso dado que tengo el middleware que agrega los datos del token al objeto res 
     uso el objeto res en la plantilla, asique simplemente la mando a renderizar */
@@ -327,7 +330,7 @@ export class ViewsController {
   }
 
 
-  async viewCart(req, res) {
+  async viewCart(req, res,next) {
     const { cid: cartId } = req.params; 
     try {
       const searchedCart = await cartsRepository.getCartById(cartId); 
@@ -455,7 +458,7 @@ export class ViewsController {
 */
 
 
-  async viewTickets(req, res) {
+  async viewTickets(req, res,next) {
     const { uid: userId } = req.params;
     try {
       //const searchResult = await ticketRepositories.getTickets({purchaser:'663120ceda09d7ad646a4000'})

@@ -54,7 +54,7 @@ export class UsersController{
             if (missingFields.length > 0)  throw new IncompleteFieldsError(`Faltan ingresar los siguientes campos: ${missingFields}`)
              //SI Estan todos los campos necesarios entonces se procede...
              const authenticateUser = await usersRepository.authenticateUser(email,password)
-             res.cookie(process.env.COOKIE_AUTH_TOKEN, generateJWT(authenticateUser), {maxAge: 3600000,  httpOnly: true  })
+             res.cookie(process.env.COOKIE_AUTH_TOKEN, generateJWT(authenticateUser), {signed:true , maxAge: 3600000,  httpOnly: true  })
               
              res.status(200).json({
                 status: "success", 

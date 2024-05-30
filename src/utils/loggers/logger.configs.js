@@ -33,7 +33,7 @@ const consoleFormat = winston.format.combine(
       format:"YY-MM-DD HH:MM:SS"
   }),
   winston.format.printf(
-      info => `${info.label} [${info.level} at ${info.timestamp}] Log: ${info.message}`
+      info => `${info.label} [${info.level} at ${info.timestamp}] ${info.message}`
   )
 );
 
@@ -45,7 +45,7 @@ const fileFormat = winston.format.combine(
       format:"YY-MM-DD HH:MM:SS"
   }),
   winston.format.printf(
-      info => `${info.label} [${info.level} at ${info.timestamp}] Log: ${info.message}`
+      info => `${info.label} [${info.level} at ${info.timestamp}] ${info.message}`
   )
 );
 

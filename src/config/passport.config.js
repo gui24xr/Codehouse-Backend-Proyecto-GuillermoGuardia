@@ -1,8 +1,6 @@
 import passport from "passport"
 import jwt from 'passport-jwt'
 import GitHubStrategy from "passport-github2"
-import { UserModel } from "../models/user.models.js";
-import { generateJWT } from "../utils/jwt.js";
 import { UsersRepository } from "../repositories/users.repositories.js";
 
 
@@ -57,12 +55,13 @@ export const initializePassport = () => {
 
 }
 
-//Creamos el cookie extractor
+//Creamos el cookie extractor y leemos las cookies pero las firmadas.
+//El server usa cookieParser con firma.
 
 const cookieExtractor = (req) => {
     let token = null;
     if(req && req.cookies) {
-        token = req.cookies[process.env.COOKIE_AUTH_TOKEN]
+        token = req.signedCookies[process.env.COOKIE_AUTH_TOKEN]
     }
     return token;
 }

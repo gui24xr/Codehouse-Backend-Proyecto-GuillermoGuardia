@@ -2,21 +2,16 @@ import express from 'express'
 import { infoUserFromToken, authMiddleware,blockRoleAccessMiddleware } from '../middlewares/authTokenMiddlewares.js'
 import { ViewsController } from '../controllers/views-controllers.js'
 
-
 const viewsController = new ViewsController()
 
 //Divido en 3 routers las vistas por una cuestion de middlewares y diferentes usos.
 
-export const routerHome = express.Router()
+
 export const routerPublicViews = express.Router()
 export const routerProtectedViews = express.Router()
 
 
 routerPublicViews.use(infoUserFromToken)
-
-
-
-
 
 //Vistas publicas
 routerPublicViews.get('/',viewsController.viewMainProductsList)

@@ -433,3 +433,4 @@
 ***[LOGGER]*** [error at 24-05-30 11:05:51] Log: Type:InternalServerError in POST - /api/carts/66450823eee3a0e616f3bf4c/products/664504dc6cccb495261b2fcd from ::1
 ***[LOGGER]*** [error at 24-05-30 11:05:81] Log: Type:InternalServerError in POST - /api/carts/66450823eee3a0e616f3bf4c/products/664504dc6cccb495261b2fcd from ::1
 ***[LOGGER]*** [error at 24-05-30 11:05:64] Log: Type:InternalServerError in POST - /api/purchases/singlepurchase from ::1
+***[LOGGER]*** [error at 24-05-30 12:05:97] Type:UsersServiceErrors in POST - /api/sessions/login from ::1

@@ -45,29 +45,7 @@ async function infoUserFromToken(req, res, next) {
 
 
 
-async function middlewareCurrent(req,res,next){
-  passport.authenticate('jwt', { session: false }, async (err, user, info) => {
-    if (err) { return next(err); }
-    //No hay usuario
-    if (!user) { 
-       //Si no hay user porque no es valido o nunca inicio sesion entonces va al middleware manejador de errores
-       //Ewcordar que cuando a travez de next enviamos una intancia de Error o heredada, salta todos los middlewares que no contienen el parametro error y va a parar al primero que tenga el parametro error.
-       return next(new UnauthorizedError(UnauthorizedError.INVALID_CREDENTIALS,'Credenciales invalidas, Accedo denegado...'))
-    }
-    else{//Hay user y es admin
-      if (user.user.role == 'admin'){
-      //A travez de req envio datos a la ruta current
-      req.user = user.user
-     next();
-  }
-  else{ 
-    res.status(500).send('El usuario no es un administrador')
-  }
 
-    }
-   
-})(req, res, next)
-}
 
 
 function authMiddleware(req,res,next){
@@ -130,7 +108,7 @@ function verifyTokenMiddleware(req,res,next){
 })(req, res, next)
 }
 
-export {verifyTokenMiddleware,authMiddleware,blockRoleAccessMiddleware,infoUserFromToken,middlewareCurrent}
+export {verifyTokenMiddleware,authMiddleware,blockRoleAccessMiddleware,infoUserFromToken}
 
 
 

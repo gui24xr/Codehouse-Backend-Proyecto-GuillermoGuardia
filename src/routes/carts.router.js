@@ -15,10 +15,11 @@ router.use(authMiddleware)
 router.get('/carts/:cid', cartsController.getCartById)
 router.post('/carts',cartsController.createCart)
 router.post('/carts/:cid/products/:pid',blockRoleAccessMiddleware('premium'),cartsController.addProductInCart)
-router.delete('/carts/:cid/products/:pid',cartsController.deleteProductInCart)
+router.delete('/carts/:cid/products/:pid',cartsController.deleteProductFromCart)
 router.delete('/carts/:cid',cartsController.clearCart)
 router.put('/carts/:cid',cartsController.addProductListInCart)
 
 //purchaseRoutes.
 router.post('/:cid/purchase', cartsController.cartCheckout)
 
+//Esta ruta es para la compra simple.

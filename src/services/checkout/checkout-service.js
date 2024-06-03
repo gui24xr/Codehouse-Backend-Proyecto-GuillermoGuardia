@@ -4,7 +4,8 @@
 */
 
 import { ProductRepository } from "../../repositories/products.repositories.js";
-import { CartRepository } from "../../repositories/cart.repositories.js";
+
+import { CartsService } from "../carts.service.js";
 import { TicketsRepositories } from "../../repositories/ticket.repositories.js";
 import { UsersRepository } from "../../repositories/users.repositories.js";
 import { MessagesService } from "../messages/messages-service.js";
@@ -12,10 +13,11 @@ import handlebars from 'handlebars';
 import fs from 'fs'
 import { transformDate } from "../../utils/hour.js";
 import { CartsServiceError, ProductsServiceError,TicketsServiceError, InternalServerError, CheckoutServiceError } from "../errors/custom-errors.js";
-import { throws } from "assert";
+
 
 const productsRepository = new ProductRepository();
-const cartsRepository = new CartRepository();
+
+const cartsService = new CartsService()
 const ticketsRepository = new TicketsRepositories();
 const usersRepository = new UsersRepository();
 
@@ -28,7 +30,7 @@ export class CheckoutService {
 
     try {
       //Obtengo el cart a procesar...
-      const searchedCart = await cartsRepository.getCartById(cartId);
+      const searchedCart = await cartsService.getCartById(cartId);
        //Antes que nada si el carro es un carro vacio entonces no se puede hacer el proceso y salimos..
       if (searchedCart.products.length < 1)  throw new CheckoutService(CheckoutServiceError.NULL_CART,`El carrito ID ${cartId} esta vacio, imposible generar ticket...`)
       //Recorro cart.products y consulto stock y divido caminos.
@@ -50,7 +52,7 @@ export class CheckoutService {
             //subtotalPrice: Number(searchedCart.products[item].product.price * requiredQuantity).toFixed(2),
           })
           //Borro el producto del carrito
-          await cartsRepository.deleteProductInCart(cartId,searchedCart.products[item].product._id)
+          await cartsService.deleteProductFromCart(cartId,searchedCart.products[item].product._id)
         } else {
           //console.log('No agregamos a la compra, no restamos del stock...')
           //Junto en el array la lista de productos que no hay stock

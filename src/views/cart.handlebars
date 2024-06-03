@@ -47,22 +47,22 @@
                 </th>
                 -->
                 <td class="px-4 py-1">
-                    {{this.title}}
+                    {{this.product.title}}
                 </td>
                 <td class="px-4 py-1">
                     <div class="flex-shrink-0">
-                        <img class="w-6 h-6 rounded-full" src={{this.img}}>
+                        <img class="w-6 h-6 rounded-full" src={{this.product.img}}>
                         <!-- Ajusté el tamaño de la imagen con w-6 y h-6 -->
                     </div>
                 </td>
                 <td class="px-4 py-1">
-                    {{this.price}}
+                    {{this.product.price}}
                 </td>
                 <td class="px-4 py-1">
                     {{this.quantity}}
                 </td>
                 <td class="px-4 py-1">
-                    {{this.totalAmount}}
+                    {{this.subtotal}}
                 </td>
             </tr>
             {{/each}}

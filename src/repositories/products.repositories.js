@@ -1,5 +1,5 @@
 
-import { MongoProductsDAO } from "../dao/mongo.products.dao.js";
+import { MongoProductsDAO } from "../dao/mongo/products.mongo.dao.js";
 
 
 const mongoProductsDAO = new MongoProductsDAO()

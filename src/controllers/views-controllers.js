@@ -1,5 +1,6 @@
 import { ProductRepository } from "../repositories/products.repositories.js";
-import { CartRepository } from "../repositories/cart.repositories.js";
+//import { CartRepository } from "../repositories/cart.repositories.js";
+import { CartsService } from "../services/carts.service.js";
 import { UsersRepository } from "../repositories/users.repositories.js";
 import { TicketsRepositories } from "../repositories/ticket.repositories.js";
 import { CheckoutService } from "../services/checkout/checkout-service.js";
@@ -8,8 +9,9 @@ import { IncompleteFieldsError, UsersServiceError, CartsServiceError, InternalSe
 
 import { transformDate } from "../utils/hour.js";
 const productsRepository = new ProductRepository();
-const usersRepository = new UsersRepository();
-const cartsRepository = new CartRepository();
+
+//const cartsRepository = new CartRepository();
+const cartsService = new CartsService()
 const checkoutService = new CheckoutService();
 const ticketRepositories = new TicketsRepositories();
 
@@ -333,7 +335,11 @@ export class ViewsController {
   async viewCart(req, res,next) {
     const { cid: cartId } = req.params; 
     try {
-      const searchedCart = await cartsRepository.getCartById(cartId); 
+      const searchedCart = await cartsService.getCartById(cartId) 
+
+
+      /* GRACIAS AL USO DE CARTDTO YA NO ES NECESARIO ESTO PORQUE ESTANDARICE EL OBJETO CART
+        y ahora es un DTO y sus productos estan formato ProducDTO
      // Mapeo con lo que necesito para renderizar y para entregar a hbds
       const productsInCart = searchedCart.products.map((item) => ({
         id: item.product.indice,
@@ -341,12 +347,14 @@ export class ViewsController {
         title: item.product.title,
         price: item.product.price,
         quantity: item.quantity,
-        totalAmount: (Number(item.quantity) * Number(item.product.price)).toFixed(2),})); 
-      
+        totalAmount: (Number(item.quantity) * Number(item.product.price)).toFixed(2),
+      }
+    ))
+    */
       
       res.render("cart", {
         cartId:cartId,
-        productsList: productsInCart,
+        productsList: searchedCart.products,//productsInCart,
         cartAmount: searchedCart.cartAmount,
       })
 

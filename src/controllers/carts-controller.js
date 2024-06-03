@@ -1,18 +1,19 @@
-import { CartRepository } from "../repositories/cart.repositories.js"
 import { CheckoutService } from "../services/checkout/checkout-service.js"
 import { CheckoutServiceError,CartsServiceError,InternalServerError, ProductsServiceError, TicketsServiceError } from "../services/errors/custom-errors.js"
-const cartRepository = new CartRepository()
-const checkoutService = new CheckoutService()
 
+import { CartsService } from "../services/carts.service.js"
+const checkoutService = new CheckoutService()
+const cartsService = new CartsService()
 
 export class CartsController{
     async getCartById(req,res,next){
-        const {cid} = req.params
+        const {cid:cartId} = req.params
         try {
-            const cart = await cartRepository.getCartById(cid)
+            //const cart = await cartRepository.getCartById(cid)
+            const cart = await cartsService.getCartById(cartId)
             res.status(200).json({
                 status: "success", 
-                message: `Carrito obtenido satisfactoriamente con ID${cart.id}`,
+                message: `Carrito id ${cartId} obtenido satisfactoriamente.`,
                 cart:cart
                 })   
         } catch (error) {
@@ -25,10 +26,11 @@ export class CartsController{
 
     async createCart(req,res,next){
         try {
-            const newCart = await cartRepository.createCart()
+            //const newCart = await cartRepository.createCart()
+            const newCart = await cartsService.createCart()
             res.status(201).json({
                 status: "success", 
-                message: `Carrito creado satisfactoriamente con ID${newCart.id}`,
+                message: `Carrito creado satisfactoriamente con id ${newCart.id}`,
                 cart:newCart
                 })   
         } catch (error) {
@@ -41,9 +43,11 @@ export class CartsController{
 
     async addProductInCart(req,res,next){
         const {cid:cartId,pid:productId} = req.params
+        console.log(req.params, req.body)
         const {quantity} = req.body    
         try {
-            const resultCart = await cartRepository.addProductInCart(cartId,productId,quantity)
+            //const resultCart = await cartRepository.addProductInCart(cartId,productId,quantity)
+            const resultCart = await cartsService.addProductInCart(cartId,productId,quantity)
             res.status(201).json({
                 status: "success", 
                 message: `Productos agregados satisfactoriametente en carrito ID${resultCart.id}`,
@@ -61,7 +65,8 @@ export class CartsController{
     async addProductListInCart(req,res,next){
         const {cid:cartId} = req.params
         const {productsArray} = req.body 
-        const resultCart = await cartRepository.addProductsListInCart(cartId,productsArray)
+        console.log(productsArray)
+        const resultCart = await cartsService.addProductListToCart(cartId,productsArray)
         res.status(201).json({
                 status: "success", 
                 message: `Productos agregados satisfactoriametente en carrito ID${resultCart.id}`,
@@ -76,20 +81,20 @@ export class CartsController{
     }
 
     //Elimina una lista de productos a un carro y devuelve el carro actualizado.
-    async deleteProductInCart(req,res,next){
+    async deleteProductFromCart(req,res,next){
         const {cid,pid} = req.params 
         try {
-            const deleteResult = await cartRepository.deleteProductInCart(cid,pid)
+            const deleteResult = await cartsService.deleteProductFromCart(cid,pid)
             res.status(201).json({
                 status: "success", 
-                message: `Producto eliminados satisfactoriametente en carrito ID${resultCart.id}`,
+                message: `Producto eliminados satisfactoriametente en carrito ID${deleteResult.id}`,
                 cart:deleteResult
                 })  
             } 
         catch(error){
             if (error instanceof CartsServiceError) next(error)
             else {
-               next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsController.AddProductInCart||...'))
+               next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsController.deleteProductFromCart||...'))
             }
         }
     }
@@ -98,7 +103,7 @@ export class CartsController{
     async clearCart(req,res,next){
         const {cid:cartId} = req.params //Obtengo el id del carro a limpiar
         try{
-            const clearedCart = await cartRepository.clearCart(cartId)
+            const clearedCart = await cartsService.clearCart(cartId)
             res.status(200).json({
                 status: "success", 
                 message: `Carrito ID ${clearedCart.id} ah sido vaciado correctamente !`,
@@ -117,6 +122,7 @@ export class CartsController{
         const {cid:cartId} = req.params
         try{
            const checkoutResult = await checkoutService.checkOutCart(cartId)
+           console.log('cjec: ', checkoutResult)
            res.status(200).json({
             status: "success", 
             message: `Checkout Carrito ID ${cartId} generado correctamente...`,
@@ -134,7 +140,10 @@ export class CartsController{
             } else {
                 next(new InternalServerError(InternalServerError.GENERIC_ERROR, 'Error in ||viewsController.cartCheckout||...'));
             }
-            }  
+            } 
+            
         }
     }
+    
+
 

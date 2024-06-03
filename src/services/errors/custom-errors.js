@@ -83,6 +83,43 @@ export class CartsServiceError extends Error{
    
 }
 
+export class CartsDAOError extends Error{
+    //Esta clase de error atañe a errores en los d
+    static CREATE_ERROR = 1
+    static GET_ERROR = 2
+    static UPDATE_ERROR = 3
+    static DELETE_ERROR = 4
+    static NO_EXIST_CART = 5
+    static ADDING_PRODUCT = 6
+   
+    
+    constructor(errorCode,problemMethod,message){
+        super(message)
+        this.name = 'CartsDAOError'
+        this.errorCode = errorCode
+        this.problemMethod = problemMethod
+    }
+
+   
+}
+
+export class DBError extends Error{
+    //Esta clase de error atañe a errores en los d
+ 
+  
+    constructor(problemMethod,message,errorcode){
+        super(message)
+        this.name = 'DBError'
+        this.errorCode = errorCode
+        this.problemMethod = problemMethod
+    }
+
+   
+}
+
+
+
+
 export class TicketsServiceError extends Error{
     //Constantes tipo de errores servicio de usuarios.
     static NO_EXIST = 0

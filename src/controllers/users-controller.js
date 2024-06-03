@@ -46,14 +46,18 @@ export class UsersController{
     //Si autenticamos metemos al req el currentUser
     async authenticateUser(req,res,next){
         const {email,password} = req.body 
+        console.log(req.body)
         const requiredFields = [ 'email', 'password']
         const missingFields = getMissingFields(req.body,requiredFields)
         console.log('llego a authenticate')
         try {
+         
              //Controlamos que no falten datos necesarios para iniciar sesion...
             if (missingFields.length > 0)  throw new IncompleteFieldsError(`Faltan ingresar los siguientes campos: ${missingFields}`)
+                console.log('llego a authenticate2')
              //SI Estan todos los campos necesarios entonces se procede...
              const authenticateUser = await usersRepository.authenticateUser(email,password)
+             
              res.cookie(process.env.COOKIE_AUTH_TOKEN, generateJWT(authenticateUser), {signed:true , maxAge: 3600000,  httpOnly: true  })
               
              res.status(200).json({
@@ -65,7 +69,7 @@ export class UsersController{
         } catch (error) {
             if (error instanceof IncompleteFieldsError || error instanceof  UsersServiceError) next(error)
                 else {
-                    next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||usersController.createUser||...'))
+                    next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||usersController.authenticateUser||...'))
                 }
         }
        

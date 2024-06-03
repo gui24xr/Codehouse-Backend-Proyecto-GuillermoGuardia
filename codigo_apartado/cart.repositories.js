@@ -1,6 +1,6 @@
 import {CartModel} from '../models/cart.model.js'
 import { InternalServerError,CartsServiceError } from '../services/errors/custom-errors.js'
-
+import { CartDTO } from '../dto/carts.dto.js'
 
 /*
 Cada vez que este repositorio devuelva un carro lo va a devolver ya proceesado por la accion de la funcion que agregue para formatear en el modelo
@@ -21,9 +21,13 @@ export class CartRepository {
 
     async createCart(){
         try{
+            console.log('Esta pasando a acaaaaaaaa')
             const newCart = new CartModel({products:[]})
             await newCart.save()
-            return newCart
+            //console.log(newCart)
+            //const unCartDTO = new cartDTO(newCart)
+            //console.log(unCartDTO)
+            return new CartDTO(newCart)//newCart
         }catch(error){
           
             throw new CartsServiceError(CartsServiceError.CREATE_ERROR,`Error al intentar crear el carrito`)

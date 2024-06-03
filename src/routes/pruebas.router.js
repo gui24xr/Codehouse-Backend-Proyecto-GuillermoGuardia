@@ -6,8 +6,8 @@
 import express from 'express'
 import fs from 'fs'
 
-import { MongoProductsDAO } from '../dao/mongo.products.dao.js'
-import { CartRepository } from '../repositories/cart.repositories.js'
+import { MongoProductsDAO } from '../dao/mongo/products.mongo.dao.js'
+
 import { CheckoutService } from '../services/checkout/checkout-service.js'
 import { UsersRepository } from '../repositories/users.repositories.js'
 import { TicketsRepositories } from '../repositories/ticket.repositories.js'
@@ -15,14 +15,16 @@ import { ProductRepository } from '../repositories/products.repositories.js'
 import { MessagesService } from '../services/messages/messages-service.js'
 import {  authMiddleware } from '../middlewares/authTokenMiddlewares.js'
 
+import { CartsService } from '../services/carts.service.js'
+
 const mongoProductsDAO = new MongoProductsDAO()
-const cartsRepository = new CartRepository()
+
 const checkoutService = new CheckoutService()
 const userRepositories = new UsersRepository()
 const ticketRepositories = new TicketsRepositories
 const productsRepository = new ProductRepository()
 
-
+const cartsService = new CartsService()
 
 
 export const router = express.Router()
@@ -51,29 +53,6 @@ router.get('/changeproductstatus/:id',async(req,res)=>{
     }
 })
 
-router.get('/cart/:cid',async (req,res)=>{
-    const {cid:cartId} = req.params
-    console.log(typeof(cartId))
-    try{
-       const productsInCart = await cartsRepository.getProductsInCart('662ff555872d32b9ed9f1935')
-       console.log('Cart:', productsInCart )
-      // Mapeo para entregar a hbds
-        const productsList = productsInCart.map(item => ({
-            id:item.product._id,
-            img:item.product.img,
-            title:item.product.title,
-            price:item.product.price,
-            quantity:item.quantity,
-            totalAmount: Number(item.quantity) * Number(item.product.price)
-        }))
-        //console.log('Produclist: ',productsList)
-        res.render('cart',{productsList:productsList})
-    }
-
-    catch(error){
-        throw new Error('Error al intentar renderizar vista cart desde prubas...')   
-    }
-})
 
 router.get('/checkout/:email',async(req,res)=>{
     try{
@@ -157,3 +136,53 @@ router.get('/log',(req,res)=>{
     console.log('ALgo llego desde afuera !')
 	res.send('Recibido')
 })
+
+//---PRUEBAS DE CAPAS CART-------------///
+router.post('/nuevocart/create',async (req,res)=>{
+  const nuevoCart = await cartsService.createCart()
+  res.send(nuevoCart)
+})
+
+router.get('/nuevocart/get/:id',async (req,res)=>{
+  const {id:cartId}= req.params
+  const myCart = await cartsService.getCartById(cartId)
+  res.send(myCart)
+})
+
+
+router.get('/nuevocart/getproducts/:id',async (req,res)=>{
+    const {id:cartId}= req.params
+    const products = await cartsService.getProductsInCart(cartId)
+    res.send(products)
+})
+
+router.get('/nuevocart/getcounts/:id/:pid',async (req,res)=>{
+    const {id:cartId,pid:productId}= req.params
+    const quantity = await cartsService.getProductQuantityInCart(cartId,productId)
+    const count = await cartsService.countProductsInCart(cartId)
+    const amount = await cartsService.cartAmount(cartId)
+
+    console.log(quantity,count,amount)
+    res.json({quantity:quantity,count:count,amount:amount})
+  })
+  
+ router.post('/nuevocart/addproduct/:id/:pid',async (req,res)=>{
+    const {id:cartId,pid:productId}= req.params
+    const result = await cartsService.addProductInCart(cartId,productId)
+    res.send(result)
+})
+
+router.post('/nuevocart/delete/:id/:pid',async (req,res)=>{
+    const {id:cartId,pid:productId}= req.params
+    const result = await cartsService.deleteProductFromCart(cartId,productId)
+    res.send(result)
+})
+
+
+
+router.post('/nuevocart/clear/:id',async (req,res)=>{
+    const {id:cartId}= req.params
+    const result = await cartsService.clearCart(cartId)
+    res.send(result)
+})
+

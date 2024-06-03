@@ -1,10 +1,10 @@
 
 import { UserModel } from "../models/user.models.js";
-import { CartRepository } from "./cart.repositories.js";
+import { CartsRepository } from "./carts-repositories.js";
 import { isValidPassword } from "../utils/hashbcryp.js";
 import { UsersServiceError, InternalServerError } from "../services/errors/custom-errors.js";
 
-const cartsRepository = new CartRepository()
+const cartsRepository = new CartsRepository()
 
 export class UsersRepository{
     async createUser(user){
@@ -15,7 +15,7 @@ export class UsersRepository{
             else  {
                 //Creo un carro para el user.
                 const cartForNewUser = await cartsRepository.createCart()
-                const newUser = new UserModel({...user,cart:cartForNewUser})
+                const newUser = new UserModel({...user,cart:cartForNewUser.id})
                 await newUser.save()
                 return newUser
             }
@@ -31,6 +31,7 @@ export class UsersRepository{
 
     //Comprueba si existen mail y contraseña y coinciden
     async authenticateUser(email,password){
+       
         try{
             const searchedUser = await UserModel.findOne({email:email})
             if (searchedUser) {

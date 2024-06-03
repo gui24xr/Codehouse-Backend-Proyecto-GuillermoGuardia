@@ -1,7 +1,9 @@
-import { CartRepository } from "../repositories/cart.repositories.js";
-import { UsersRepository } from "../repositories/users.repositories.js";
-const cartsRepository = new CartRepository()
-const usersRepository = new UsersRepository()
+
+import { CartsService } from "../services/carts.service.js";
+
+
+const cartsService = new CartsService()
+
 import passport from "passport";
 import { UnauthorizedError, TokenVerificationError } from "../services/errors/custom-errors.js";
 
@@ -35,7 +37,7 @@ async function infoUserFromToken(req, res, next) {
         login: true,
         user: user.user, 
         admin: user.user.role == 'admin' ? true : false, //Para saber si se trata de un admin
-        productsQuantityInUserCart : await cartsRepository.countProductsInCart(user.user.cart),
+        productsQuantityInUserCart : await cartsService.countProductsInCart(user.user.cart),
       }
       //console.log('SesionData: ',res.locals.sessionData )
         next();

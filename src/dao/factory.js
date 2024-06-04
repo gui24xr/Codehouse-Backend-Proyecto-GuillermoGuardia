@@ -9,9 +9,11 @@ export let ticketsDAO
 switch (process.env.database){
     case 'mongo':
         const {default:CartsMongoDAO} = await import('./mongo/carts.mongo.dao.js')
+        const {default:UsersMongoDAO} = await import('./mongo/users.mongo.dao.js')
         //Como yo quiero que se llame igual siempre al importar se lo asgino a CartsDao
         //O sea en cartsDao va a vivir la clase CartsMongoDAO
         CartsDAO = CartsMongoDAO
+        UsersDAO = UsersMongoDAO
     break
     case 'sequelize':
         console.log('Entro sequelize')

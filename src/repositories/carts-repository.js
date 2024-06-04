@@ -25,7 +25,7 @@ cart con la siguiente estructura:
  De esta manera le damos a la capa de servicios un objeto estandarizado.
 
 */
-export class CartsRepository{
+export class CartRepository{
 
     //Le pide a la capa de persistencia la creacion del carro vacio
     //Toma el carro creado y deveulve un CartDTO para uso de la capa service.
@@ -33,7 +33,6 @@ export class CartsRepository{
     async createCart(){
         try{
             const newCart = await cartsDAO.createCart()
-            console.log('paso por repositories', newCart)
             return new CartDTO(newCart)
         }catch(error){
             if(error instanceof CartsDAOError || error instanceof DBError) throw(error)

@@ -16,7 +16,7 @@ import { MessagesService } from '../services/messages/messages-service.js'
 import {  authMiddleware } from '../middlewares/authTokenMiddlewares.js'
 
 import { CartsService } from '../services/carts.service.js'
-
+import { UsersService } from '../services/users.service.js'
 const mongoProductsDAO = new MongoProductsDAO()
 
 const checkoutService = new CheckoutService()
@@ -25,7 +25,7 @@ const ticketRepositories = new TicketsRepositories
 const productsRepository = new ProductRepository()
 
 const cartsService = new CartsService()
-
+const usersService = new UsersService()
 
 export const router = express.Router()
 
@@ -186,3 +186,8 @@ router.post('/nuevocart/clear/:id',async (req,res)=>{
     res.send(result)
 })
 
+router.post('/nuevouser/nuevo',async (req,res)=>{
+    const result = await usersService.createUserWithCart('Guillermo','MEX','email2421@gmail.com','123456',23,'user')
+    res.send(result)
+
+})

@@ -1,14 +1,14 @@
 import { CartsServiceError, InternalServerError } from "./errors/custom-errors.js"
-import { CartsRepository } from "../repositories/carts-repositories.js"
+import { CartRepository } from "../repositories/carts-repository.js"
 
 /*Aca hacemos toda la logica de negocio usando nuestro repositories */
-const cartsRepository = new CartsRepository()
+const cartRepository = new CartRepository()
 
 export class CartsService {
 
     async createCart(){
         try{
-            const newCart = await cartsRepository.createCart()
+            const newCart = await cartRepository.createCart()
             return newCart
         }catch(error){
           throw new CartsServiceError(CartsServiceError.CREATE_ERROR,`Error al intentar crear el carrito`)
@@ -19,24 +19,24 @@ export class CartsService {
 
     async getCartById(cartId){
         try {
-            const searchedCart = await cartsRepository.getCartById(cartId)
+            const searchedCart = await cartRepository.getCartById(cartId)
             return searchedCart
         } catch (error) {
           // if (error instanceof CartsServiceError) throw error
-           //else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsRepository.getCartById||...')
+           //else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartRepository.getCartById||...')
         }
     }
 
 
     async getProductsInCart(cartId){
         try {
-            const searchedCart = await cartsRepository.getCartById(cartId)
+            const searchedCart = await cartRepository.getCartById(cartId)
             return searchedCart.products
 
         } catch (error) {
             
           // if (error instanceof CartsServiceError) throw error
-           //else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsRepository.getCartById||...')
+           //else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartRepository.getCartById||...')
         }
     }
 
@@ -44,7 +44,7 @@ export class CartsService {
     //Deveulve la cantidad de producto, si el producto no se encuentra devuelve cero, si no, la cantidad
     async getProductQuantityInCart(cartId,productId){
         try{
-            const searchedCart = await cartsRepository.getCartById(cartId)
+            const searchedCart = await cartRepository.getCartById(cartId)
             //COmo obtengo un dto y lo conoce lo busca
             const productPosition = searchedCart.products.findIndex(item => item.product.productId == productId)
             if (productPosition>=0){
@@ -67,38 +67,38 @@ export class CartsService {
           //Deveulve el carro actualizado
           const productQuantityInCart = await this.getProductQuantityInCart(cartId,productId)
           if (productQuantityInCart < 1){
-          const updatedCart = await cartsRepository.addProductInCart(cartId,productId,quantity || 1)
+          const updatedCart = await cartRepository.addProductInCart(cartId,productId,quantity || 1)
           return updatedCart
           }
           else{
             const newQuantity = (productQuantityInCart + quantity) || (productQuantityInCart + 1)
-            const updatedCart = await cartsRepository.updateProductQuantityInCart(cartId,productId,newQuantity)
+            const updatedCart = await cartRepository.updateProductQuantityInCart(cartId,productId,newQuantity)
             return updatedCart
           }
 
         } catch (error) {
             if (error instanceof CartsServiceError) throw error
-            else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsRepository.AddProductInCart||...')
+            else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartRepository.AddProductInCart||...')
         }
     }
 
     async deleteProductFromCart(cartId,productId){
         try{
-            const updatedCart = await cartsRepository.deleteProductFromCart(cartId,productId)
+            const updatedCart = await cartRepository.deleteProductFromCart(cartId,productId)
             return updatedCart
         }catch(error){
             if(error instanceof CartsDAOError) throw(error)
-            else throw new InternalServerError(InternalServerError.GENERIC_ERROR,error.stack,'Error en |CartsRepository.clearCart|')
+            else throw new InternalServerError(InternalServerError.GENERIC_ERROR,error.stack,'Error en |cartRepository.clearCart|')
         }
     }
     
     async clearCart(cartId){
         try {
-           const updatedCart = await cartsRepository.clearCart(cartId)
+           const updatedCart = await cartRepository.clearCart(cartId)
            return updatedCart
           } catch (error) {
            if (error instanceof CartsServiceError) throw error
-           else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsRepository.AddProductInCart||...')
+           else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartRepository.AddProductInCart||...')
           }
 
    }
@@ -122,7 +122,7 @@ export class CartsService {
         await Promise.all(addProductsPromises)
 
         //Ahora que ya se que en la BD todo sucedio, pido el carro actualizado para devolve.
-        const updatedCart = await cartsRepository.getCartById(cartId)
+        const updatedCart = await cartRepository.getCartById(cartId)
         return updatedCart
         
     }catch(error){
@@ -133,22 +133,22 @@ export class CartsService {
 
 async countProductsInCart(cartId){
     try {
-        const searchedCart = await cartsRepository.getCartById(cartId)
+        const searchedCart = await cartRepository.getCartById(cartId)
         return searchedCart.countProducts
 
     } catch (error) {
       // if (error instanceof CartsServiceError) throw error
-       //else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsRepository.getCartById||...')
+       //else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartRepository.getCartById||...')
     }
 }
 
 async cartAmount(cartId){
     try {
-        const searchedCart = await cartsRepository.getCartById(cartId)
+        const searchedCart = await cartRepository.getCartById(cartId)
         return searchedCart.cartAmount
     } catch (error) {
       // if (error instanceof CartsServiceError) throw error
-       //else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsRepository.getCartById||...')
+       //else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartRepository.getCartById||...')
     }
 }
 
@@ -180,7 +180,7 @@ async cartAmount(cartId){
                 }
         } catch (error) {
             if (error instanceof CartsServiceError) throw error
-            else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsRepository.deleteProductInCart||...')
+            else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartRepository.deleteProductInCart||...')
         }
     }
 
@@ -216,7 +216,7 @@ async cartAmount(cartId){
         } 
         } catch (error) {
              if (error instanceof CartsServiceError) throw error
-            else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsRepository.deleteProductInCart||...')
+            else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartRepository.deleteProductInCart||...')
         }
     }
 
@@ -239,7 +239,7 @@ async cartAmount(cartId){
 
         } catch (error) {
             if (error instanceof CartsServiceError) throw error
-            else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsRepository.countProductsInCart||...')
+            else throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartRepository.countProductsInCart||...')
         }
     }
     */

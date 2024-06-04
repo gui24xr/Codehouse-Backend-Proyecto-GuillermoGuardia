@@ -1,10 +1,10 @@
 
 import { UserModel } from "../models/user.models.js";
-import { CartsRepository } from "./carts-repositories.js";
+import { CartRepository } from "./carts-repository.js";
 import { isValidPassword } from "../utils/hashbcryp.js";
 import { UsersServiceError, InternalServerError } from "../services/errors/custom-errors.js";
 
-const cartsRepository = new CartsRepository()
+const cartRepository = new CartRepository()
 
 export class UsersRepository{
     async createUser(user){
@@ -14,7 +14,7 @@ export class UsersRepository{
             if (existUser) throw new UsersServiceError(UsersServiceError.REGISTER_ERROR,`El usuario ${user.email} ya existe en nuestra base de datos !!`)
             else  {
                 //Creo un carro para el user.
-                const cartForNewUser = await cartsRepository.createCart()
+                const cartForNewUser = await cartRepository.createCart()
                 const newUser = new UserModel({...user,cart:cartForNewUser.id})
                 await newUser.save()
                 return newUser

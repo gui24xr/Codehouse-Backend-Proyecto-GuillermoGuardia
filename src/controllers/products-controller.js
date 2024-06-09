@@ -1,7 +1,7 @@
 import { ProductRepository } from "../repositories/products.repositories.js";
 import { mySocketServer } from "../app.js";
 import { IncompleteFieldsError, InternalServerError } from "../services/errors/custom-errors.js";
-import { getMissingFields } from "../utils/getMissingFields.js";
+import { getMissingFields } from "../utils/helpers.js";
 
 const productRepository = new ProductRepository()
 

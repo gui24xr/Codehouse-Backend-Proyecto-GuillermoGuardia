@@ -8,6 +8,7 @@ export class UserDTOERROR extends Error{
     //Codigos posibles.
     static INTERNAL_SERVER_ERROR = 0;
     static INCOMPLETE_FIELDS = 1;
+    static INVALIDS_FIELDS = 2;
     constructor(errorCode,operationName,message){
         super(message);
         this.name = 'UserDTOERROR';

@@ -2,7 +2,7 @@ import { UsersRepository } from "../repositories/users.repositories.js";
 import {createHash, isValidPassword} from "../utils/hashbcryp.js"
 import { generateJWT } from "../utils/jwt.js";
 import { IncompleteFieldsError, UsersServiceError, InternalServerError } from "../services/errors/custom-errors.js";
-import { getMissingFields } from "../utils/getMissingFields.js";
+import { getMissingFields } from "../utils/helpers.js";
 
 
 const usersRepository = new UsersRepository()
@@ -54,7 +54,6 @@ export class UsersController{
          
              //Controlamos que no falten datos necesarios para iniciar sesion...
             if (missingFields.length > 0)  throw new IncompleteFieldsError(`Faltan ingresar los siguientes campos: ${missingFields}`)
-                console.log('llego a authenticate2')
              //SI Estan todos los campos necesarios entonces se procede...
              const authenticateUser = await usersRepository.authenticateUser(email,password)
              

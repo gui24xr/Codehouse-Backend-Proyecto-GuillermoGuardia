@@ -17,7 +17,7 @@ export default class UsersMongoDao{
         //Ingresa un DTO y devuelve el registro de mongo.
         //Que tengan carros los useer es parte de la logica de negocio
         try{
-        const {email,password,first_name,last_name,userRole,age,cartId} = receivedUser
+        const {email,password,firstName,lastName,role,age,cartId} = receivedUser
         console.log('User recibido en DAO: ',receivedUser)
         const existUser = await UserModel.findOne({email:email})
         //Existe usuario no creo nada y salgo.
@@ -26,10 +26,10 @@ export default class UsersMongoDao{
         const newUser = new UserModel({
             email:email,
             password:password,
-            first_name:first_name,
-            last_name: last_name,
+            first_name:firstName,
+            last_name: lastName,
             age: age,
-            role:userRole,
+            role:role,
             cart: cartId
         })
         await newUser.save()
@@ -75,8 +75,8 @@ export default class UsersMongoDao{
                 //Si el user existe trabajo sobre el mismo y luego luego lo guardo.
                 searchedUser.email = receivedUser.email;
                 searchedUser.password = receivedUser.password;
-                searchedUser.first_name = receivedUser.first_name;
-                searchedUser.last_name = receivedUser.last_name;
+                searchedUser.first_name = receivedUser.firstName;
+                searchedUser.last_name = receivedUser.lastName;
                 searchedUser.age = receivedUser.age;
                 searchedUser.userRole = receivedUser.userRole;
                 searchedUser.cart = receivedUser.cart;

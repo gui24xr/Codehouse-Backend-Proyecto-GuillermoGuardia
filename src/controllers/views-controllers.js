@@ -4,7 +4,7 @@ import { CartsService } from "../services/carts.service.js";
 import { UsersRepository } from "../repositories/users.repositories.js";
 import { TicketsRepositories } from "../repositories/ticket.repositories.js";
 import { CheckoutService } from "../services/checkout/checkout-service.js";
-import { getMissingFields } from "../utils/getMissingFields.js";
+import { getMissingFields } from "../utils/helpers.js";
 import { IncompleteFieldsError, UsersServiceError, CartsServiceError, InternalServerError, CheckoutServiceError, ProductsServiceError, TicketsServiceError } from "../services/errors/custom-errors.js";
 
 import { transformDate } from "../utils/hour.js";

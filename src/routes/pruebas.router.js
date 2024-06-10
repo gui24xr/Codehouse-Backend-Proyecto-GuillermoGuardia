@@ -189,7 +189,17 @@ router.post('/nuevocart/clear/:id',async (req,res)=>{
 router.post('/nuevouser/:username',async (req,res)=>{
     const {username} = req.params
     
-    const result = await usersService.createUserWithCart('nombre','apellido',`${username}@gmail.com`,'123456',23,'user')
+    //const result = await usersService.createUserWithCart('nombre','apellido',`${username}@gmail.com`,'123456',23,'user')
+    const result = await usersService.createUser('nombre','apellido',`${username}@gmail.com`,'123456',23,'user')
+    res.send(result)
+
+})
+
+router.post('/loginuser/:username/:password',async (req,res)=>{
+    const {username,password} = req.params
+    
+    //const result = await usersService.createUserWithCart('nombre','apellido',`${username}@gmail.com`,'123456',23,'user')
+    const result = await usersService.authenticateUser(username,password)
     res.send(result)
 
 })

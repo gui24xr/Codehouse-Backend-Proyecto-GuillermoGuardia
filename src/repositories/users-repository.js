@@ -45,6 +45,43 @@ export class UsersRepository{
 
         }
     }
+
+    async createUserWithCart(newUserData,cartId){
+        //Recibe createUserDtoInstance
+        //Recibe cart ID
+        //Deconstructura el user y pide el create
+        //Recibe un user DTO de la BD
+        //Lo devulve a service
+        if (!(newUserData instanceof CreateUserDTO)) throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.createUser|','No se recibio una instancia valida para crear un usuario...')
+         const newUser = await usersDAO.createUser(
+            newUserData.email,
+            newUserData.password,
+            newUserData.firstName,
+            newUserData.lastName,
+            newUserData.role,
+            newUserData.age,
+            cartId
+        )
+
+        console.log('En repository user creado: ', newUser)
+
+        return newUser
+    
+    }
+
+    async getUserByEmail(email){
+        //Toma el email recibido y lo valida que sea email valido.
+        //si lo es, lo busca en la bd. si esta devuelve dto,sino error.
+        try{
+            console.log('Repo: ', email)
+            //validar mail else therow error
+            const searchedUser = await usersDAO.getUserByEmail(email)
+            console.log('Repo: ', searchedUser)
+            return searchedUser
+        }catch(error){
+
+        }
+    }
 }
 
 /*

@@ -1,6 +1,6 @@
 import { UserModel } from "../../models/user.models.js";
 import { UsersServiceError } from "../../services/errors.service.js";
-import { UserDTO } from "../../dto/users.dto.js";
+import { UserDTO } from "../../dto/user-dto/user.dto.js"
 
 //Importar errores
 
@@ -13,12 +13,10 @@ export default class UsersMongoDao{
     //Crea el usuario y lo devuelve en un user DTO
     //El carro se lo asigna la capa servicios xq talvez podriamos tener users sinn cart a futuro
     //El usuario se crea sin cart, luego la capa de servicios le asignara un cart y updateal registro
-    async createUser(receivedUser){
+    async createUser(email,password,firstName,lastName,role,age,cartId){
         //Ingresa un DTO y devuelve el registro de mongo.
         //Que tengan carros los useer es parte de la logica de negocio
         try{
-        const {email,password,firstName,lastName,role,age,cartId} = receivedUser
-        console.log('User recibido en DAO: ',receivedUser)
         const existUser = await UserModel.findOne({email:email})
         //Existe usuario no creo nada y salgo.
         if (existUser) throw new UsersServiceError(UsersServiceError.USER_EXIST_IN_DATABASE,'|UsersMongoDao.createUser|')
@@ -33,7 +31,19 @@ export default class UsersMongoDao{
             cart: cartId
         })
         await newUser.save()
-        return newUser
+        //Con la data construyo el user dto
+        return new UserDTO({
+            userId: newUser._id,
+            email: newUser.email,
+            password: newUser.password,
+            firstName: newUser.first_name,
+            lastName: newUser.last_name,
+            age: newUser.age,
+            role: newUser.role,
+            cartId: newUser.cart
+        })
+
+        
         
         }catch(error){
             if (error instanceof UsersServiceError) throw error
@@ -46,7 +56,16 @@ export default class UsersMongoDao{
         try{
             const searchedUser = await UserModel.findOne({id:userId}).populate('cart')
             if (!searchedUser) throw new UsersServiceError(UsersServiceError.USER_NO_EXIST,'|UsersMongoDao.getUserById|')
-            return searchedUser
+            return new UserDTO({
+                userId: searchedUser._id,
+                email: searchedUser.email,
+                password: searchedUser.password,
+                firstName: searchedUser.first_name,
+                lastName: searchedUser.last_name,
+                age: searchedUser.age,
+                role: searchedUser.role,
+                cartId: searchedUser.cart
+            })
         }catch(error){
             if (error instanceof UsersServiceError) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersMongoDAO.getUserById|')
@@ -55,9 +74,18 @@ export default class UsersMongoDao{
 
     async getUserByEmail(email){
         try{
-            const searchedUser = await UserModel.findOne({email:email}).populate('cart')
+            const searchedUser = await UserModel.findOne({email:email})//.populate('cart')
             if (!searchedUser) throw new UsersServiceError(UsersServiceError.USER_NO_EXIST,'|UsersMongoDao.getUserByEmail|')
-            return searchedUser
+                return new UserDTO({
+                    userId: searchedUser._id,
+                    email: searchedUser.email,
+                    password: searchedUser.password,
+                    firstName: searchedUser.first_name,
+                    lastName: searchedUser.last_name,
+                    age: searchedUser.age,
+                    role: searchedUser.role,
+                    cartId: searchedUser.cart
+                })
         }catch(error){
             if (error instanceof UsersServiceError) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersMongoDAO.getUserByEmail|')

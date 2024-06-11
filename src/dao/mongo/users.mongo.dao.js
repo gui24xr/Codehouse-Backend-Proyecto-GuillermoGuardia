@@ -1,5 +1,5 @@
 import { UserModel } from "../../models/user.models.js";
-import { UsersServiceError } from "../../services/errors.service.js";
+import { UserDTOERROR, UsersServiceError } from "../../services/errors.service.js";
 import { UserDTO } from "../../dto/user-dto/user.dto.js"
 import { isEmail } from "../../utils/helpers.js";
 
@@ -32,17 +32,19 @@ export default class UsersMongoDao{
         await newUser.save() // Lo guardo en la BD
         //Con la data construyo el user dto para devolver a la capa repository.
         return new UserDTO({
-            userId: searchedUser._id.toString(),
+            userId: newUser._id.toString(),
             email: newUser.email,
             password: newUser.password,
             firstName: newUser.first_name,
             lastName: newUser.last_name,
             age: newUser.age,
             role: newUser.role,
-            cartId: newUser.cart
+            cartId: newUser.cart,
+            lastConnection: newUser.last_connection,
+            documents:newUser.documents
         })
         }catch(error){
-            if (error instanceof UsersServiceError) throw error
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersMongoDAO.createUser|')
         }
     }
@@ -52,18 +54,20 @@ export default class UsersMongoDao{
     //Si existe devuelve un UserDTo, si no existe lanza una instancia de UsersSeriveError
     async getUserById(userId){
         try{
-            const searchedUser = await UserModel.findOne({id:userId})//.populate('cart')
+            const searchedUser = await UserModel.findOne({id:userId}).populate('cart')
             if (!searchedUser) throw new UsersServiceError(UsersServiceError.USER_NO_EXIST,'|UsersMongoDao.getUserById|')
-            return new UserDTO({
-                userId: searchedUser._id.toString(),
-                email: searchedUser.email,
-                password: searchedUser.password,
-                firstName: searchedUser.first_name,
-                lastName: searchedUser.last_name,
-                age: searchedUser.age,
-                role: searchedUser.role,
-                cartId: searchedUser.cart
-            })
+                return new UserDTO({
+                    userId: searchedUser._id.toString(),
+                    email: searchedUser.email,
+                    password: searchedUser.password,
+                    firstName: searchedUser.first_name,
+                    lastName: searchedUser.last_name,
+                    age: searchedUser.age,
+                    role: searchedUser.role,
+                    cartId: searchedUser.cart ? searchedUser.cart._id.toString() : null, //Si hay cart id en string, si no null.
+                    lastConnection: searchedUser.last_connection,
+                    documents:searchedUser.documents
+                })
             
         }catch(error){
             if (error instanceof UsersServiceError) throw error
@@ -77,8 +81,6 @@ export default class UsersMongoDao{
         try{
             const searchedUser = await UserModel.findOne({email:email}).populate('cart')
             if (!searchedUser) throw new UsersServiceError(UsersServiceError.USER_NO_EXIST,'|UsersMongoDao.getUserByEmail|')
-                
-                console.log('En persistencia salio: ', searchedUser)
                 return new UserDTO({
                     userId: searchedUser._id.toString(),
                     email: searchedUser.email,
@@ -87,7 +89,9 @@ export default class UsersMongoDao{
                     lastName: searchedUser.last_name,
                     age: searchedUser.age,
                     role: searchedUser.role,
-                    cartId: searchedUser.cart ? searchedUser.cart._id.toString() : null // Asegúrate de que cartId sea el _id del objeto cart
+                    cartId: searchedUser.cart ? searchedUser.cart._id.toString() : null, //Si hay cart id en string, si no null.
+                    lastConnection: searchedUser.last_connection,
+                    documents:searchedUser.documents
                 })
         }catch(error){
             if (error instanceof UsersServiceError) throw error
@@ -103,6 +107,7 @@ export default class UsersMongoDao{
     //Si x algun motivo no se pudo modificar devuelve un UsersServiceError Update error
     async updateUser(receivedUser){
         //Si no me dio un cartDTO salgo
+        console.log('En mongo update: ', receivedUser)
         try{
             if (!(receivedUser instanceof UserDTO)) throw new UsersServiceError(UsersServiceError.UPDATING_ERROR,'|UsersMongoDao.updateUser|','El objeto recibido no es una instancia de UserDTO.')
                 //Leo cartDTO y actuo . Primero busco el user
@@ -114,8 +119,10 @@ export default class UsersMongoDao{
                 searchedUser.first_name = receivedUser.firstName;
                 searchedUser.last_name = receivedUser.lastName;
                 searchedUser.age = receivedUser.age;
-                searchedUser.userRole = receivedUser.userRole;
-                searchedUser.cart = receivedUser.cart;
+                searchedUser.role = receivedUser.role;
+                searchedUser.cart = receivedUser.cartId;
+                searchedUser.last_connection = receivedUser.lastConnection;
+                searchedUser.documents = receivedUser.documents;
     
                 // Guardar los cambios en la base de datos
                 await searchedUser.save()
@@ -127,7 +134,9 @@ export default class UsersMongoDao{
                     lastName: searchedUser.last_name,
                     age: searchedUser.age,
                     role: searchedUser.role,
-                    cartId: searchedUser.cart
+                    cartId: searchedUser.cart ,// searchedUser.cart._id.toString() : null, //Si hay cart id en string, si no null.
+                    lastConnection: searchedUser.last_connection,
+                    documents:searchedUser.documents
                 })
         }catch(error){
             if (error instanceof UsersServiceError) throw error
@@ -145,14 +154,16 @@ export default class UsersMongoDao{
             const deletedUser = await UserModel.findOneAndDelete({ email: email })
             if (deletedUser){
                 return new UserDTO({
-                    userId: searchedUser._id.toString(),
+                    userId: deletedUser._id.toString(),
                     email: deletedUser.email,
                     password: deletedUser.password,
                     firstName: deletedUser.first_name,
                     lastName: deletedUser.last_name,
                     age: deletedUser.age,
                     role: deletedUser.role,
-                    cartId: deletedUser.cart
+                    cartId: deletedUser.cart ,// searchedUser.cart._id.toString() : null, //Si hay cart id en string, si no null.
+                    lastConnection: deletedUser.last_connection,
+                    documents:deletedUser.documents
                 })
             } 
             else throw new UsersServiceError(UsersServiceError.DELETING_ERROR,'|UsersMongoDao.deleteUser|','No se pudo borrar el registro ya que el user no existe...')

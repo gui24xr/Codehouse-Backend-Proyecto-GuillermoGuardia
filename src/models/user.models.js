@@ -33,8 +33,22 @@ const userSchema =  mongoose.Schema({
     cart:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'carts',
+        default: null
        
     },
+    last_connection:{
+        type: Date,
+        default: null
+    },
+    documents:[{
+        name:{
+            type: String,
+        },
+        reference:{
+            type:String,
+        }
+    }]
+
 
 })
 

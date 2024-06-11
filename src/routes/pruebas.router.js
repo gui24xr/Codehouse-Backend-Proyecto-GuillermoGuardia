@@ -17,6 +17,9 @@ import {  authMiddleware } from '../middlewares/authTokenMiddlewares.js'
 
 import { CartsService } from '../services/carts.service.js'
 import { UsersService } from '../services/users.service.js'
+import UsersMongoDao from '../dao/mongo/users.mongo.dao.js'
+
+
 const mongoProductsDAO = new MongoProductsDAO()
 
 const checkoutService = new CheckoutService()
@@ -210,5 +213,51 @@ router.post('/updaterole/:username/:role',async (req,res)=>{
     //const result = await usersService.createUserWithCart('nombre','apellido',`${username}@gmail.com`,'123456',23,'user')
     const result = await usersService.changeUserRole(`${username}@gmail.com`,role)
     res.send(result)
+
+})
+
+router.post('/mongouserdao',async(req,res)=>{
+    const usersMongoDao = new UsersMongoDao()
+
+    const email = 'unemail1@gmail.com'
+    const password = 123456
+    const firstName = 'un nombre'
+    const lastName = 'un apellido'
+    const age = 22
+    const role = 'user'
+    const cartId = '666765b6718b28823f4c05db'
+
+    const resultCreate = await usersMongoDao.createUser(email,password,firstName,lastName,role,age,cartId)
+    console.log('Create: ',resultCreate)
+    const resultGetByEmail = await usersMongoDao.getUserByEmail(email)
+    console.log('ByEmail: ',resultGetByEmail)
+    const resultGetById = await usersMongoDao.getUserByEmail(email)
+    console.log('ById: ',resultGetById)
+
+    //Obtuve un DTO, lo modifico con sus set.
+    resultGetByEmail.setLastConnection(new Date())
+    console.log('Modificado en DTO: ', resultGetByEmail)
+    let updatedResult = await usersMongoDao.updateUser(resultGetByEmail)
+    console.log('Updated: ', updatedResult)
+
+    resultGetByEmail.setRole('admin')
+    console.log('Modificado en DTO: ', resultGetByEmail)
+    updatedResult = await usersMongoDao.updateUser(resultGetByEmail)
+    console.log('Updated role: ', updatedResult)
+
+    resultGetByEmail.addDocument('avatar','urlavatar')
+    resultGetByEmail.addDocument('avatar2','urlavatar2')
+    console.log('Modificado en DTO: ', resultGetByEmail)
+    updatedResult = await usersMongoDao.updateUser(resultGetByEmail)
+    console.log('Updated doc: ', updatedResult)
+
+    resultGetByEmail.setPassword('242424')
+    console.log('Modificado en DTO paswor: ', resultGetByEmail)
+    updatedResult = await usersMongoDao.updateUser(resultGetByEmail)
+    console.log('Updated passwc: ', updatedResult)
+
+    const deleteResult = await usersMongoDao.deleteUserByEmail(email)
+    console.log('Deleted: ', deleteResult)
+    res.send('Todo OK')
 
 })

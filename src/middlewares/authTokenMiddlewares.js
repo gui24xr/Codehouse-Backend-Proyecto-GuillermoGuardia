@@ -93,7 +93,7 @@ function verifyTokenMiddleware(req,res,next){
     }
     else{
       //Si hay un usuario con credenciales validas adjunto al objeto req esos datos en una propiedad para tenerlo a mano.
-      req.currentUser = user.user
+      req.currentUser = user
       req.isAuthenticated = true //Lo vamos a usar para las plantillas cuando borremos infoUserFromToken y estandaricemos.
       //De este modo tengo los datos del user activo.
     next()

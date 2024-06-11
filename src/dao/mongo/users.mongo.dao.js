@@ -53,8 +53,9 @@ export default class UsersMongoDao{
     //Busca el user por ID en la base de datos.
     //Si existe devuelve un UserDTo, si no existe lanza una instancia de UsersSeriveError
     async getUserById(userId){
+        console.log('Id que lleg:', userId)
         try{
-            const searchedUser = await UserModel.findOne({id:userId}).populate('cart')
+            const searchedUser = await UserModel.findOne({_id:userId}).populate('cart')
             if (!searchedUser) throw new UsersServiceError(UsersServiceError.USER_NO_EXIST,'|UsersMongoDao.getUserById|')
                 return new UserDTO({
                     userId: searchedUser._id.toString(),

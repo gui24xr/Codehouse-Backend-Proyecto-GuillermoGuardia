@@ -18,7 +18,7 @@ import {  authMiddleware } from '../middlewares/authTokenMiddlewares.js'
 import { CartsService } from '../services/carts.service.js'
 import { UsersService } from '../services/users.service.js'
 import UsersMongoDao from '../dao/mongo/users.mongo.dao.js'
-
+import { UsersRepository as NuevoUsersRepository } from '../repositories/users-repository.js'
 
 const mongoProductsDAO = new MongoProductsDAO()
 
@@ -216,10 +216,11 @@ router.post('/updaterole/:username/:role',async (req,res)=>{
 
 })
 
-router.post('/mongouserdao',async(req,res)=>{
+router.post('/mongouserdao/:username',async(req,res)=>{
+    const {username} = req.params
     const usersMongoDao = new UsersMongoDao()
 
-    const email = 'unemail1@gmail.com'
+    const email = `${username}@gemail.com`
     const password = 123456
     const firstName = 'un nombre'
     const lastName = 'un apellido'
@@ -260,4 +261,18 @@ router.post('/mongouserdao',async(req,res)=>{
     console.log('Deleted: ', deleteResult)
     res.send('Todo OK')
 
+})
+
+router.post('/usersrepository/:userid',async(req,res)=>{
+     const {userid:userId}= req.params
+     const usersRepository = new NuevoUsersRepository()
+     const myUser = await usersRepository.getUserById(userId)
+     await usersRepository.updateLastConnection(userId,new Date())
+     await usersRepository.setPassword(userId,'11122222')
+     await usersRepository.setRole(userId,'user')
+     await usersRepository.setCart(userId,'66676603aea7e1f046531eee')
+     await usersRepository.addDocument(userId,'avatar','refavatar')
+     const result = await usersRepository.getUserById(userId)
+   
+    res.json({Original: myUser, modificado: result})
 })

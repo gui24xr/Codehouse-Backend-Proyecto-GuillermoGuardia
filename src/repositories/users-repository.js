@@ -19,11 +19,10 @@ const usersDAO = new UsersDAO()
 export class UsersRepository{
 
      async createUserWithCart(newUserData,cartId){
-        //Recibe createUserDtoInstance
-        //Recibe cart ID
-        //Deconstructura el user y pide el create
-        //Recibe un user DTO de la BD
-        //Lo devulve a service
+        //Recibe createUserDtoInstance y un cartId del carro creado para asignar al user.
+        //Valida que se trate de un createUserDTO, de lo contrario devuelve error.
+        //Deconstructura el user y pide el create a la capa de persistencia para recibir un DTO con el user creado.
+        //Devuelve el userDTO recibido de la capa de persistencia para enviarselo a la capa service.
         try{
             if (!(newUserData instanceof CreateUserDTO)) throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.createUserWithCart|','No se recibio una instancia valida para crear un usuario...')
                 const newUser = await usersDAO.createUser(
@@ -33,9 +32,8 @@ export class UsersRepository{
                    newUserData.lastName,
                    newUserData.role,
                    newUserData.age,
-                   cartId
+                   cartId 
                )
-            console.log('En repository user creado: ', newUser)
             return newUser
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
@@ -48,10 +46,8 @@ export class UsersRepository{
         //Toma el email recibido y lo valida que sea email valido.
         //si lo es, lo busca en la bd. si esta devuelve dto,sino error.
         try{
-            console.log('Repo Desde service: ', email)
             //validar mail else therow error
             const searchedUser = await usersDAO.getUserByEmail(email)
-            console.log('Repo desde persistencia: ', searchedUser)
             return searchedUser
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
@@ -59,8 +55,22 @@ export class UsersRepository{
         }
     }
 
+    async getUserById(userId){
+        //Toma el email recibido y lo valida que sea email valido.
+        //si lo es, lo busca en la bd. si esta devuelve dto,sino error.
+        try{
+            //validar mail else therow error
+            const searchedUser = await usersDAO.getUserById(userId)
+            return searchedUser
+        }catch(error){
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.getUserByEmail|','Error interno del servidor...')
+        }
+    }
+
+
     async updateUser(user){
-        console.log('Recibi para update: ', user)
+        //Recibe un userDTO y le pide a la capa perssitencia que updatee el registro entero.
         try{
             if (!(user instanceof UserDTO)) throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.updateUser|','No se recibio una instancia valida editar un usuario en la base de datos...')
             const updatedUser = await usersDAO.updateUser(user)
@@ -70,6 +80,94 @@ export class UsersRepository{
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.updateUser|','Error interno del servidor...')
         }
     }
+
+
+    async updateLastConnection(userId,newLastConnection){
+        //Recibe el email del user y lo valida para buscarlo en la capa de persistencia.
+        //Recibe de la capa de persistencia un userDTO, le setea lo requerido y le pide a la capa de persistencia el update.
+        //La capa de persistencia le envia el userDTO del registro modificado y esta capa lo envia a la capa service.
+        try{
+            //Busca el usuario y recibe un DTO, si no hubiese usuario va a error por la implementacion de la capa de persistencia.
+            const searchedUser = await usersDAO.getUserById(userId)
+            searchedUser.setLastConnection(newLastConnection)
+            const updateResult = await this.updateUser(searchedUser)
+            return updateResult
+        }catch(error){
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.updateLastConnection|','Error interno del servidor...')
+        }
+    
+    }
+
+    async setPassword(userId,newPassword){
+        //Recibe el email del user y lo valida para buscarlo en la capa de persistencia.
+        //Recibe de la capa de persistencia un userDTO, le setea lo requerido y le pide a la capa de persistencia el update.
+        //La capa de persistencia le envia el userDTO del registro modificado y esta capa lo envia a la capa service.
+        try{
+            //Busca el usuario y recibe un DTO, si no hubiese usuario va a error por la implementacion de la capa de persistencia.
+            const searchedUser = await usersDAO.getUserById(userId)
+            searchedUser.setPassword(newPassword)
+            const updateResult = await this.updateUser(searchedUser)
+            return updateResult
+        }catch(error){
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.setPassword|','Error interno del servidor...')
+        }
+    
+    }
+
+    async setRole(userId,newRole){
+        //Recibe el email del user y lo valida para buscarlo en la capa de persistencia.
+        //Recibe de la capa de persistencia un userDTO, le setea lo requerido y le pide a la capa de persistencia el update.
+        //La capa de persistencia le envia el userDTO del registro modificado y esta capa lo envia a la capa service.
+        try{
+            //Busca el usuario y recibe un DTO, si no hubiese usuario va a error por la implementacion de la capa de persistencia.
+            const searchedUser = await usersDAO.getUserById(userId)
+            searchedUser.setRole(newRole)
+            const updateResult = await this.updateUser(searchedUser)
+            return updateResult
+        }catch(error){
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.setRole|','Error interno del servidor...')
+        }
+    
+    }
+
+    //La usaremos para los users que inician sesion y vinciular a su carro de local storage
+    async setCart(userId,newCart){
+        //Recibe el email del user y lo valida para buscarlo en la capa de persistencia.
+        //Recibe de la capa de persistencia un userDTO, le setea lo requerido y le pide a la capa de persistencia el update.
+        //La capa de persistencia le envia el userDTO del registro modificado y esta capa lo envia a la capa service.
+        try{
+            //Busca el usuario y recibe un DTO, si no hubiese usuario va a error por la implementacion de la capa de persistencia.
+            const searchedUser = await usersDAO.getUserById(userId)
+            searchedUser.setCart(newCart)
+            const updateResult = await this.updateUser(searchedUser)
+            return updateResult
+        }catch(error){
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.setCart|','Error interno del servidor...')
+        }
+    
+    }
+
+    async addDocument(userId,docName,docRef){
+        //Recibe el email del user y lo valida para buscarlo en la capa de persistencia.
+        //Recibe de la capa de persistencia un userDTO, le setea lo requerido y le pide a la capa de persistencia el update.
+        //La capa de persistencia le envia el userDTO del registro modificado y esta capa lo envia a la capa service.
+        try{
+            //Busca el usuario y recibe un DTO, si no hubiese usuario va a error por la implementacion de la capa de persistencia.
+            const searchedUser = await usersDAO.getUserById(userId)
+            searchedUser.addDocument(docName,docRef)
+            const updateResult = await this.updateUser(searchedUser)
+            return updateResult
+        }catch(error){
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.addDocument|','Error interno del servidor...')
+        }
+    
+    }
+
 
 
 }

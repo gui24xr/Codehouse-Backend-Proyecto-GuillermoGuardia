@@ -1,6 +1,7 @@
 import { CreateUserDTO, UserDTO } from "../dto/user-dto/user.dto.js";
 
 import { UsersRepository } from "../repositories/users-repository.js";
+import { generateJWT } from "../utils/jwt.js";
 import { isValidPassword,createHash } from "../utils/hashbcryp.js";
 import { UsersServiceError } from "./errors.service.js";
 import { CartsService } from "./carts.service.js";
@@ -21,16 +22,19 @@ export class UsersService{
             const cart = await cartsService.createCart()
             const {id:cartId} = cart
             //Se crea instancia de createUserDto
+            console.log('Tipo de eddad. ',typeof(age))
             const dataForNewUser = new CreateUserDTO({
                 email:email,
                 password:createHash(password),
                 firstName:firstName,
                 lastName:lastName,
-                age:age,
+                age:Number(age),
                 role:role
             })
+            
             //Pido a repository la creacion de un usurio cond ataForNewUser y un cartId
             const newUser = await usersRepository.createUserWithCart(dataForNewUser,cartId)
+            console.log('New user: ', newUser)
             return newUser   //Devuelvo el user creado.
           } catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
@@ -39,7 +43,10 @@ export class UsersService{
     }
 
     
-    //Comprueba si existen mail y contraseña y coinciden
+    //Le pide a repository el user, repository si existe el user se lo devuelve, y si no error.
+    //
+    //Si va todo bien y el user existe genera un token con los datos del user para enviarle a la capa controllers
+    //Devuelve el token generado y una instancia del user en formato UserDTo
     async authenticateUser(email,password){
        console.log('En service: ', email,password)
         try{
@@ -49,7 +56,14 @@ export class UsersService{
             //Repository me devuelve dto y miro que coincida la contraseña.
             console.log(searchedUser)
             if (searchedUser) {
-                if (isValidPassword(password,searchedUser.password))  return searchedUser
+                if (isValidPassword(password,searchedUser.password)) {
+                    //Se crea el jsonwebtockn que se retornara ala capa controllers
+                    
+                    const updatedUser = await usersRepository.updateLastConnection(searchedUser.userId,new Date())
+                    const userToken = generateJWT(updatedUser)
+                
+                    return {userData: searchedUser, userToken:userToken}
+                } 
                 else throw new UsersServiceError(UsersServiceError.WRONG_PASSWORD,'|UsersService.authenticateUser|','El usuario y/la contraseña no coinciden...')
             }
            //En este caso si no hay user se va directo a error.
@@ -60,18 +74,13 @@ export class UsersService{
         }
     }
 
-    async changeUserRole(email,newRole){
+    async changeUserRole(userId,newRole){
         //Recibe los datos de repository y los valida.
         //Pide el usuario, lo modifica y se lo envia a repository para que le pida a persistencia que lo grabe
         //Devuelve el user con el rol modificado o error segun corresponda.
         //Dado que nuestros user DTO deben cumplir reglas
         try{
-            const userForUpdated = await usersRepository.getUserByEmail(email)
-            console.log('Para updatear: ', userForUpdated)
-            //Se recibio user DTO, se lo modifica
-            userForUpdated.setRole(newRole)
-            //Se lo envia a repository
-            const updatedUser = usersRepository.updateUser(userForUpdated)
+            const updatedUser = await usersRepository.setRole(userId,newRole)
             return updatedUser
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error

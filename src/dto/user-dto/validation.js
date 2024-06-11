@@ -1,7 +1,7 @@
-import { UserDTOERROR } from "./errors.js"
+import { UserDTOERROR } from "../../services/errors.service.js"
 
 //Esto traerlo de variables de entorno a futuro. Cada app puede permitir distintos tipos de roles.
-const rolesList = ['user','admin','premium']
+export const rolesList = ['user','admin','premium']
 
 
 export function getMissingFields(oneObject,requiredFieldsArray){
@@ -16,8 +16,6 @@ export function getMissingFields(oneObject,requiredFieldsArray){
 
 export function getInvalidFieldsList(receivedObject) {
     const invalidFieldsList = [];
-    console.log('Tipos: ', typeof(receivedObject.userId))
-    console.log('Tipos: ', typeof(receivedObject.cartId))
     //if ('userId' in receivedObject && typeof receivedObject.userId !== 'string') invalidFieldsList.push('userId');
     if ('email' in receivedObject && !isEmail(receivedObject.email)) invalidFieldsList.push('email');
     if ('password' in receivedObject && typeof receivedObject.password !== 'string') invalidFieldsList.push('password');

@@ -1,6 +1,7 @@
 import { UsersDAO } from "../dao/factory.js";
 import { UsersServiceError } from "../services/errors.service.js";
 import { CreateUserDTO, UserDTO } from "../dto/user-dto/user.dto.js";
+import { UserDTOERROR } from "../services/errors.service.js";
 
 const usersDAO = new UsersDAO()
 
@@ -17,88 +18,59 @@ const usersDAO = new UsersDAO()
 // si hay error en la creacion xq el user existia o otro error hay qe borrar el carro creado
 export class UsersRepository{
 
-
-    //Recibe una instancia de CreateUserDTO, la valida y extrae sus propiedades para hacer el crud.
-    //Recibe lo devuelto por la capa de persistencia y segun DAO usado crea un USERDTO para retornar a service.
-    async createUser(createUserData){
-        console.log('ggd:',createUserData)
-        try{
-            if (!(createUserData instanceof CreateUserDTO)) throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.createUser|','No se recibio una instancia valida para crear un usuario...')
-                //Con los datos extraidos se hace el crud...
-            const resultUser = await usersDAO.createUser({...createUserData,cartId:null})
-            //Con lo recibido se genera el nuevo USERDTO
-            console.log('EN repository: ',resultUser)
-            
-
-            return new UserDTO({
-                userId: resultUser._id,
-                email: resultUser.email,
-                password: resultUser.password,
-                firstName: resultUser.first_name,
-                lastName: resultUser.last_name,
-                age: resultUser.age,
-                role: resultUser.role,
-                cartId: resultUser.cartId
-            })
-                
-        }catch(error){
-
-        }
-    }
-
-    async createUserWithCart(newUserData,cartId){
+     async createUserWithCart(newUserData,cartId){
         //Recibe createUserDtoInstance
         //Recibe cart ID
         //Deconstructura el user y pide el create
         //Recibe un user DTO de la BD
         //Lo devulve a service
-        if (!(newUserData instanceof CreateUserDTO)) throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.createUser|','No se recibio una instancia valida para crear un usuario...')
-         const newUser = await usersDAO.createUser(
-            newUserData.email,
-            newUserData.password,
-            newUserData.firstName,
-            newUserData.lastName,
-            newUserData.role,
-            newUserData.age,
-            cartId
-        )
-
-        console.log('En repository user creado: ', newUser)
-
-        return newUser
-    
+        try{
+            if (!(newUserData instanceof CreateUserDTO)) throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.createUserWithCart|','No se recibio una instancia valida para crear un usuario...')
+                const newUser = await usersDAO.createUser(
+                   newUserData.email,
+                   newUserData.password,
+                   newUserData.firstName,
+                   newUserData.lastName,
+                   newUserData.role,
+                   newUserData.age,
+                   cartId
+               )
+            console.log('En repository user creado: ', newUser)
+            return newUser
+        }catch(error){
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.createUserWithCart|','Error interno del servidor...')
+        }
     }
+
 
     async getUserByEmail(email){
         //Toma el email recibido y lo valida que sea email valido.
         //si lo es, lo busca en la bd. si esta devuelve dto,sino error.
         try{
-            console.log('Repo: ', email)
+            console.log('Repo Desde service: ', email)
             //validar mail else therow error
             const searchedUser = await usersDAO.getUserByEmail(email)
-            console.log('Repo: ', searchedUser)
+            console.log('Repo desde persistencia: ', searchedUser)
             return searchedUser
         }catch(error){
-
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.getUserByEmail|','Error interno del servidor...')
         }
     }
-}
 
-/*
-  async createUser(receivedUser){
+    async updateUser(user){
+        console.log('Recibi para update: ', user)
         try{
-            //receivedUser es una instancia de userDTO pero con los datos para la creacion
-            //De acuerdo a la base de datos usada transforma el registro recibido en dto
-
-            const newUser = await usersDAO.createUser(receivedUser)
-            if(process.env.database='mongo'){
-                console.log('EN repository: ',newUser)
-                return new UserDTO(newUser._id,newUser.email,newUser.password,newUser.first_name,newUser.last_name,newUser.age,newUser.role,newUser.cart)
-            }
+            if (!(user instanceof UserDTO)) throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.updateUser|','No se recibio una instancia valida editar un usuario en la base de datos...')
+            const updatedUser = await usersDAO.updateUser(user)
+            return updatedUser
         }catch(error){
-
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.updateUser|','Error interno del servidor...')
         }
     }
+
+
 }
 
-*/

@@ -1,5 +1,6 @@
 import { getMissingFields, getInvalidFieldsList } from "./validation.js";
-import { UserDTOERROR } from "./errors.js"
+import { UserDTOERROR } from "../../services/errors.service.js";
+import { rolesList } from "./validation.js";
 
 
 export class UserDTO{
@@ -18,6 +19,8 @@ export class UserDTO{
         const invalidFields = getInvalidFieldsList(receivedObject)
         if (invalidFields.length > 0) return new UserDTOERROR(UserDTOERROR.INVALIDS_FIELDS,'|UserDTO.contructor|',`Campos invalidos: ${[...invalidFields].join('|')}.`)
         //Salio todo ok, se construye la instancia.
+        // Se construye la instancia.
+        
         this.userId = receivedObject.userId;
         this.email = receivedObject.email;
         this.password = receivedObject.password;
@@ -32,6 +35,12 @@ export class UserDTO{
     setCart(cartId){
         if (typeof cartId !== 'string') return UserDTOERROR(UserDTOERROR.INVALIDS_FIELDS,'|UserDTO.addCart|','Formato cartId no valido.')
         this.cartId = cartId;
+    }
+
+    setRole(newUserRole){
+        if (typeof newUserRole !== 'string') return UserDTOERROR(UserDTOERROR.INVALIDS_FIELDS,'|UserDTO.setRole|','Formato rol no valido.')
+        if (!rolesList.includes(newUserRole)) return UserDTOERROR(UserDTOERROR.INVALIDS_FIELDS,'|UserDTO.setRole|','Rol no valido.')
+        this.role = newUserRole
     }
 }
 

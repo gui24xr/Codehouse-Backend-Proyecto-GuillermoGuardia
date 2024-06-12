@@ -26,7 +26,7 @@ routerPublicViews.get('/views/login', viewsController.viewLoginGet)
 routerProtectedViews.use(authMiddleware)
 //vistas privadas
 //SI no hay user no se puede acceder 
-routerProtectedViews.get('/views/logout', viewsController.viewLogout)
+
 routerProtectedViews.get('/views/realtimeproducts', blockRoleAccessMiddleware('user'),viewsController.viewRealTimeProducts)
 routerProtectedViews.get('/views/chat',blockRoleAccessMiddleware('admin'),viewsController.viewChat)
 routerProtectedViews.get('/views/profile', viewsController.viewProfile)

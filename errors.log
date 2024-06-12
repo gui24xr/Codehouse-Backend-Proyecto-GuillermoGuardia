@@ -494,3 +494,11 @@
 ***[LOGGER]*** [fatal at 24-06-11 16:06:62] Type:InternalServerError in POST - /api/carts/undefined/products/664504dc6cccb495261b2fce from ::1
 ***[LOGGER]*** [fatal at 24-06-11 16:06:69] Type:InternalServerError in POST - /api/sessions/login from ::1
 ***[LOGGER]*** [fatal at 24-06-11 16:06:66] Type:InternalServerError in POST - /api/sessions/login from ::1
+***[LOGGER]*** [fatal at 24-06-12 11:06:86] Type:InternalServerError in POST - /api/carts/undefined/products/664504dc6cccb495261b314d from ::1
+***[LOGGER]*** [fatal at 24-06-12 11:06:14] Type:InternalServerError in POST - /api/carts/undefined/products/664504dc6cccb495261b3149 from ::1
+***[LOGGER]*** [fatal at 24-06-12 11:06:18] Type:InternalServerError in POST - /api/carts/undefined/products/664504dc6cccb495261b3149 from ::1
+***[LOGGER]*** [fatal at 24-06-12 11:06:41] Type:InternalServerError in POST - /api/carts/undefined/products/664504dc6cccb495261b3149 from ::1
+***[LOGGER]*** [fatal at 24-06-12 11:06:39] Type:InternalServerError in POST - /api/purchases/singlepurchase from ::1
+***[LOGGER]*** [error at 24-06-12 15:06:14] Type:UnauthorizedError in GET - /views/chat?email=guillermoxr24@gmail.com from ::1
+***[LOGGER]*** [error at 24-06-12 15:06:38] Type:UnauthorizedError in GET - /views/chat?email=guillermoxr24@gmail.com from ::1
+***[LOGGER]*** [error at 24-06-12 15:06:39] Type:UnauthorizedError in GET - /views/chat?email=guillermoxr24@gmail.com from ::1

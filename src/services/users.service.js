@@ -48,13 +48,11 @@ export class UsersService{
     //Si va todo bien y el user existe genera un token con los datos del user para enviarle a la capa controllers
     //Devuelve el token generado y una instancia del user en formato UserDTo
     async authenticateUser(email,password){
-       console.log('En service: ', email,password)
         try{
             //Se validan la cantidad de parametros y datos, en este caso password no necesario validar.
             //Le pido a la capa repository el usuario.
             const searchedUser = await usersRepository.getUserByEmail(email)
             //Repository me devuelve dto y miro que coincida la contraseña.
-            console.log(searchedUser)
             if (searchedUser) {
                 if (isValidPassword(password,searchedUser.password)) {
                     //Se crea el jsonwebtockn que se retornara ala capa controllers
@@ -87,6 +85,41 @@ export class UsersService{
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersService.changeUserRole|','Error interno del servidor...')
         }
     }
+
+    async logout(userId){
+        //Setea last connection del user y devuelve el user actualizado.
+        try{
+            const updatedUser = await usersRepository.updateLastConnection(userId,new Date())
+            console.log('En service: ',updatedUser)
+            return updatedUser
+        }catch(error){
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersService.logout|','Error interno del servidor...')
+        }
+    }
+
+    async getUserByEmail(email){
+        //Se valida que sea un email (hacerlo)
+        try{
+            const searchedUser = await usersRepository.getUserByEmail(email)
+            return searchedUser
+        }catch(error){
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersService.getUserByEmail|','Error interno del servidor...')
+        }
+    }
+
+    async getUserByCart(cartId){
+        //Se valida que sea un email (hacerlo)
+        try{
+            const searchedUser = await usersRepository.getUserByCart(cartId)
+            return searchedUser
+        }catch(error){
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersService.getUserByEmail|','Error interno del servidor...')
+        }
+    }
+
 
    
 }

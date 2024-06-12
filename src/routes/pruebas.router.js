@@ -9,7 +9,7 @@ import fs from 'fs'
 import { MongoProductsDAO } from '../dao/mongo/products.mongo.dao.js'
 
 import { CheckoutService } from '../services/checkout/checkout-service.js'
-import { UsersRepository } from '../repositories/users.repositories.js'
+
 import { TicketsRepositories } from '../repositories/ticket.repositories.js'
 import { ProductRepository } from '../repositories/products.repositories.js'
 import { MessagesService } from '../services/messages/messages-service.js'
@@ -23,7 +23,7 @@ import { UsersRepository as NuevoUsersRepository } from '../repositories/users-r
 const mongoProductsDAO = new MongoProductsDAO()
 
 const checkoutService = new CheckoutService()
-const userRepositories = new UsersRepository()
+
 const ticketRepositories = new TicketsRepositories
 const productsRepository = new ProductRepository()
 

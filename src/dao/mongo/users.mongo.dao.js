@@ -53,7 +53,6 @@ export default class UsersMongoDao{
     //Busca el user por ID en la base de datos.
     //Si existe devuelve un UserDTo, si no existe lanza una instancia de UsersSeriveError
     async getUserById(userId){
-        console.log('Id que lleg:', userId)
         try{
             const searchedUser = await UserModel.findOne({_id:userId}).populate('cart')
             if (!searchedUser) throw new UsersServiceError(UsersServiceError.USER_NO_EXIST,'|UsersMongoDao.getUserById|')
@@ -97,6 +96,29 @@ export default class UsersMongoDao{
         }catch(error){
             if (error instanceof UsersServiceError) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersMongoDAO.getUserByEmail|')
+        }
+    }
+
+    //filter es un objeto asi {email:email}
+    async getUserByFilter(field,value){
+        try{
+            const searchedUser = await UserModel.findOne({[field]:value}).populate('cart')
+            if (!searchedUser) throw new UsersServiceError(UsersServiceError.USER_NO_EXIST,'|UsersMongoDao.getUserByEmail|')
+                return new UserDTO({
+                    userId: searchedUser._id.toString(),
+                    email: searchedUser.email,
+                    password: searchedUser.password,
+                    firstName: searchedUser.first_name,
+                    lastName: searchedUser.last_name,
+                    age: searchedUser.age,
+                    role: searchedUser.role,
+                    cartId: searchedUser.cart ? searchedUser.cart._id.toString() : null, //Si hay cart id en string, si no null.
+                    lastConnection: searchedUser.last_connection,
+                    documents:searchedUser.documents
+                })
+        }catch(error){
+            if (error instanceof UsersServiceError) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersMongoDAO.getUserByFilter|')
         }
     }
 

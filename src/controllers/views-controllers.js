@@ -1,7 +1,7 @@
 import { ProductRepository } from "../repositories/products.repositories.js";
 //import { CartRepository } from "../repositories/cart.repositories.js";
 import { CartsService } from "../services/carts.service.js";
-import { UsersRepository } from "../repositories/users.repositories.js";
+
 import { TicketsRepositories } from "../repositories/ticket.repositories.js";
 import { CheckoutService } from "../services/checkout/checkout-service.js";
 import { getMissingFields } from "../utils/helpers.js";
@@ -240,6 +240,7 @@ export class ViewsController {
     res.render("realTimeProducts");
   }
 
+  /*
   viewLogout(req, res,next) {
     //Diferente a logout de api
     //Este logou es para vistas, hace lo mismo pero ademas redirigje y acomdoda variables
@@ -250,6 +251,7 @@ export class ViewsController {
     res.locals.sessionData.login = false;
     res.redirect("/");
   }
+    */
 
   /*
   async viewLoginPost(req, res,next) {

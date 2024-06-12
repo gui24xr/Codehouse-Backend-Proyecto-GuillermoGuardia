@@ -47,7 +47,7 @@ export class UsersRepository{
         //si lo es, lo busca en la bd. si esta devuelve dto,sino error.
         try{
             //validar mail else therow error
-            const searchedUser = await usersDAO.getUserByEmail(email)
+            const searchedUser = await usersDAO.getUserByFilter('email',email)
             return searchedUser
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
@@ -55,6 +55,20 @@ export class UsersRepository{
         }
     }
 
+    async getUserByCart(cartId){
+        //Toma el email recibido y lo valida que sea email valido.
+        //si lo es, lo busca en la bd. si esta devuelve dto,sino error.
+        try{
+            //validar mail else therow error
+            const searchedUser = await usersDAO.getUserByFilter('cart',cartId)
+            return searchedUser
+        }catch(error){
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.getUserByCart|','Error interno del servidor...')
+        }
+    }
+
+    //Para esta uso este metodo exclusivo para no tener problemas a futuro xq mongo toma _id y sequelize no usare _id sino id
     async getUserById(userId){
         //Toma el email recibido y lo valida que sea email valido.
         //si lo es, lo busca en la bd. si esta devuelve dto,sino error.

@@ -1,10 +1,10 @@
 import passport from "passport"
 import jwt from 'passport-jwt'
 import GitHubStrategy from "passport-github2"
-import { UsersRepository } from "../repositories/users.repositories.js";
+import { UsersService } from "../services/users.service.js";
 
 
-const usersRepository = new UsersRepository()
+const usersService = new UsersService()
 const JWTStrategy = jwt.Strategy;
 const ExtractJwt = jwt.ExtractJwt;
 
@@ -23,8 +23,9 @@ export const initializePassport = () => {
     }))
 
 
-
+    //REIMPLEMENTAR ESTO
      //*PARA GITHUB******************************************/
+     /*
      passport.use("github",new GitHubStrategy({
         clientID: 'Iv1.1df2eaa08b41c7eb', 
         clientSecret: '48be7bb869f051d8d0d55541356c7111815fcdd7',
@@ -34,15 +35,15 @@ export const initializePassport = () => {
         console.log('Chusmeando user:', profile)
         try {
      
-           const user = await usersRepository.getUser(profile._json.email)
+           const user = await usersService.getUserByEmail(profile._json.email)
            if (!user){//Si no existe genero un nuevo usuario.
-                const {user} = usersRepository.createUser(profile._json.email,'')
+                const {user} = usersService.createUser(profile._json.email,'')
                 console.log('Entro a usuario no existe', user)
                 done(null,user)
            }
            else{
             //Si el user existe genero un token y sigo.
-            console.log('Entro a usuario  existe', user)
+            console.log('Ya existe un usuario con este', user)
                done(null,user)
            }
         } catch (error) {
@@ -51,6 +52,7 @@ export const initializePassport = () => {
 
       }
     ))
+    */
 
 
 }

@@ -17,6 +17,15 @@ export class UserDTOERROR extends Error{
     }
 }
 
+//Para cuando falta se ingresen campos.
+export class IncompleteFieldsError extends Error{
+    constructor(message){
+        super(message)
+        this.name = 'IncompleteFieldsError'
+    }
+}
+
+
 //Todos los errore de lo que tiene que ver con el servicio de cualquier capa de usuarios
 export class UsersServiceError extends Error{
 
@@ -37,3 +46,4 @@ export class UsersServiceError extends Error{
         this.operationName = operationName; //Funcion donde se dio la falla
     }
 }
+

@@ -7,7 +7,8 @@ import { ProductRepository } from "../../repositories/products.repositories.js";
 
 import { CartsService } from "../carts.service.js";
 import { TicketsRepositories } from "../../repositories/ticket.repositories.js";
-import { UsersRepository } from "../../repositories/users.repositories.js";
+
+import { UsersService } from "../users.service.js";
 import { MessagesService } from "../messages/messages-service.js";
 import handlebars from 'handlebars';
 import fs from 'fs'
@@ -15,11 +16,12 @@ import { transformDate } from "../../utils/hour.js";
 import { CartsServiceError, ProductsServiceError,TicketsServiceError, InternalServerError, CheckoutServiceError } from "../errors/custom-errors.js";
 
 
-const productsRepository = new ProductRepository();
+const productsRepository = new ProductRepository()
 
 const cartsService = new CartsService()
-const ticketsRepository = new TicketsRepositories();
-const usersRepository = new UsersRepository();
+const ticketsRepository = new TicketsRepositories()
+
+const usersService = new UsersService()
 
 export class CheckoutService {
   
@@ -74,10 +76,10 @@ export class CheckoutService {
       
 
       //Dado que al ticket le vamos a estampar el id del user dueño del cartId, buscamos el user por cartId.
-      const users = await usersRepository.getUsers({ cart: cartId });
+      const searchedUser = await usersService.getUserByCart(cartId)
       //Ya que devuelve un array y sabemos que es solo uno...
      //Ya tenemos la operacion hecha y ahora podemos generar el ticket
-      const generatedTicket = await ticketsRepository.createTicket(users[0].id,listToTicket)
+      const generatedTicket = await ticketsRepository.createTicket(searchedUser.userId,listToTicket)
   
      //Envio email de confirmacion de compra..
         await this.sendTicketMail(generatedTicket._id)

@@ -15,17 +15,26 @@ const ticketSchema = mongoose.Schema({
         required: true,
         default: Date.now // No se necesita () aquí, solo se referencia la función Date.now
     },
+    
     price: { 
         type: Number,
         required: true
     },
-    purchaser: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'users',
-        required: true
-    }, //Detalles del ticket.
+
+   //Detalles del ticket. //quitar cuando genere el neuevo modelo
     details:[{
-    }]
+    }],
+
+    purchaser: {
+        type: mongoose.Schema.Types.Mixed,
+        refPath: 'purchaserType',
+        required: true
+    },
+    purchaserType: {
+        type: String,
+        required: true,
+        enum: ['users', 'preorders']
+    }
 
 });
 

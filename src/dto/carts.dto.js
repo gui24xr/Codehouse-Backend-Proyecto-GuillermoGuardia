@@ -1,15 +1,23 @@
 import { ProductDTO } from "./products.dto.js"
 
 
+
+/*
+
+ESTE DTO DEBE RECIBIR UN OBJETO CON LAS SIGUIENTES PROPIEDADES
+id -> para construir el cartId
+products: un array de objetos {product: , quantity}
+
+*/
 export class CartDTO{
 
     
     constructor(receivedCart){
       
-        if(process.env.database='mongo'){
+        
 
             //console.log('Carro entrado a dto: ', receivedCart)
-            this.id = receivedCart._id,
+            this.id = receivedCart.id,
             this.products = receivedCart.products.map(item => ({
                 product: new ProductDTO(item.product),
                 quantity: item.quantity,
@@ -27,6 +35,6 @@ export class CartDTO{
             
 
             
-        }
+       
     }
 }

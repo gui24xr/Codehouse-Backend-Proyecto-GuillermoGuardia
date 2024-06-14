@@ -60,6 +60,7 @@ export class UsersController {
 
   //Si autenticamos metemos al req el currentUser
   async authenticateUser(req, res, next) {
+    console.log('fffffffffffffffffffffffffff')
     const { email, password } = req.body;
     const requiredFields = ["email", "password"];
     const missingFields = getMissingFields(req.body, requiredFields);

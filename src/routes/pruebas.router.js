@@ -276,3 +276,19 @@ router.post('/usersrepository/:userid',async(req,res)=>{
    
     res.json({Original: myUser, modificado: result})
 })
+
+router.get('/mongodaouser/:email',async(req,res)=>{
+    const {email} = req.params
+    const mongouserdao = new UsersMongoDao()
+    const result = await mongouserdao.getUserByEmail(email)
+    
+    res.send(result)
+})
+
+router.post('/usersincart/:email',async(req,res)=>{
+    const {email} = req.params
+    const mongouserdao = new UsersMongoDao()
+    const result = await mongouserdao.createUser(email,'123456','gui','ller','user',44,null)
+    
+    res.send(result)
+})

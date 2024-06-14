@@ -12,7 +12,7 @@ export default class UsersMongoDao{
     //Esta es interna de cada dao x lo cual no debe ser homologado
     //Lo que es homologado es el 
     transformInUserDTO(userFromDB){
-        console.log('dao::::',userFromDB)
+        console.log('dao::::',userFromDB, new Date())
         return new UserDTO({
             userId: userFromDB._id.toString(),
             email: userFromDB.email,
@@ -50,8 +50,8 @@ export default class UsersMongoDao{
         })
         await newUser.save() // Lo guardo en la BD
         //Con la data construyo el user dto para devolver a la capa repository.
-        return transformInUserDTO(newUser)
-       /* return new UserDTO({
+       return this.transformInUserDTO(newUser)
+       /*return new UserDTO({
             userId: newUser._id.toString(),
             email: newUser.email,
             password: newUser.password,
@@ -62,8 +62,8 @@ export default class UsersMongoDao{
             cartId: newUser.cart,
             lastConnection: newUser.last_connection,
             documents:newUser.documents
-        })
-            */
+        })*/
+            
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersMongoDAO.createUser|')
@@ -75,7 +75,7 @@ export default class UsersMongoDao{
     //Si existe devuelve un UserDTo, si no existe lanza una instancia de UsersSeriveError
     async getUserById(userId){
         try{
-            const searchedUser = await UserModel.findOne({_id:userId}).populate('cart')
+            const searchedUser = await UserModel.findOne({_id:userId})//.populate('cart')
             if (!searchedUser) throw new UsersServiceError(UsersServiceError.USER_NO_EXIST,'|UsersMongoDao.getUserById|')
                /* return new UserDTO({
                     userId: searchedUser._id.toString(),
@@ -90,7 +90,7 @@ export default class UsersMongoDao{
                     documents:searchedUser.documents
                 })
             */
-                return transformInUserDTO(searchedUser)
+            return this.transformInUserDTO(searchedUser)
         }catch(error){
             if (error instanceof UsersServiceError) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersMongoDAO.getUserById|')
@@ -101,9 +101,9 @@ export default class UsersMongoDao{
     //Si existe devuelve un UserDTo, si no existe lanza una instancia de UsersServiceError
     async getUserByEmail(email){
         try{
-            const searchedUser = await UserModel.findOne({email:email}).populate('cart')
+            const searchedUser = await UserModel.findOne({email:email})//.populate('cart')
             if (!searchedUser) throw new UsersServiceError(UsersServiceError.USER_NO_EXIST,'|UsersMongoDao.getUserByEmail|')
-               /* return new UserDTO({
+              /*  return new UserDTO({
                     userId: searchedUser._id.toString(),
                     email: searchedUser.email,
                     password: searchedUser.password,
@@ -115,9 +115,10 @@ export default class UsersMongoDao{
                     lastConnection: searchedUser.last_connection,
                     documents:searchedUser.documents
                 })
-                    */
-                return transformInUserDTO(searchedUser)
+                 */   
+                return this.transformInUserDTO(searchedUser)
         }catch(error){
+            console.log('fdddfdfdfdfdfdddfderrorrrrr')
             if (error instanceof UsersServiceError) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersMongoDAO.getUserByEmail|')
         }
@@ -126,7 +127,7 @@ export default class UsersMongoDao{
     //filter es un objeto asi {email:email}
     async getUserByFilter(field,value){
         try{
-            const searchedUser = await UserModel.findOne({[field]:value}).populate('cart')
+            const searchedUser = await UserModel.findOne({[field]:value})//populate('cart')
             if (!searchedUser) throw new UsersServiceError(UsersServiceError.USER_NO_EXIST,'|UsersMongoDao.getUserByEmail|')
                /* return new UserDTO({
                     userId: searchedUser._id.toString(),
@@ -141,7 +142,7 @@ export default class UsersMongoDao{
                     documents:searchedUser.documents
                 })
                     */
-                return transformInUserDTO(searchedUser)
+                return this.transformInUserDTO(searchedUser)
         }catch(error){
             if (error instanceof UsersServiceError) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersMongoDAO.getUserByFilter|')
@@ -187,8 +188,8 @@ export default class UsersMongoDao{
                     lastConnection: searchedUser.last_connection,
                     documents:searchedUser.documents
                 })
-                    */
-                return transformInUserDTO(searchedUser)
+                 */   
+                return this.transformInUserDTO(searchedUser)
         }catch(error){
             if (error instanceof UsersServiceError) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersMongoDAO.updateUser|')
@@ -204,7 +205,7 @@ export default class UsersMongoDao{
             if (!(isEmail(email))) throw new UsersServiceError(UsersServiceError.DELETING_ERROR,'|UsersMongoDao.deleteUser|','No se ingreso un email valido para buscar el registro...')
             const deletedUser = await UserModel.findOneAndDelete({ email: email })
             if (deletedUser){
-               /* return new UserDTO({
+              /*  return new UserDTO({
                     userId: deletedUser._id.toString(),
                     email: deletedUser.email,
                     password: deletedUser.password,
@@ -216,8 +217,8 @@ export default class UsersMongoDao{
                     lastConnection: deletedUser.last_connection,
                     documents:deletedUser.documents
                 })
-                    */
-                return transformInUserDTO(deletedUser)
+               */     
+                return this.transformInUserDTO(deletedUser)
             } 
             else throw new UsersServiceError(UsersServiceError.DELETING_ERROR,'|UsersMongoDao.deleteUser|','No se pudo borrar el registro ya que el user no existe...')
         }catch(error){

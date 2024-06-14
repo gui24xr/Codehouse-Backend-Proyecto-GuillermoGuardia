@@ -34,7 +34,7 @@ export default class CartsMongoDAO{
     async getCartById(cartId){
         try {
              const searchedCart = await CartModel.findById(cartId).populate('products.product')
-              if (!searchedCart)  throw new CartsDAOError(CartsServiceError.CART_NO_EXIST,'CartsMongoDao.getCartById',`No existe carro id${cartId}..`)
+              if (!searchedCart)  throw new CartsServiceError(CartsServiceError.CART_NO_EXIST,'CartsMongoDao.getCartById',`No existe carro id${cartId}..`)
              //return searchedCart
               return this.transformInCartDO(searchedCart)      
         } catch (error) {

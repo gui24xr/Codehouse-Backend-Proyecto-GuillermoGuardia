@@ -48,18 +48,20 @@ export class UsersService{
     //Si va todo bien y el user existe genera un token con los datos del user para enviarle a la capa controllers
     //Devuelve el token generado y una instancia del user en formato UserDTo
     async authenticateUser(email,password){
+        console.log('fffffffffffffffffffffffffff22222')
         try{
             //Se validan la cantidad de parametros y datos, en este caso password no necesario validar.
             //Le pido a la capa repository el usuario.
             const searchedUser = await usersRepository.getUserByEmail(email)
             //Repository me devuelve dto y miro que coincida la contraseña.
             if (searchedUser) {
+                console.log('Searcheduser: ',searchedUser)
                 if (isValidPassword(password,searchedUser.password)) {
                     //Se crea el jsonwebtockn que se retornara ala capa controllers
-                    
+                    console.log('fffffffffffffffffffffffffff33332')
                     const updatedUser = await usersRepository.updateLastConnection(searchedUser.userId,new Date())
                     const userToken = generateJWT(updatedUser)
-                
+                    console.log('fffffffffffffffffffffffffff4442')
                     return {userData: searchedUser, userToken:userToken}
                 } 
                 else throw new UsersServiceError(UsersServiceError.WRONG_PASSWORD,'|UsersService.authenticateUser|','El usuario y/la contraseña no coinciden...')

@@ -292,3 +292,10 @@ router.post('/usersincart/:email',async(req,res)=>{
     
     res.send(result)
 })
+
+
+router.get('/cartcheckoutlist/:cid',async(req,res)=>{
+    const {cid:cartId} = req.params
+    const result = await cartsService.checkoutCartById(cartId)
+    res.send(result)
+})

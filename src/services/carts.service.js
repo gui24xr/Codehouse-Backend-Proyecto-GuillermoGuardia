@@ -29,6 +29,38 @@ export class CartsService {
     }
 
 
+    async checkoutCartById(cartId){
+        //Ya nos trae un dto de carts que tiene una lista de dto products
+        try {
+            const listToPreOrder = []; //LosProducto-cantidad que iran al ticket
+            const listNoPreOrder = []; //Lo que no ira al ticket...
+            const searchedCart = await cartRepository.getCartById(cartId)//Obtengo cartDTO
+            //mi CartDTO trae info de los productos que tiene y el stock de los mismos x lo cual no hace falta comprobarstock.
+            //Recorro searchedCart.products . En searchedCart.quantity tengo la cantidad requerida y subtotal precio*cantidad.
+            // SearchedCart.products.product.stock el stock actual
+            // SearchedCart.products.product.stock el stock actual
+            // SearchedCart.products.product.price el precio unitario
+            //Armo la lista para la preOrder, esto es quitar los que no hay stock.
+            searchedCart.products.forEach(item =>{
+                //Compruebo stock vs cantidad requerida
+                if (item.quantity < item.product.stock) {
+                    listToPreOrder.push(item)
+                    //El descuento de stock lo va  ahacer el checkout service directamente.
+                }
+                else  listNoPreOrder.push(item)
+                
+            })
+            return {
+                listToPreOrder : listToPreOrder,
+                listNoPreOrder : listNoPreOrder
+            }
+        } catch (error) {
+            if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
+            else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsService.getCartById|')
+        }
+    }
+
+
     async getProductsInCart(cartId){
         try {
             const searchedCart = await cartRepository.getCartById(cartId)

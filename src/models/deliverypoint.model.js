@@ -5,14 +5,15 @@ const colectionName = 'delivery_points'
 
 const deliveryPointSchema = new mongoose.Schema({
     receiver:{
-        type: String
+        name: { type: Number, required: true, default:null },
+        last_name: { type: Number, required: true, default: null }
     },
     address: {
         street: { type: String, required: true },
         streetNumber: { type: String, required: true },
         city: { type: String, required: true },
         state: { type: String, required: true },
-        postal_code: { type: String, required: true },
+        zip_code: { type: String, required: true },
         country: { type: String, required: true },
         floor: { type: String },  // Piso
         apartment: { type: String }  // Departamento
@@ -32,7 +33,7 @@ const deliveryPointSchema = new mongoose.Schema({
             message: props => `${props.value} no es un número de teléfono válido.`
         }
     }],
-    type: {
+    location_type: {
         type: String,
         enum: [
           'Domicilio Residencial','Domicilio Laboral', 'Departamento', 'Oficina/Negocio',
@@ -44,4 +45,4 @@ const deliveryPointSchema = new mongoose.Schema({
       },
 })
 
-export const DeliveryPoint = new mongoose.model(colectionName, deliveryPointSchema)
+export const DeliveryPointModel = new mongoose.model(colectionName, deliveryPointSchema)

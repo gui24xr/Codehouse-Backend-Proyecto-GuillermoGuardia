@@ -63,7 +63,7 @@ export class CartsServiceError extends Error{
     
     constructor(errorCode,operationName,message){
         super(message);
-        this.name = 'UsersServiceError';
+        this.name = 'CartsServiceError';
         this.code = errorCode || UsersServiceError.INTERNAL_SERVER_ERROR; //una constante static de codigo
         this.operationName = operationName; //Funcion donde se dio la falla
     }
@@ -84,5 +84,37 @@ export class CartDTOERROR extends Error{
 }
 
 
+export class DeliveryPointsServiceError extends Error{
 
+    //Codigos posibles.
+    static INTERNAL_SERVER_ERROR = 0;
+    static CLEAR_CART_ERROR = 1;
+    static NO_CART_DTO_VALID = 2; //No llego un userDTO
+    static ADD_ERROR = 3;
+    static CART_NO_EXIST = 4;
+    static UPDATING_ERROR = 5;
+    static DELETING_ERROR = 6;
+    static CREATE_ERROR = 7;
+    
+    constructor(errorCode,operationName,message){
+        super(message);
+        this.name = 'DeliveryPointsServiceError';
+        this.code = errorCode || DeliveryPointsServiceError.INTERNAL_SERVER_ERROR; //una constante static de codigo
+        this.operationName = operationName; //Funcion donde se dio la falla
+    }
+}
+
+export class DeliveryPointDTOERROR extends Error{
+
+    //Codigos posibles.
+    static INTERNAL_SERVER_ERROR = 0;
+    static WRONG_PRODUCTS_ARRAY = 1;
+    static WRONG_FORMAT_ID = 2;
+    constructor(errorCode,operationName,message){
+        super(message);
+        this.name = 'DeliveryPointDTOERROR';
+        this.code = errorCode || DeliveryPointDTOERROR.INTERNAL_SERVER_ERROR; //una constante static de codigo
+        this.operationName = operationName; //Funcion donde se dio la falla
+    }
+}
 

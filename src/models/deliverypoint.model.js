@@ -5,8 +5,8 @@ const colectionName = 'delivery_points'
 
 const deliveryPointSchema = new mongoose.Schema({
     receiver:{
-        name: { type: Number, required: true, default:null },
-        last_name: { type: Number, required: true, default: null }
+        name: { type: String, required: true, default:null },
+        last_name: { type: String, required: true, default: null }
     },
     address: {
         street: { type: String, required: true },

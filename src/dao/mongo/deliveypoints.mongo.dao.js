@@ -24,7 +24,7 @@ export default class DeliveryPointsMongoDAO{
             const newDeliveryPoint = new DeliveryPointModel({
                 receiver: {
                     name: 'Juan',
-                    last_name: 'Pérez'
+                    last_name: 'Perez'
                 },
                 address: {
                     street: 'Calle Principal',

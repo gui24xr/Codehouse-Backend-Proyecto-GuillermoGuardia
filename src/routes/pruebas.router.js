@@ -312,3 +312,10 @@ router.post('/delivery/crear2',async(req,res)=>{
     res.send(result)
 })
 
+router.post('/delivery/crear3',async(req,res)=>{
+    const deliveryPointsMongoDao = new DeliveryPointsMongoDAO()
+    const result = await deliveryPointsMongoDao.createDeliveryPoint({})
+    res.send(result)
+})
+
+

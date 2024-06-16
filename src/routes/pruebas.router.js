@@ -19,7 +19,7 @@ import { CartsService } from '../services/carts.service.js'
 import { UsersService } from '../services/users.service.js'
 import UsersMongoDao from '../dao/mongo/users.mongo.dao.js'
 import { UsersRepository as NuevoUsersRepository } from '../repositories/users-repository.js'
-
+import DeliveryPointsMongoDAO from '../dao/mongo/deliveypoints.mongo.dao.js'
 const mongoProductsDAO = new MongoProductsDAO()
 
 const checkoutService = new CheckoutService()
@@ -297,5 +297,11 @@ router.post('/usersincart/:email',async(req,res)=>{
 router.get('/cartcheckoutlist/:cid',async(req,res)=>{
     const {cid:cartId} = req.params
     const result = await cartsService.checkoutCartById(cartId)
+    res.send(result)
+})
+
+router.post('/delivery/crear',async(req,res)=>{
+    const deliveryPointsMongoDao = new DeliveryPointsMongoDAO()
+    const result = await deliveryPointsMongoDao.createDeliveryPoint({})
     res.send(result)
 })

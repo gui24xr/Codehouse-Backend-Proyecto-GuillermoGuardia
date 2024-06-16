@@ -1,6 +1,6 @@
 //Este es el dao de mongo para carts.
 import { DeliveryPointModel } from "../../models/deliverypoint.model.js"
-import { DeliveryPointDTO } from "../../dto/deliverypoint.dto.js"
+import { DeliveryPointDTO, DeliveryPointConstructionObject } from "../../dto/deliverypoint.dto.js"
 import { CartsServiceError, CartDTOERROR, } from "../../services/errors.service.js"
 import { DeliveryPointsServiceError, DeliveryPointDTOERROR } from "../../services/errors.service.js"
 
@@ -11,33 +11,56 @@ export default class DeliveryPointsMongoDAO{
     //funcion interna para construir los DTO
     //Esta es interna de cada dao x lo cual no debe ser homologado
     //Lo que es homologado es el 
-    transformInCartDO(cartFromDB){
-        return new CartDTO({
+    transformInDeliveryPointDTO(cartFromDB){
+        return new DeliveryPointDTO({
             id: cartFromDB._id,
             products: cartFromDB.products
         })
     }
     
     //Recibe un objeto
-    async createDeliveryPoint(createDeliveryPointObject){
-        //Crea y devuelve un carro nuevo y vacio. //No es necesrio populate ya que viene vacio.
-        try{
-            const newCart = new CartModel({products:[]})
-            await newCart.save()
-            //return newCart
-            return this.transformInCartDO(newCart)
-        }catch(error){
-            if (error instanceof CartDTOERROR) throw error
-            else throw new CartsServiceError(CartsServiceError.CREATE_ERROR,'CartsMongoDao.createCart','Error al crear carro...')
+    async createDeliveryPoint(createDeliveryPointObject) {
+        try {
+            const newDeliveryPoint = new DeliveryPointModel({
+                receiver: {
+                    name: 'Juan',
+                    last_name: 'Pérez'
+                },
+                address: {
+                    street: 'Calle Principal',
+                    streetNumber: '123',
+                    city: 'Ciudad Ejemplo',
+                    state: 'Estado Ejemplo',
+                    zip_code: '12345',
+                    country: 'País Ejemplo',
+                    floor: '2',
+                    apartment: 'A'
+                },
+                coordinates: {
+                    latitude: 40.7128,
+                    longitude: -74.006
+                },
+                phones: ['123456789', '987654321'],
+                location_type: 'Domicilio Residencial'
+            });
+    
+            await newDeliveryPoint.save();
+    
+            console.log('Nuevo punto de entrega guardado:', newDeliveryPoint);
+            return newDeliveryPoint;
+        } catch (error) {
+            console.error('Error al crear el punto de entrega:', error);
+            throw error; // Puedes manejar el error según necesites aquí
         }
     }
+    
 
     async getDeliveryPointById(cartId){
         try {
              const searchedCart = await CartModel.findById(cartId).populate('products.product')
               if (!searchedCart)  throw new CartsServiceError(CartsServiceError.CART_NO_EXIST,'CartsMongoDao.getCartById',`No existe carro id${cartId}..`)
              //return searchedCart
-              return this.transformInCartDO(searchedCart)      
+              return this.transformInDeliveryPointDTO(searchedCart)      
         } catch (error) {
             if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
             else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsMongoDao.getCartById|')
@@ -57,7 +80,7 @@ export default class DeliveryPointsMongoDAO{
             searchedCart.products[position].quantity = newQuantity
             searchedCart.markModified("carts") 
             await searchedCart.save()//Guardo en BD
-            return this.transformInCartDO(searchedCart)   
+            return this.transformInDeliveryPointDTO(searchedCart)   
         }catch(error){
             if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
             else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsMongoDao.updateProductQuantityInCart|')
@@ -75,7 +98,7 @@ export default class DeliveryPointsMongoDAO{
             searchedCart.products.splice(position,1)
             searchedCart.markModified("carts")
             await searchedCart.save()
-            return this.transformInCartDO(searchedCart)   
+            return this.transformInDeliveryPointDTO(searchedCart)   
         }catch(error){
             if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
             else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsMongoDao.deleteProductFromCart|')

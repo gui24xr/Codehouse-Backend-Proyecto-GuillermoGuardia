@@ -49,7 +49,32 @@ const objectForMakeDeliveryPointDTO = {
     
 }
 
-export class DeliveryPointConstructionObject{
-
-    
+export class DeliveryPointConstructionObject {
+    constructor(
+        receiverName,
+        receiverLastName,
+        street,
+        streetNumber,
+        floor,
+        apartment,
+        zip_code,
+        country,
+        latitude,
+        longitude,
+        phones,
+        locationType
+    ) {
+        this.receiverName = receiverName;
+        this.receiverLastName = receiverLastName;
+        this.street = street;
+        this.streetNumber = streetNumber;
+        this.floor = floor;
+        this.apartment = apartment;
+        this.zip_code = zip_code;
+        this.country = country;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.phones = phones;
+        this.locationType = locationType; // Se validará el tipo de lugar
+    }
 }

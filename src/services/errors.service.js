@@ -88,7 +88,7 @@ export class DeliveryPointsServiceError extends Error{
 
     //Codigos posibles.
     static INTERNAL_SERVER_ERROR = 0;
-    static CLEAR_CART_ERROR = 1;
+    static WRONG_CONSTRUCTOR_OBJECT = 1;
     static NO_CART_DTO_VALID = 2; //No llego un userDTO
     static ADD_ERROR = 3;
     static CART_NO_EXIST = 4;

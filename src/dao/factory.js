@@ -1,7 +1,7 @@
 export let CartsDAO
 export let ProductsDAO 
 export let UsersDAO
-export let DeliveryPointsDAO
+export let ExchangePointsDAO
 export let PurchasesDAO
 export let MessagesDAO
 export let ticketsDAO
@@ -9,14 +9,17 @@ export let ticketsDAO
 
 switch (process.env.database){
     case 'mongo':
+        const {default:ProductsMongoDAO} = await import('./mongo/products.mongo.dao.remake.js')
         const {default:CartsMongoDAO} = await import('./mongo/carts.mongo.dao.js')
         const {default:UsersMongoDAO} = await import('./mongo/users.mongo.dao.js')
-        const {default:DeliveryPointsMongoDAO} = await import('./mongo/deliveypoints.mongo.dao.js')
+        const {default:ExchangePointsMongoDAO} = await import('./mongo/exchangepoints.mongo.dao.js')
+
         //Como yo quiero que se llame igual siempre al importar se lo asgino a CartsDao
         //O sea en cartsDao va a vivir la clase CartsMongoDAO
+        ProductsDAO = ProductsMongoDAO
         CartsDAO = CartsMongoDAO
         UsersDAO = UsersMongoDAO
-        DeliveryPointsDAO = DeliveryPointsMongoDAO
+        ExchangePointsDAO = ExchangePointsMongoDAO
     break
     case 'sequelize':
         console.log('Entro sequelize')

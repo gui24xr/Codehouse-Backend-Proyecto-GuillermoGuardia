@@ -41,3 +41,19 @@ export class ProductDTO{
 
     }
 }
+
+
+export class ProductoConstructionObject {
+    constructor(title, description, price, img, code, category, owner, stock, status, thumbnails) {
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.img = img;
+        this.code = code;
+        this.category = category;
+        this.owner = owner;
+        this.stock = stock;
+        this.status = status;
+        this.thumbnails = thumbnails;
+    }
+}

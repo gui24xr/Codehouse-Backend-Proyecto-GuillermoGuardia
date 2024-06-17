@@ -1,9 +1,18 @@
 import mongoose from "mongoose"
 
 
-const colectionName = 'delivery_points'
+const colectionName = 'exchange_points'
 
-const deliveryPointSchema = new mongoose.Schema({
+const exchangePointSchema = new mongoose.Schema({
+    type: {
+        type: String,
+        enum: ['pickup', 'delivery'],
+        required: true
+    },
+    pointName: {
+        type: String,
+        default: null
+    },
     receiver:{
         name: { type: String, required: true, default:null },
         last_name: { type: String, required: true, default: null }
@@ -45,4 +54,4 @@ const deliveryPointSchema = new mongoose.Schema({
       },
 })
 
-export const DeliveryPointModel = new mongoose.model(colectionName, deliveryPointSchema)
+export const ExchangePointModel = new mongoose.model(colectionName, exchangePointSchema)

@@ -84,37 +84,71 @@ export class CartDTOERROR extends Error{
 }
 
 
-export class DeliveryPointsServiceError extends Error{
+export class ExchangePointsServiceError extends Error{
 
     //Codigos posibles.
     static INTERNAL_SERVER_ERROR = 0;
-    static WRONG_CONSTRUCTOR_OBJECT = 1;
-    static NO_CART_DTO_VALID = 2; //No llego un userDTO
+    static CREATE_ERROR = 1;
+    static NO_EXCHANGE_POINT_DTO_VALID = 2; //No llego un userDTO
     static ADD_ERROR = 3;
-    static CART_NO_EXIST = 4;
+    static EXCHANGE_POINT_NO_EXIST = 4;
     static UPDATING_ERROR = 5;
     static DELETING_ERROR = 6;
-    static CREATE_ERROR = 7;
+    static GET_ERROR = 7;
+
+   
     
     constructor(errorCode,operationName,message){
         super(message);
-        this.name = 'DeliveryPointsServiceError';
-        this.code = errorCode || DeliveryPointsServiceError.INTERNAL_SERVER_ERROR; //una constante static de codigo
+        this.name = 'ExchangePointsServiceError';
+        this.code = errorCode || ExchangePointsServiceError.INTERNAL_SERVER_ERROR; //una constante static de codigo
         this.operationName = operationName; //Funcion donde se dio la falla
     }
 }
 
-export class DeliveryPointDTOERROR extends Error{
+export class ExchangePointDTOERROR extends Error{
 
     //Codigos posibles.
     static INTERNAL_SERVER_ERROR = 0;
-    static WRONG_PRODUCTS_ARRAY = 1;
-    static WRONG_FORMAT_ID = 2;
+    static INVALIDS_FIELDS = 1;
+    static MISSING_FIELDS = 2;
     constructor(errorCode,operationName,message){
         super(message);
         this.name = 'DeliveryPointDTOERROR';
-        this.code = errorCode || DeliveryPointDTOERROR.INTERNAL_SERVER_ERROR; //una constante static de codigo
+        this.code = errorCode || ExchangePointDTOERROR.INTERNAL_SERVER_ERROR; //una constante static de codigo
         this.operationName = operationName; //Funcion donde se dio la falla
     }
 }
 
+export class ProductsServiceError extends Error{
+
+    //Codigos posibles.
+    static INTERNAL_SERVER_ERROR = 0;
+    static CREATE_ERROR = 1;
+    static ADD_ERROR = 2;
+    static UPDATING_ERROR = 3;
+    static DELETING_ERROR = 4;
+    static GET_ERROR = 5;
+    static PRODUCT_NO_EXIST = 6;
+
+    constructor(errorCode,operationName,message){
+        super(message);
+        this.name = 'ProductsServiceError';
+        this.code = errorCode || ProductsServiceError.INTERNAL_SERVER_ERROR; //una constante static de codigo
+        this.operationName = operationName; //Funcion donde se dio la falla
+    }
+}
+
+export class ProductDTOERROR extends Error{
+
+    //Codigos posibles.
+    static INTERNAL_SERVER_ERROR = 0;
+    static INVALIDS_FIELDS = 1;
+    static MISSING_FIELDS = 2;
+    constructor(errorCode,operationName,message){
+        super(message);
+        this.name = 'ProductDTOERROR';
+        this.code = errorCode || ProductDTOERROR.INTERNAL_SERVER_ERROR; //una constante static de codigo
+        this.operationName = operationName; //Funcion donde se dio la falla
+    }
+}

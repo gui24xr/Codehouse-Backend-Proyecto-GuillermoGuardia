@@ -19,7 +19,11 @@ import { CartsService } from '../services/carts.service.js'
 import { UsersService } from '../services/users.service.js'
 import UsersMongoDao from '../dao/mongo/users.mongo.dao.js'
 import { UsersRepository as NuevoUsersRepository } from '../repositories/users-repository.js'
-import DeliveryPointsMongoDAO from '../dao/mongo/deliveypoints.mongo.dao.js'
+import ExchangePointsMongoDAO from '../dao/mongo/exchangepoints.mongo.dao.js'
+import { ExchangePointsRepository } from '../repositories/exchangepoints-repository.js'
+import { ExchangePointsService } from '../services/exchangepoints.service.js'
+import { exchangePointsArray } from '../../datos/exchangepointsarray.js'
+import { ProductsRepository } from '../repositories/products-repository.js'
 const mongoProductsDAO = new MongoProductsDAO()
 
 const checkoutService = new CheckoutService()
@@ -300,22 +304,131 @@ router.get('/cartcheckoutlist/:cid',async(req,res)=>{
     res.send(result)
 })
 
-router.post('/delivery/crear',async(req,res)=>{
-    const deliveryPointsMongoDao = new DeliveryPointsMongoDAO()
-    const result = await deliveryPointsMongoDao.createDeliveryPoint({})
-    res.send(result)
+router.post('/points/crear',async(req,res)=>{
+    const point = exchangePointsArray[0]
+    
+
+    const exchangePointsService = new ExchangePointsService()
+    const newPoint = await exchangePointsService.createExchangePoint(
+        point.type,
+        point.pointName,
+        point.receiver.name,
+        point.receiver.last_name,
+        point.address.street,
+        point.address.streetNumber,
+        point.address.floor,
+        point.address.apartment,
+        point.address.zip_code,
+        point.address.city,
+        point.address.state,
+        point.address.country,
+        point.coordinates.latitude,
+        point.coordinates.longitude,
+        point.phones,
+        point.location_type
+    )
+   res.send(newPoint)
 })
 
-router.post('/delivery/crear2',async(req,res)=>{
-    const deliveryPointsMongoDao = new DeliveryPointsMongoDAO()
-    const result = await deliveryPointsMongoDao.createDeliveryPoint({})
-    res.send(result)
+router.post('/points/crearpoints', async (req, res) => {
+    const exchangePointsService = new ExchangePointsService();
+    const createdPoints = [];
+
+    try {
+        for (const point of exchangePointsArray) {
+            const newPoint = await exchangePointsService.createExchangePoint(
+                point.type,
+                point.pointName,
+                point.receiver.name,
+                point.receiver.last_name,
+                point.address.street,
+                point.address.streetNumber,
+                point.address.floor,
+                point.address.apartment,
+                point.address.zip_code,
+                point.address.city,
+                point.address.state,
+                point.address.country,
+                point.coordinates.latitude,
+                point.coordinates.longitude,
+                point.phones,
+                point.location_type
+            );
+            createdPoints.push(newPoint);
+        }
+
+        res.status(200).json(createdPoints);
+    } catch (error) {
+        console.error('Error al crear puntos de intercambio:', error);
+        res.status(500).json({ error: 'Error al crear puntos de intercambio' });
+    }
+});
+
+router.get('/points/get', async (req, res) => {
+    const exchangePointsDao = new ExchangePointsMongoDAO()
+    const points = await exchangePointsDao.get({"type": "pickup"})
+    res.send(points)
+
 })
 
-router.post('/delivery/crear3',async(req,res)=>{
-    const deliveryPointsMongoDao = new DeliveryPointsMongoDAO()
-    const result = await deliveryPointsMongoDao.createDeliveryPoint({})
-    res.send(result)
+router.get('/points/getbyid/:pid', async (req, res) => {
+    const {pid:pointId} = req.params
+    const exchangePointsService = new ExchangePointsService();
+    const point = await exchangePointsService.getExchangePointById(pointId)
+    res.send(point)
+
 })
+
+router.get('/points/pick', async (req, res) => {
+    
+    const exchangePointsService = new ExchangePointsService();
+    const point = await exchangePointsService.getPickupPoints()
+    res.send(point)
+
+})
+
+router.get('/productsnew/:pid', async (req, res) => {
+    const {pid:productId} = req.params
+    const productRepository = new ProductsRepository()
+    const product = await productRepository.getProductById(productId)
+    res.send(product)
+
+})
+
+router.get('/productscode/:code', async (req, res) => {
+    const {code} = req.params
+    const productRepository = new ProductsRepository()
+    const product = await productRepository.getProductByCode(code)
+    const exist = await productRepository.existProductByCode(code)
+    console.log('Existe: ',exist)
+    res.send(product)
+
+})
+
+router.post('/productstock/:pid', async (req, res) => {
+    const {pid:productId} = req.params
+    const productRepository = new ProductsRepository()
+    const product = await productRepository.updateStock(productId,241)
+    res.send(product)
+
+})
+
+router.post('/productstatus/:pid', async (req, res) => {
+    const {pid:productId} = req.params
+    const productRepository = new ProductsRepository()
+    const product = await productRepository.changeProductStatus(productId)
+    res.send(product)
+
+})
+
+router.delete('/productdelete/:pid', async (req, res) => {
+    const {pid:productId} = req.params
+    const productRepository = new ProductsRepository()
+    const product = await productRepository.deleteProduct(productId)
+    res.send(product)
+
+})
+
+
 
 

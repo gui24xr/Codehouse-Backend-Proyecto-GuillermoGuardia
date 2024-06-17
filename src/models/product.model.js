@@ -1,5 +1,6 @@
 import mongoose from "mongoose"
 import mongoosePaginate from 'mongoose-paginate-v2'
+import { isEmail } from "../utils/helpers.js"
 
 const collectionName = 'products'
 
@@ -44,12 +45,22 @@ const productSchema = new mongoose.Schema({
         //required: true
     },
     owner: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'users',
-        default: 'admin'
-    }, //Detalles del ticket.
+        type: String,
+        default: 'admin',
+        validate: {
+            validator: (value) => {
+                if ((value === 'admin') || 
+                    (isEmail(value))) return true
+                else return false
+            },
+            message: props => `${props.value} no es un email.`
+        }
+
+    }, 
     
 })
+
+
 
 //Le agrego el plugin para paginate.
 productSchema.plugin(mongoosePaginate)

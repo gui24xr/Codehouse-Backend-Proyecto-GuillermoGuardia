@@ -24,6 +24,8 @@ import { ExchangePointsRepository } from '../repositories/exchangepoints-reposit
 import { ExchangePointsService } from '../services/exchangepoints.service.js'
 import { exchangePointsArray } from '../../datos/exchangepointsarray.js'
 import { ProductsRepository } from '../repositories/products-repository.js'
+import { ProductsService } from '../services/products.service.js'
+import { ProductConstructionObject } from '../dto/products.dto.js'
 const mongoProductsDAO = new MongoProductsDAO()
 
 const checkoutService = new CheckoutService()
@@ -35,6 +37,8 @@ const cartsService = new CartsService()
 const usersService = new UsersService()
 
 export const router = express.Router()
+
+
 
 router.get('/prueba',async(req,res)=>{
 
@@ -427,6 +431,65 @@ router.delete('/productdelete/:pid', async (req, res) => {
     const product = await productRepository.deleteProduct(productId)
     res.send(product)
 
+})
+
+
+router.post('/productsadd', async (req, res) => {
+    const productsService = new ProductsService()
+    const product =  {
+        "title": "AGV Pista GP RR Iridium Helmet",
+        "description": "Descripcion de AGV Pista GP RR Iridium Helmet",
+        "price": 1899,
+        "img": "https://www.thehelmetwarehouse.com.au/image/cache/catalog/AGV/PISTA%20GP%20RR/pist%20iridium-200x200.jpg",
+        "code": "3333344aaaaasassasa",
+        "category": "cascos",
+        "owner": null,
+        "stock": 1295,
+        "status": true,
+        "thumbnails": [
+         "https://www.thehelmetwarehouse.com.au/image/cache/catalog/AGV/PISTA%20GP%20RR/pist%20iridium-200x200.jpg",
+         "https://www.thehelmetwarehouse.com.au/image/cache/catalog/AGV/PISTA%20GP%20RR/pist%20iridium-200x200.jpg",
+         "https://www.thehelmetwarehouse.com.au/image/cache/catalog/AGV/PISTA%20GP%20RR/pist%20iridium-200x200.jpg",
+         "https://www.thehelmetwarehouse.com.au/image/cache/catalog/AGV/PISTA%20GP%20RR/pist%20iridium-200x200.jpg"
+        ]
+       }
+
+    const newProduct = await productsService.addProduct(product)
+    res.send(newProduct)
+
+})
+
+router.get('/productcategories',async(req,res)=>{
+    const productsService = new ProductsService()
+    const categories = await productsService.getProductsCategoriesList()
+    res.send(categories)
+})
+
+router.put('/productstatus/:pid',async(req,res)=>{
+    const {pid:productId} = req.params
+    const productsService = new ProductsService()
+    const pdc = await productsService.changeProductStatusById(productId)
+    res.send(pdc)
+})
+
+router.put('/productstock/:pid',async(req,res)=>{
+    const {pid:productId} = req.params
+    const productsService = new ProductsService()
+    const pdc = await productsService.updateProductStockById(productId,0)
+    res.send(pdc)
+})
+
+router.delete('/productdeletes/:pid',async(req,res)=>{
+    const {pid:productId} = req.params
+    const productsService = new ProductsService()
+    const pdc = await productsService.deleteProductById(productId)
+    res.send(pdc)
+})
+
+router.get('/productsget',async(req,res)=>{
+    const productsService = new ProductsService()
+    const pds = await productsService.getProducts()
+    res.send(pds)
 })
 
 

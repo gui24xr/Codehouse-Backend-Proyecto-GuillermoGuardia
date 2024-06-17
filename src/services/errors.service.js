@@ -130,6 +130,8 @@ export class ProductsServiceError extends Error{
     static DELETING_ERROR = 4;
     static GET_ERROR = 5;
     static PRODUCT_NO_EXIST = 6;
+    static PRODUCT_WITH_SAME_CODE_ALREADY_EXIST = 7;
+    static NO_CONSTRUCTION_OBJECT = 8;
 
     constructor(errorCode,operationName,message){
         super(message);

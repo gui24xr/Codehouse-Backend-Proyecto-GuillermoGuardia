@@ -1,4 +1,4 @@
-import { ProductDTO, ProductoConstructionObject } from "../dto/products.dto.js";
+import { ProductDTO, ProductConstructionObject } from "../dto/products.dto.js";
 import { ProductDTOERROR, ProductsServiceError } from "../services/errors.service.js";
 import { ProductsDAO } from "../dao/factory.js";
 import { ProductsMongoDAO } from "../dao/mongo/products.mongo.dao.remake.js";
@@ -28,6 +28,17 @@ export class ProductsRepository{
             else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.getProductById|',error.message)
         }
     }
+
+    async getProducts(){
+        try{
+            const productsList = await productsDAO.get()
+            return productsList
+        }catch(error){
+            if (error instanceof ProductsServiceError || error instanceof ProductsServiceError) throw error
+            else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.getProducts|',error.message)
+        }
+    }
+
 
     async getProductByCode(code){
         try{
@@ -67,11 +78,20 @@ export class ProductsRepository{
         }
     }
 
-    async createProduct(productId){
+    async createProduct(productConstructionObject){
         try{
-
+            //Va a recibir una instancia de creacion de producto y se la va a enviar a la base de datos para que lo guarde
+            //Valida que el producto sea una instancia para no ensuciar la base de datos
+            //Recibe el productDTO que le da la capa de persistencia para devolverlo a la capa service
+            if (!(productConstructionObject instanceof ProductConstructionObject)) throw new ProductsServiceError(ProductsServiceError.NO_CONSTRUCTION_OBJECT,'|ProductsRepository.createProduct|')
+            console.log('ProductObject en repository: ', productConstructionObject)
+            const newProduct = await productsDAO.create(productConstructionObject)
+        //Recibo y devuelvo el dto.
+            //return newProduct
+            return {a:'fd'}
         }catch(error){
-            
+            if (error instanceof ProductsServiceError || error instanceof ProductsServiceError) throw error
+            else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.createProduct|',error.message)
         }
     }
 
@@ -84,6 +104,42 @@ export class ProductsRepository{
         }catch(error){
             if (error instanceof ProductsServiceError || error instanceof ProductsServiceError) throw error
             else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.deleteProduct|',error.message)
+        }
+    }
+
+
+    async getCategoriesList(){
+        //Implementar con cache para no hacer constantes llamados a la BD
+        try{
+            //Pido todo el catalogo
+            const productsList = await productsDAO.get()
+            //Me devolvio lista de dto. Reviso
+            const categoriesSet = new Set();
+            
+            productsList.forEach(item => {
+                categoriesSet.add(item.category)
+            });
+
+            const arrayCategories = Array.from(categoriesSet)
+            const arrayWithInfo = []
+       
+            //Voy a transformar en objeto que sea {categoryName: nombre, quantityInCategory: x}
+            arrayCategories.forEach( categoryItem => {
+
+                    let categoryQuantity = 0
+                    let categoryQuantityStatusActive = 0
+                    productsList.forEach( item => {
+                        if (item.category == categoryItem) categoryQuantity +=1
+                        if ((item.category == categoryItem) && item.status==true) categoryQuantityStatusActive +=1
+                    })
+                    arrayWithInfo.push({ categoryName: categoryItem,quantity: categoryQuantity, activeQuantity:categoryQuantityStatusActive})
+            })
+            //console.log('Array with info: ', arrayWithInfo)
+            return arrayWithInfo
+
+        }catch(error){
+            if (error instanceof ProductsServiceError || error instanceof ProductsServiceError) throw error
+            else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.getCategoriesList|',error.message)
         }
     }
 

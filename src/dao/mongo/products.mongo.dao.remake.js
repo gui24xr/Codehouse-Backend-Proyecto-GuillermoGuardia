@@ -9,7 +9,13 @@ export class ProductsMongoDAO{
     }
 
     // Función interna para transformar el filtro
+    //Lo uso por el temade _id de mongo vs otras bases de datos que usan solo id_
+    //Y si filter es vacio tendre drama en los metodos de mongo entonces si es vacio filter debe ser {}
     transformFilter(filter) {
+
+    if (!filter) {
+            return {}
+    }
     const transformedFilter = { ...filter };
     if (filter.id) {
         transformedFilter._id = filter.id;
@@ -46,10 +52,16 @@ export class ProductsMongoDAO{
 
     async get(filter){
         try{
+            const options = {}
+           // if (limit !== undefined) {
+             // options.limit = limit;
+          //}
             const transformedFilter = this.transformFilter(filter);
-            const productsArray = await ProductModel.find(transformedFilter)
+            //const productsArray = await ProductModel.find(transformedFilter)
+            const productsArray = await ProductModel.paginate({},options)
+            console.log(productsArray)
             //Tengo el array con coincidencias, y quiero devolver lista de DTO
-            const products = productsArray.map( item => (
+            const products = productsArray.docs.map( item => (
                 this.getProductDTO(item)
             ))
             return products

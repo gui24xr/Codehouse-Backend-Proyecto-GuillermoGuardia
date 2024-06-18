@@ -383,13 +383,30 @@ router.get('/points/getbyid/:pid', async (req, res) => {
 
 })
 
-router.get('/points/pick', async (req, res) => {
-    
+router.put('/points/editbyid/:pid', async (req, res) => {
+    const {pid:pointId} = req.params
     const exchangePointsService = new ExchangePointsService();
-    const point = await exchangePointsService.getPickupPoints()
+    const point = await exchangePointsService.updateExchangePoint(pointId)
     res.send(point)
 
 })
+
+router.get('/points/pick', async (req, res) => {
+    
+    const exchangePointsService = new ExchangePointsService();
+    const points = await exchangePointsService.getPickupPoints()
+    res.send(points)
+
+})
+
+router.get('/points/delivery', async (req, res) => {
+    
+    const exchangePointsService = new ExchangePointsService();
+    const points = await exchangePointsService.getDeliveryPoints()
+    res.send(points)
+
+})
+
 
 router.get('/productsnew/:pid', async (req, res) => {
     const {pid:productId} = req.params

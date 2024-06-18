@@ -1,6 +1,6 @@
 //Este es el dao de mongo para carts.
 import { ExchangePointModel } from "../../models/exchangepoint.model.js"
-import { ExchangePointDTO, ExchangePointConstructionObject } from "../../dto/exchangepoint.dto.js"
+import { ExchangePointDTO, ExchangePointConstructionObject, ExchangePointEditObject } from "../../dto/exchangepoint.dto.js"
 import { ExchangePointsServiceError, ExchangePointDTOERROR } from "../../services/errors.service.js";
 
 export default class ExchangePointsMongoDAO{
@@ -31,18 +31,25 @@ export default class ExchangePointsMongoDAO{
         })
     }
 
-     // Función interna para transformar el filtro
-     transformFilter(filter) {
+         // Función interna para transformar el filtro
+    //Lo uso por el temade _id de mongo vs otras bases de datos que usan solo id_
+    //Y si filter es vacio tendre drama en los metodos de mongo entonces si es vacio filter debe ser {}
+    transformFilter(filter) {
+
+        if (!filter) {
+                return {}
+        }
         const transformedFilter = { ...filter };
         if (filter.id) {
             transformedFilter._id = filter.id;
             delete transformedFilter.id;
+            }
+            return transformedFilter;
         }
-        return transformedFilter;
-    }
     
     //Recibe un objeto
     async create(pointData) {
+        
         //Point data es un objeto de construccion de points
         try {
             const newExchangePoint = new ExchangePointModel({
@@ -98,7 +105,7 @@ export default class ExchangePointsMongoDAO{
     
 
 
-    async update(filter,updateData){
+    async update2(filter,updateData){
         //Busca los registros que coincidan con el filtro, los actualiza con updateData y devuelve un array de DTO con la data actualizada.
         try{
             const transformedFilter = this.transformFilter(filter);
@@ -115,6 +122,20 @@ export default class ExchangePointsMongoDAO{
             else throw new ExchangePointsServiceError(ExchangePointsServiceError.UPDATING_ERROR,'|ExchangePointsMongoDAO.update|',error.message)
         }
     }
+
+    async update(listOfExchangePoinstToUpdate){
+        //Recibe una lista de DTOs de edicion la cual recorrera, comprobara que sea una instancia correspondiente
+        //Luego de comprobar la instancia va a buscar el registro y hara la modificacion
+        //Devuelve una lista con el/los registros modificados transfromados en DTO
+        try{
+            
+        }catch(error){
+            if (error instanceof ExchangePointDTOERROR) throw error
+            else throw new ExchangePointsServiceError(ExchangePointsServiceError.UPDATING_ERROR,'|ExchangePointsMongoDAO.update|',error.message)
+        }
+    }
+
+
 
 
     async delete(filter){

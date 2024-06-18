@@ -12,8 +12,8 @@ export class ExchangePointDTO{
        this.type = exchangePointObject.type;
        this.pointName = exchangePointObject.pointName;
        this.receiver = {
-        receiverName : exchangePointObject.receiverName,
-        receiverLastName : exchangePointObject.receiverLastName
+        name : exchangePointObject.receiverName,
+        lastName : exchangePointObject.receiverLastName
        };
        
        this.address = {
@@ -33,30 +33,47 @@ export class ExchangePointDTO{
         }
        };
 
-
+       //lo freezo
+       Object.freeze(this.exchangePointId)
+       Object.freeze(this.type)
+       Object.freeze(this.pointName)
+       Object.freeze(this.receiver)
+       Object.freeze(this.address)
+       Object.freeze(this)
     }
 }
 
 
-const objectForMakeExchangePointDTO = {
-    type: 'valor',
-    pointName: 'valor',
-    receiverName: 'valor',
-    receiverLastName : 'valor',
-    street: 'valor',
-    streetNumber: 'valor',
-    floor: 'valor',
-    apartment: 'valor',
-    zip_code: 'valor',
-    country: 'country',
-    latitude: 'valor',
-    longitude: 'valor',
-    phones: 'telefonos',
-    locationType: 'Tipo de lugar // se validara'
+export class ExchangePointEditObject{
+    //recibe una instancia de ExchangePointDTO,la copia pero solo deja editable las propiedades que son editables
+    //Luego con este objeto editado se manda a a repository.
+    //para que esta capa leyendo este objeto le ordene a la capa persistencia haga la modificacion
+    constructor(exchangePointDTOinstance){
+        //Compruebo que sea una instancia
+        if (!(exchangePointDTOinstance instanceof ExchangePointDTO)) throw new ExchangePointDTOERROR(ExchangePointDTOERROR.EDIT_DTO_ERROR,'|ExchangePointEditObject.constructor|')
+        //Habria tmb que validar que para campo todo es correcto
+        //copio las propiedades una a una como nuevas xq las propieddes del original estan freezadas
+        this.exchangePointId = exchangePointDTOinstance.exchangePointId
+        this.type = exchangePointDTOinstance.type;
+        this.pointName = exchangePointDTOinstance.pointName;
+        this.receiver = {...exchangePointDTOinstance.receiver};
+        this.address = {
+            ...exchangePointDTOinstance.address, // Copia superficial
+            coordinates: {
+                ...exchangePointDTOinstance.address.coordinates // Copia superficial
+            }
+        };
 
+        //Congelo todas las propiedades inmodificables.
+        //Object.freeze(this.exchangePointId)
+        //Object.freeze(this)
+        Object.defineProperty(this, 'exchangePointId', {
+            value: this.exchangePointId,
+            writable: false // No se puede cambiar
+          })
+        Object.freeze(this);
 
-
-    
+    }
 }
 
 export class ExchangePointConstructionObject {

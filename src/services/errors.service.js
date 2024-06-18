@@ -75,6 +75,7 @@ export class CartDTOERROR extends Error{
     static INTERNAL_SERVER_ERROR = 0;
     static WRONG_PRODUCTS_ARRAY = 1;
     static WRONG_FORMAT_ID = 2;
+    static EDIT_DTO_ERROR = 3;
     constructor(errorCode,operationName,message){
         super(message);
         this.name = 'UserDTOERROR';
@@ -112,6 +113,7 @@ export class ExchangePointDTOERROR extends Error{
     static INTERNAL_SERVER_ERROR = 0;
     static INVALIDS_FIELDS = 1;
     static MISSING_FIELDS = 2;
+    static EDIT_DTO_ERROR = 3;
     constructor(errorCode,operationName,message){
         super(message);
         this.name = 'DeliveryPointDTOERROR';
@@ -147,6 +149,7 @@ export class ProductDTOERROR extends Error{
     static INTERNAL_SERVER_ERROR = 0;
     static INVALIDS_FIELDS = 1;
     static MISSING_FIELDS = 2;
+    static EDIT_DTO_ERROR = 3;
     constructor(errorCode,operationName,message){
         super(message);
         this.name = 'ProductDTOERROR';

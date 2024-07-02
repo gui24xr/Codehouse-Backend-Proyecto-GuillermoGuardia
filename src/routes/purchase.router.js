@@ -14,5 +14,5 @@ routerPurchases.use(blockRoleAccessMiddleware('premium'))
 routerPurchases.post('/purchases/cartpurchase/:cid', purchaseController.cartCheckout)
 routerPurchases.post('/purchases/singlepurchase', purchaseController.singlePurchase) //Compra un producto
 //Deveulve los tickets, se usara para clientes externos que pidan tickets de users o compras y usandp filtro por query.
-//Querys validos --> code,purchaser/userId
+//Querys validos --> code,userId
 routerPurchases.get('/purchases/tickets',purchaseController.getTickets)

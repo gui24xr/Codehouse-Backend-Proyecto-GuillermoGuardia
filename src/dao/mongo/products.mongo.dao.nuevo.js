@@ -1,9 +1,10 @@
-import { configSessionFileStorage } from "../../config/sessions-config.js"
+
 import { ProductModel } from "../../models/product.model.js"
 
 
 export class MongoProductsDAO{
    
+    //Devuelve un array con todos los productos.
     async getProducts(){
         try {
             const products = await ProductModel.find()

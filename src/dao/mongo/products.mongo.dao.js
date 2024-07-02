@@ -1,9 +1,10 @@
-import { configSessionFileStorage } from "../../config/sessions-config.js"
+
 import { ProductModel } from "../../models/product.model.js"
 
 
 export class MongoProductsDAO{
    
+    //Devuelve un array con todos los productos.
     async getProducts(){
         try {
             const products = await ProductModel.find()
@@ -24,6 +25,7 @@ export class MongoProductsDAO{
 
    }
 
+   //Esto ira a servicios
    async getProductStock(productId){
     try {
        const searchedProduct = await ProductModel.findById(productId)
@@ -34,6 +36,9 @@ export class MongoProductsDAO{
    }
 
 }
+
+    //ESTO LO HARE EN SERVICE TRABAJANDO SOBRE EL DTO Y ENVIANDOLO
+    //Y USANDO EL METODO UPDATE DEL REPOSITORY
    //Solamente modifica el stock...
    //SI el stock pasar a ser cero al ser modificado entonces el status pasara a inactivo/false.
    //Stock en cero producto inactivo, stock distinto de cero el producto puede, o no ,estar activo.
@@ -67,7 +72,7 @@ export class MongoProductsDAO{
 
    
 
-
+   //rECICE EL DTO PROCESADO
    async updateProduct(productId,newProduct){
     try {
         const updatedProduct = await ProductModel.findByIdAndUpdate(productId, newProduct, { new: true });
@@ -87,6 +92,7 @@ export class MongoProductsDAO{
     }
    }
 
+   
    async deleteProduct(productId){
      try {
         const deletedProduct = await ProductModel.findByIdAndDelete(productId) 

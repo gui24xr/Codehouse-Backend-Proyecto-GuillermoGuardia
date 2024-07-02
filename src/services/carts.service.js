@@ -2,14 +2,14 @@ import { CartsServiceError, CartDTOERROR } from "./errors.service.js"
 import { CartRepository } from "../repositories/carts-repository.js"
 
 /*Aca hacemos toda la logica de negocio usando nuestro repositories */
-const cartRepository = new CartRepository()
+const cartsRepository = new CartRepository()
 
 export class CartsService {
 
     async createCart(){
         try{
-            const newCart = await cartRepository.createCart()
-            return newCart
+            const createdCart = await cartsRepository.createEmptyCart()
+            return createdCart
         }catch(error){
             if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
             else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsService.createCart|')
@@ -20,7 +20,7 @@ export class CartsService {
 
     async getCartById(cartId){
         try {
-            const searchedCart = await cartRepository.getCartById(cartId)
+            const searchedCart = await cartsRepository.getCartById(cartId)
             return searchedCart
         } catch (error) {
             if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
@@ -29,41 +29,10 @@ export class CartsService {
     }
 
 
-    async checkoutCartById(cartId){
-        //Ya nos trae un dto de carts que tiene una lista de dto products
-        try {
-            const listToPreOrder = []; //LosProducto-cantidad que iran al ticket
-            const listNoPreOrder = []; //Lo que no ira al ticket...
-            const searchedCart = await cartRepository.getCartById(cartId)//Obtengo cartDTO
-            //mi CartDTO trae info de los productos que tiene y el stock de los mismos x lo cual no hace falta comprobarstock.
-            //Recorro searchedCart.products . En searchedCart.quantity tengo la cantidad requerida y subtotal precio*cantidad.
-            // SearchedCart.products.product.stock el stock actual
-            // SearchedCart.products.product.stock el stock actual
-            // SearchedCart.products.product.price el precio unitario
-            //Armo la lista para la preOrder, esto es quitar los que no hay stock.
-            searchedCart.products.forEach(item =>{
-                //Compruebo stock vs cantidad requerida
-                if (item.quantity < item.product.stock) {
-                    listToPreOrder.push(item)
-                    //El descuento de stock lo va  ahacer el checkout service directamente.
-                }
-                else  listNoPreOrder.push(item)
-                
-            })
-            return {
-                listToPreOrder : listToPreOrder,
-                listNoPreOrder : listNoPreOrder
-            }
-        } catch (error) {
-            if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
-            else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsService.getCartById|')
-        }
-    }
-
-
+   
     async getProductsInCart(cartId){
         try {
-            const searchedCart = await cartRepository.getCartById(cartId)
+            const searchedCart = await cartsRepository.getCartById(cartId)
             return searchedCart.products
 
         } catch (error) {
@@ -76,7 +45,7 @@ export class CartsService {
     //Deveulve la cantidad de producto, si el producto no se encuentra devuelve cero, si no, la cantidad
     async getProductQuantityInCart(cartId,productId){
         try{
-            const searchedCart = await cartRepository.getCartById(cartId)
+            const searchedCart = await cartsRepository.getCartById(cartId)
             //COmo obtengo un dto y lo conoce lo busca
             const productPosition = searchedCart.products.findIndex(item => item.product.productId == productId)
             if (productPosition>=0){
@@ -100,12 +69,12 @@ export class CartsService {
           //Deveulve el carro actualizado
           const productQuantityInCart = await this.getProductQuantityInCart(cartId,productId)
           if (productQuantityInCart < 1){
-          const updatedCart = await cartRepository.addProductInCart(cartId,productId,quantity || 1)
+          const updatedCart = await cartsRepository.addProductInCart(cartId,productId,quantity || 1)
           return updatedCart
           }
           else{
             const newQuantity = (productQuantityInCart + quantity) || (productQuantityInCart + 1)
-            const updatedCart = await cartRepository.updateProductQuantityInCart(cartId,productId,newQuantity)
+            const updatedCart = await cartsRepository.updateProductQuantityInCart(cartId,productId,newQuantity)
             return updatedCart
           }
 
@@ -117,7 +86,7 @@ export class CartsService {
 
     async deleteProductFromCart(cartId,productId){
         try{
-            const updatedCart = await cartRepository.deleteProductFromCart(cartId,productId)
+            const updatedCart = await cartsRepository.deleteProductFromCart(cartId,productId)
             return updatedCart
         }catch(error){
             if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
@@ -127,7 +96,7 @@ export class CartsService {
     
     async clearCart(cartId){
         try {
-           const updatedCart = await cartRepository.clearCart(cartId)
+           const updatedCart = await cartsRepository.clearCart(cartId)
            return updatedCart
           } catch (error) {
             if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
@@ -155,7 +124,7 @@ export class CartsService {
         await Promise.all(addProductsPromises)
 
         //Ahora que ya se que en la BD todo sucedio, pido el carro actualizado para devolve.
-        const updatedCart = await cartRepository.getCartById(cartId)
+        const updatedCart = await cartsRepository.getCartById(cartId)
         return updatedCart
         
     }catch(error){
@@ -167,7 +136,7 @@ export class CartsService {
 
 async countProductsInCart(cartId){
     try {
-        const searchedCart = await cartRepository.getCartById(cartId)
+        const searchedCart = await cartsRepository.getCartById(cartId)
         return searchedCart.countProducts
 
     } catch (error) {
@@ -178,11 +147,43 @@ async countProductsInCart(cartId){
 
 async cartAmount(cartId){
     try {
-        const searchedCart = await cartRepository.getCartById(cartId)
+        const searchedCart = await cartsRepository.getCartById(cartId)
         return searchedCart.cartAmount
     } catch (error) {
         if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
         else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsService.cartAmount|')
+    }
+}
+
+
+async checkoutCartById(cartId){
+    //Ya nos trae un dto de carts que tiene una lista de dto products
+    try {
+        const listToPreOrder = []; //LosProducto-cantidad que iran al ticket
+        const listNoPreOrder = []; //Lo que no ira al ticket...
+        const searchedCart = await cartsRepository.getCartById(cartId)//Obtengo cartDTO
+        //mi CartDTO trae info de los productos que tiene y el stock de los mismos x lo cual no hace falta comprobarstock.
+        //Recorro searchedCart.products . En searchedCart.quantity tengo la cantidad requerida y subtotal precio*cantidad.
+        // SearchedCart.products.product.stock el stock actual
+        // SearchedCart.products.product.stock el stock actual
+        // SearchedCart.products.product.price el precio unitario
+        //Armo la lista para la preOrder, esto es quitar los que no hay stock.
+        searchedCart.products.forEach(item =>{
+            //Compruebo stock vs cantidad requerida
+            if (item.quantity < item.product.stock) {
+                listToPreOrder.push(item)
+                //El descuento de stock lo va  ahacer el checkout service directamente.
+            }
+            else  listNoPreOrder.push(item)
+            
+        })
+        return {
+            listToPreOrder : listToPreOrder,
+            listNoPreOrder : listNoPreOrder
+        }
+    } catch (error) {
+        if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
+        else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsService.getCartById|')
     }
 }
 

@@ -502,3 +502,8 @@
 ***[LOGGER]*** [error at 24-06-12 15:06:14] Type:UnauthorizedError in GET - /views/chat?email=guillermoxr24@gmail.com from ::1
 ***[LOGGER]*** [error at 24-06-12 15:06:38] Type:UnauthorizedError in GET - /views/chat?email=guillermoxr24@gmail.com from ::1
 ***[LOGGER]*** [error at 24-06-12 15:06:39] Type:UnauthorizedError in GET - /views/chat?email=guillermoxr24@gmail.com from ::1
+***[LOGGER]*** [fatal at 24-07-01 11:07:50] Type:InternalServerError in POST - /api/carts from ::1
+***[LOGGER]*** [fatal at 24-07-01 11:07:58] Type:InternalServerError in POST - /api/carts from ::1
+***[LOGGER]*** [fatal at 24-07-01 11:07:95] Type:InternalServerError in POST - /api/carts from ::1
+***[LOGGER]*** [fatal at 24-07-01 11:07:95] Type:InternalServerError in POST - /api/carts from ::1
+***[LOGGER]*** [fatal at 24-07-01 11:07:27] Type:InternalServerError in POST - /api/carts from ::1

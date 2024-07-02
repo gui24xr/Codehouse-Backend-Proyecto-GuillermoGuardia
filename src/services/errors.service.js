@@ -60,6 +60,10 @@ export class CartsServiceError extends Error{
     static UPDATING_ERROR = 5;
     static DELETING_ERROR = 6;
     static CREATE_ERROR = 7;
+    static INVALID_PRODUCTS_LIST = 8;
+    static GET_ERROR = 8;
+    static UPDATING_PRODUCT_QUANTITY_ERROR = 9;
+    static DELETING_PRODUCT_IN_CART_ERROR = 10;
     
     constructor(errorCode,operationName,message){
         super(message);

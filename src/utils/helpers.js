@@ -15,6 +15,7 @@ function getMissingFields(oneObject,requiredFieldsArray){
 }
 
 
+//Deveulve true o false si la cadena ingresada es un email.
 function isEmail(email) {
     // Expresión regular para validar un email
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

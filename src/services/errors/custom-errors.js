@@ -72,6 +72,7 @@ export class CartsServiceError extends Error{
     static CREATE_ERROR = 1
     static PRODUCT_NO_DELETED = 2
     static PRODUCT_NO_ADD = 3
+    static INVALID_PRODUCTS_LIST = 4
    
     
     constructor(errorCode,message){

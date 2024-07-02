@@ -28,6 +28,7 @@ export class CartsController{
         try {
             //const newCart = await cartRepository.createCart()
             const newCart = await cartsService.createCart()
+            console.log('controller: ',newCart)
             res.status(201).json({
                 status: "success", 
                 message: `Carrito creado satisfactoriamente con id ${newCart.id}`,
@@ -36,7 +37,7 @@ export class CartsController{
         } catch (error) {
             if (error instanceof CartsServiceError) next(error)
                 else {
-                    next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsController.getCartById||...'))
+                    next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsController.createCart||...'))
                 }
         }
     }

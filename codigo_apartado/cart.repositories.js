@@ -21,7 +21,6 @@ export class CartRepository {
 
     async createCart(){
         try{
-            console.log('Esta pasando a acaaaaaaaa')
             const newCart = new CartModel({products:[]})
             await newCart.save()
             //console.log(newCart)
@@ -121,7 +120,7 @@ export class CartRepository {
 
     //Si el producto existe en el carro entonces lo elimina y devuelve el carro actualizado.
     async deleteProductInCart(cartId,productId){
-        try {console.log('LLego: ',cartId, productId)
+        try {
             const searchedCart = await CartModel.findById(cartId)
             //No Existe el carro, me voy....
             if(!searchedCart) throw new CartsServiceError(CartsServiceError.NO_EXIST,`No existe carrito con ID${cartId}`)

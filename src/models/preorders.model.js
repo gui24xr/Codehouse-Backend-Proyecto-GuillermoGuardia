@@ -24,12 +24,17 @@ const preOrderSchema = mongoose.Schema({
     comment: {
         type: String
     },
-    cart:{   //Igual que users, creo un cart para esta compra y listo.
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'carts',
-        default: null
-       
-    },
+    orderList:[{
+        product:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'products',
+            required: true
+        },
+        quantity:{
+            type: Number,
+            required:true
+        }
+    }],
     payment: {
        paymentId: {
         type: String,
@@ -37,11 +42,11 @@ const preOrderSchema = mongoose.Schema({
         },
         paymentMethod: {
         type: String ,
-        defaul:null 
+        default:null 
         },
         receivedAt: {
         type: Date,
-        defaul:null  
+        default:null  
         }
 
     },

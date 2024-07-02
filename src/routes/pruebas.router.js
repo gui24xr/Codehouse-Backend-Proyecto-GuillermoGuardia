@@ -15,8 +15,10 @@ import { ProductRepository } from '../repositories/products.repositories.js'
 import { MessagesService } from '../services/messages/messages-service.js'
 import {  authMiddleware } from '../middlewares/authTokenMiddlewares.js'
 
-import { CartsService } from '../services/carts.service.js'
+
+
 import { UsersService } from '../services/users.service.js'
+import { CartRepository } from '../repositories/carts-repository.js'
 import UsersMongoDao from '../dao/mongo/users.mongo.dao.js'
 import { UsersRepository as NuevoUsersRepository } from '../repositories/users-repository.js'
 import ExchangePointsMongoDAO from '../dao/mongo/exchangepoints.mongo.dao.js'
@@ -26,6 +28,7 @@ import { exchangePointsArray } from '../../datos/exchangepointsarray.js'
 import { ProductsRepository } from '../repositories/products-repository.js'
 import { ProductsService } from '../services/products.service.js'
 import { ProductConstructionObject } from '../dto/products.dto.js'
+import { CartsService } from '../services/carts.service.js'
 const mongoProductsDAO = new MongoProductsDAO()
 
 const checkoutService = new CheckoutService()
@@ -36,8 +39,32 @@ const productsRepository = new ProductRepository()
 const cartsService = new CartsService()
 const usersService = new UsersService()
 
+
 export const router = express.Router()
 
+
+router.post('/repocarts',async(req,res)=>{
+    const cartsRepository = new CartRepository()
+    //const creado = await cartsRepository.addProductInCart('6682fe0b40c3cfbe98c597f6','664504dc6cccb495261b2fcd',20)
+    //const creado = await cartsRepository.updateProductQuantityInCart('6682fe0b40c3cfbe98c597f6','664504dc6cccb495261b2fcd',26)
+    //const creado = await cartsRepository.deleteProductFromCart('6682fe0b40c3cfbe98c597f6','664504dc6cccb495261b2fcd')
+    //const creado = await cartsRepository.clearCart('6682fe0b40c3cfbe98c597f6')
+    //const creado = await cartsRepository.getCartById('6682fe0b40c3cfbe98c597f6')
+    //const creado = await cartsRepository.createEmptyCart()
+    //const creado = await cartsRepository.createCartWithProductsList([{product:'664504dc6cccb495261b2fcd',quantity:23}])
+    const result = await cartsRepository.deleteCart('6670669cf941a85735b787b4')
+    res.send(result)
+})
+
+router.post('/servicecarts',async(req,res)=>{
+    const cartsService = new CartsService()
+
+    //const result = await cartsService.createCart()
+    //const result = await cartsService.getCartById('6670669cf941a85735b787c0')
+    //const result = await cartsService.getProductsInCart('6670669cf941a85735b787c0')
+    const result = await cartsService.getProductQuantityInCart('668419db0bbd49392ccb2334','664504dc6cccb495261b2fcd')
+    res.send(result)
+})
 
 
 router.get('/prueba',async(req,res)=>{

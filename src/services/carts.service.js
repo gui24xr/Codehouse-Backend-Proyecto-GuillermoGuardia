@@ -60,6 +60,17 @@ export class CartsService {
     }
     
 
+    async clearCart(cartId){
+        try {
+           const updatedCart = await cartsRepository.clearCart(cartId)
+           return updatedCart
+          } catch (error) {
+            if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
+            else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsService.clearCart|')
+          }
+        }
+
+
     async addProductInCart(cartId,productId,quantity){
         try {
           //La logica del negocio dice:
@@ -94,44 +105,81 @@ export class CartsService {
         }
     }
     
-    async clearCart(cartId){
-        try {
-           const updatedCart = await cartsRepository.clearCart(cartId)
-           return updatedCart
-          } catch (error) {
-            if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
-            else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsService.clearCart|')
-          }
 
-   }
-
-   async addProductListToCart(cartId,productList){
-    //Es preferible enviar la data a la capa de persistencia para no hacer tantos llamados (?)
-    //Mas adelante vamos a pedir que lo que entre a esta capa sea una instancia de objeto productListDTO
-    //Por ahora suponemos que Vendria una lista de objetos asi ..{productid: 43543543353, quantity: 32, quantity:4}
+   async addProductListToCart(cartId,newProductsList){
+   /* Para no hacer multiples llamadas a la base de datos vamos a pedir la lista actual del carro, y con las
+   reglas de negocio vamos a construir una lista nueva entre la actual y la que viene por parametro.
+   Una vez construida usamos el metodo del repository que cambia la lista entera del carro. Obtenemos el 
+   carro actualizado que nos deveulve el repository y lo devolvemos,de esta manera evitamos muchas llamadas a la
+   base de datos... 
+   La productList recibidda tiene formato [{productId:'dgdggd', quantity:323}]
+   */
     try{
-        for(let item in productList){
-            const {productId,quantity} = productList[item]
-            await this.addProductInCart(cartId,productId,quantity)
-        }
-
-        //Construyo un array de promesas para que se haga todo junto
-        const addProductsPromises = productList.map((item) =>
-            this.addProductInCart(cartId, item.productId, item.quantity)
-        )
-
-        //Espero a que todas se resuelvan.
-        await Promise.all(addProductsPromises)
-
-        //Ahora que ya se que en la BD todo sucedio, pido el carro actualizado para devolve.
-        const updatedCart = await cartsRepository.getCartById(cartId)
-        return updatedCart
+       //Pedimos el carro para obtener su lista actual y la mapeamos para que ya tenga el formato que pide el repository...
+       const searchedCart = await cartsRepository.getCartById(cartId)
+       const currentCartList = searchedCart.products.map ( item => ({productId: item.product.productId, quantity: item.quantity}))
+         
+       //Recorremos la lista de productos para agregar y vamos viendo si hay que agregar producto o actualizar cantidad.
+       newProductsList.forEach( itemInNewList => {
+            //Busco el producto en la currentCartList
+            const productInCurrentCartListPosition = currentCartList.findIndex(itemInCurrentList => itemInCurrentList.productId == itemInNewList.productId)
+            //Si es menor a cero, o sea no esta el producto de la lista nueva en el carro, entonces agregamos el producto de la lista nueva a la currentList
+            if (productInCurrentCartListPosition < 0) currentCartList.push(itemInNewList)
+            else{
+                //Pero si ya esta el producto hay que sumar la cantidad 
+                currentCartList[productInCurrentCartListPosition].quantity = currentCartList[productInCurrentCartListPosition].quantity + itemInNewList.quantity
+            }
+       })
+       //Tenemos la currentList actualizada. Se la pasamos al repository para que haga el trabajo en la BD.
+       const updatedCart = await cartsRepository.changeCartProductsList(cartId,currentCartList)
+       //Nos devuelve el dto actualizado, lo devolvemos...
+       return updatedCart
         
     }catch(error){
         if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
         else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsService.addProductListToCart|')
    }
 }
+
+
+async deleteProductListToCart(cartId,deleteProductsList){
+    /* Lo mismo que addProductListToCart pero borramos los productos que vienen en la lista, si es que estan en el carro.
+    */
+     try{
+        //Pedimos el carro para obtener su lista actual y la mapeamos para que ya tenga el formato que pide el repository...
+        const searchedCart = await cartsRepository.getCartById(cartId)
+        const currentCartList = searchedCart.products.map ( item => ({productId: item.product.productId, quantity: item.quantity}))
+          
+        //Recorremos la lista de productos para agregar y vamos viendo si hay que agregar producto o actualizar cantidad.
+        deleteProductsList.forEach( itemInDeleteList => {
+             //Busco el producto en la currentCartList
+             const productInCurrentCartListPosition = currentCartList.findIndex(itemInCurrentList => itemInCurrentList.productId == itemInDeleteList.productId)
+             //Si es mayor igual a cero, el producto esta en el carro, miro la cantidad y si al borrar cantidad a borrar menos actual entonces lo borro 
+             if (productInCurrentCartListPosition >= 0) {
+                 //Pero si ya esta el producto hay que sumar la cantidad 
+                 const currentProductQuantity = currentCartList[productInCurrentCartListPosition].quantity 
+                 const quantityToDelete = itemInDeleteList.quantity
+                 const newQuantity = currentProductQuantity - quantityToDelete
+                 if (newQuantity <= 0){
+                    //Lo borro de la currentList.
+                    currentCartList.splice(productInCurrentCartListPosition,1)
+                 }
+                 else{
+                    //Si la resta de uno menos le pongo como cantidad la newQuantity
+                    currentCartList[productInCurrentCartListPosition].quantity = newQuantity
+                 }
+             }
+        })
+        //Tenemos la currentList actualizada. Se la pasamos al repository para que haga el trabajo en la BD.
+        const updatedCart = await cartsRepository.changeCartProductsList(cartId,currentCartList)
+        //Nos devuelve el dto actualizado, lo devolvemos...
+        return updatedCart
+         
+     }catch(error){
+         if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
+         else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsService.addProductListToCart|')
+    }
+ }
 
 
 async countProductsInCart(cartId){

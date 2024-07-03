@@ -101,6 +101,22 @@ export class CartRepository{
     }
 
     
+    async changeCartProductsList(cartId,newProductsList){
+        //Pide al DAO que genere un carro con la lista que le pasara por parametro y toma el CartDTO retornado..
+        //La lista ya deberia venir armada desde el service por lo cual hay que documentar como debe ser la lista.
+        try{
+            //Dadto que la lista de service nos viene asi [{productId,quantity}] y el daoToma {product,quantity} la mapeo hasta que arregle eso.
+            const mappedList = newProductsList.map(item => ({product:item.productId,quantity:item.quantity}))
+            const updatedCart = await cartsDAO.update({cartId:cartId,productsList:mappedList})
+            return updatedCart
+        }catch(error){
+            if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
+            else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsRepository.create|')
+        }
+    }
+
+
+    
 
 
     async deleteProductFromCart(cartId,productId){

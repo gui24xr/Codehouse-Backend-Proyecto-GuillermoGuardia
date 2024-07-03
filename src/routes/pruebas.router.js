@@ -45,14 +45,14 @@ export const router = express.Router()
 
 router.post('/repocarts',async(req,res)=>{
     const cartsRepository = new CartRepository()
-    //const creado = await cartsRepository.addProductInCart('6682fe0b40c3cfbe98c597f6','664504dc6cccb495261b2fcd',20)
+    const result = await cartsRepository.addProductInCart('668419db0bbd49392ccb2334','664504dc6cccb495261b2fcd',20)
     //const creado = await cartsRepository.updateProductQuantityInCart('6682fe0b40c3cfbe98c597f6','664504dc6cccb495261b2fcd',26)
     //const creado = await cartsRepository.deleteProductFromCart('6682fe0b40c3cfbe98c597f6','664504dc6cccb495261b2fcd')
     //const creado = await cartsRepository.clearCart('6682fe0b40c3cfbe98c597f6')
     //const creado = await cartsRepository.getCartById('6682fe0b40c3cfbe98c597f6')
     //const creado = await cartsRepository.createEmptyCart()
     //const creado = await cartsRepository.createCartWithProductsList([{product:'664504dc6cccb495261b2fcd',quantity:23}])
-    const result = await cartsRepository.deleteCart('6670669cf941a85735b787b4')
+    //const result = await cartsRepository.deleteCart('6670669cf941a85735b787b4')
     res.send(result)
 })
 
@@ -62,7 +62,20 @@ router.post('/servicecarts',async(req,res)=>{
     //const result = await cartsService.createCart()
     //const result = await cartsService.getCartById('6670669cf941a85735b787c0')
     //const result = await cartsService.getProductsInCart('6670669cf941a85735b787c0')
-    const result = await cartsService.getProductQuantityInCart('668419db0bbd49392ccb2334','664504dc6cccb495261b2fcd')
+    //const result = await cartsService.getProductQuantityInCart('668419db0bbd49392ccb2334','664504dc6cccb495261b2fcda')
+    //const result = await cartsService.addProductInCart('668419db0bbd49392ccb2334','664504dc6cccb495261b318f')
+    const result = await cartsService.deleteProductFromCart('668419db0bbd49392ccb2334','664504dc6cccb495261b318f')
+    const productsList = [
+        {productId: '664504dc6cccb495261b3185', quantity:2},
+        {productId: '664504dc6cccb495261b318d', quantity:4},
+        {productId: '664504dc6cccb495261b318f', quantity:6}
+    ]
+    //const result = await cartsService.addProductListToCart('668419db0bbd49392ccb2334',productsList)
+    //const result = await cartsService.clearCart('668419db0bbd49392ccb2334')
+    //const result = await cartsService.deleteProductListToCart('668419db0bbd49392ccb2334',productsList)
+    //const countProducts = await cartsService.countProductsInCart('668419db0bbd49392ccb2334')
+    //const cartAmount = await cartsService.cartAmount('668419db0bbd49392ccb2334')
+    //console.log('fdfsdddg',countProducts,cartAmount)
     res.send(result)
 })
 

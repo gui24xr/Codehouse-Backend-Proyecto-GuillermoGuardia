@@ -38,6 +38,7 @@ export class UsersServiceError extends Error{
     static UPDATING_ERROR = 5;
     static DELETING_ERROR = 6;
     static WRONG_PASSWORD = 7;
+    static GET_ERROR = 8;
     
     constructor(errorCode,operationName,message){
         super(message);

@@ -36,9 +36,21 @@ const userSchema =  mongoose.Schema({
         default: null
        
     },
+    enabled:{
+        type: Boolean,
+        default: true
+    },
+    createdAt:{
+        type: Date,
+        default: Date.now
+    },
     last_connection:{
         type: Date,
         default: null
+    },
+    recovery_password_info:{
+        code: {type: 'String',default: null},
+        expiration:{type: date, default: null}
     },
     documents:[{
         name:{

@@ -12,30 +12,28 @@ const usersRepository = new UsersRepository()
 
 export class UsersService{
 
-   async createUser(firstName, lastName, email, password,age, role){
+   async createUser({email, password, role, firstName, lastName, age}){
         try{
             //Se validan los datos y se controla la entrada de campos
             //Esta validacion tmb se hace en la capa controllers pero aca se repite xq este servicio puede ser usado por otras capas.
             //Entre esta validaciones se debe revisar que cumpla las reglas de contraseñas en nuestra app.
             //Se crea un carro para el nuevo user y extrae el id del carro creado para asociar.
             const cartsService = new CartsService()
-            const cart = await cartsService.createCart()
-            const {id:cartId} = cart
+            const cartForNewUser = await cartsService.createCart()
+            const {cartId} = cartForNewUser
             //Se crea instancia de createUserDto
-            console.log('Tipo de eddad. ',typeof(age))
-            const dataForNewUser = new CreateUserDTO({
-                email:email,
-                password:createHash(password),
-                firstName:firstName,
+            const newUser = await usersRepository.createUserWithCart({
+                email: email,
+                password: password,
+                firstName: firstName,
                 lastName:lastName,
-                age:Number(age),
-                role:role
+                age: age,
+                role:role,
+                cartId: cartId
             })
-            
-            //Pido a repository la creacion de un usurio cond ataForNewUser y un cartId
-            const newUser = await usersRepository.createUserWithCart(dataForNewUser,cartId)
-            console.log('New user: ', newUser)
-            return newUser   //Devuelvo el user creado.
+
+            return newUser
+   
           } catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersService.createUser|','Error interno del servidor...')
@@ -48,21 +46,22 @@ export class UsersService{
     //Si va todo bien y el user existe genera un token con los datos del user para enviarle a la capa controllers
     //Devuelve el token generado y una instancia del user en formato UserDTo
     async authenticateUser(email,password){
-        console.log('fffffffffffffffffffffffffff22222')
         try{
             //Se validan la cantidad de parametros y datos, en este caso password no necesario validar.
             //Le pido a la capa repository el usuario.
             const searchedUser = await usersRepository.getUserByEmail(email)
             //Repository me devuelve dto y miro que coincida la contraseña.
-            if (searchedUser) {
+            if (searchedUser) {     
                 console.log('Searcheduser: ',searchedUser)
                 if (isValidPassword(password,searchedUser.password)) {
                     //Se crea el jsonwebtockn que se retornara ala capa controllers
                     console.log('fffffffffffffffffffffffffff33332')
-                    const updatedUser = await usersRepository.updateLastConnection(searchedUser.userId,new Date())
+                    const updatedUser = await usersRepository.setLastConnection(email,new Date())
                     const userToken = generateJWT(updatedUser)
-                    console.log('fffffffffffffffffffffffffff4442')
-                    return {userData: searchedUser, userToken:userToken}
+                    return {
+                        userData: searchedUser, 
+                        userToken:userToken
+                    }
                 } 
                 else throw new UsersServiceError(UsersServiceError.WRONG_PASSWORD,'|UsersService.authenticateUser|','El usuario y/la contraseña no coinciden...')
             }
@@ -80,7 +79,7 @@ export class UsersService{
         //Devuelve el user con el rol modificado o error segun corresponda.
         //Dado que nuestros user DTO deben cumplir reglas
         try{
-            const updatedUser = await usersRepository.setRole(userId,newRole)
+            const updatedUser = await usersRepository.setRole(email,newRole)
             return updatedUser
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
@@ -91,7 +90,9 @@ export class UsersService{
     async logout(userId){
         //Setea last connection del user y devuelve el user actualizado.
         try{
-            const updatedUser = await usersRepository.updateLastConnection(userId,new Date())
+            //Busco el email de este userID
+            const searchedUser = await usersRepository.getUserById(userId)
+            const updatedUser = await usersRepository.setLastConnection(searchedUser.email,new Date())
             console.log('En service: ',updatedUser)
             return updatedUser
         }catch(error){
@@ -123,5 +124,26 @@ export class UsersService{
     }
 
 
-   
+    async deleteInactiveUsers(selectedDate){
+        //Se valida que sea un email (hacerlo)
+        try{
+            //Pido todos los usuarios y miro cuales tienen fecha anterior o igual a la selectedDate
+            //Si cumplen la condicion va a una lista ese email
+            //La lista de emails se la pasamos a repository al metodo deleteUsers
+            const searchedUser = await usersRepository.getUserByCart(cartId)
+            return searchedUser
+        }catch(error){
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersService.getUserByEmail|','Error interno del servidor...')
+        }
+    }
+
+
+
+
+
 }
+    
+
+
+   

@@ -2,11 +2,11 @@
 import mongoose from "mongoose"
 
 const userSchema =  mongoose.Schema({
-    first_name: {
+    firstName: {
         type:String,
         required:true
     },
-    last_name: {
+    lastName: {
         type: String,
         required: true
     },
@@ -44,19 +44,23 @@ const userSchema =  mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    last_connection:{
+    lastConnection:{
         type: Date,
         default: null
     },
-    recovery_password_info:{
-        code: {type: 'String',default: null},
-        expiration:{type: date, default: null}
+    recoveryPasswordCode:{
+       type: 'String',
+       default: null
+    },
+    recoveryPasswordExpiration:{
+        type: Date, 
+        default: null
     },
     documents:[{
-        name:{
+        docName:{
             type: String,
         },
-        reference:{
+        docReference:{
             type:String,
         }
     }]

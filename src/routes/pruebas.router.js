@@ -43,39 +43,103 @@ const usersService = new UsersService()
 export const router = express.Router()
 
 
+router.post('/mongousersdaocreate',async(req,res)=>{
+
+    const usersMongoDao = new UsersMongoDao()
+    const usersArray = [
+        { email: 'usuario1@example.com', password: '123456', firstName: 'Juan', lastName: 'Pérez', age: 30, role: 'user' },
+        { email: 'usuario2@example.com', password: '123456', firstName: 'María', lastName: 'García', age: 25, role: 'user' },
+        { email: 'usuario3@example.com', password: '123456', firstName: 'Pedro', lastName: 'Sánchez', age: 35, role: 'user' },
+        { email: 'usuario4@example.com', password: '123456', firstName: 'Ana', lastName: 'Martínez', age: 28, role: 'user' },
+        { email: 'usuario5@example.com', password: '123456', firstName: 'Luis', lastName: 'López', age: 32, role: 'user' },
+        { email: 'usuario6@example.com', password: '123456', firstName: 'Elena', lastName: 'Rodríguez', age: 27, role: 'user' },
+        { email: 'usuario7@example.com', password: '123456', firstName: 'Carlos', lastName: 'Fernández', age: 31, role: 'user' },
+        { email: 'usuario8@example.com', password: '123456', firstName: 'Sara', lastName: 'Gómez', age: 29, role: 'user' }
+    ]
+
+    const results = []
+
+    for (const item of usersArray) {
+        const nuevoUser = await usersMongoDao.create({
+            email: item.email,
+            password: item.password,
+            firstName: item.firstName,
+            lastName: item.lastName,
+            role: item.role,
+            age: item.age,
+        });
+
+        console.log('Devuelto:', nuevoUser);
+
+        results.push(nuevoUser);
+    }
+  
+
+    console.log('Usuarios Creados: ', results)
+    res.send(results)
+})
+
+
+router.get('/mongousersdaoget',async(req,res)=>{
+    const usersMongoDao = new UsersMongoDao()
+    const resultsAll = await usersMongoDao.get()
+    const resultsByEmail = await usersMongoDao.get({userEmail:'usuario2@example.com'})
+    const resultsByUserId = await usersMongoDao.get({userId:'6686b79ed2eb35c189216515'})
+    const resultsByCartId = await usersMongoDao.get({userCartId:'6686b79ed2eb35c189216515'})
+    res.json({
+        byMail: resultsByEmail,
+        byuserId: resultsByUserId,
+        resultsByCartId: resultsByCartId,
+        all:resultsAll
+    })
+})
+
+router.post('/mongousersdaodelete',async(req,res)=>{
+    const usersMongoDao = new UsersMongoDao()
+    const results = await usersMongoDao.delete(['1','2',3,'usuario1@example.com'])
+
+    res.json({results})
+})
+
+router.post('/mongousersdaoupdate',async(req,res)=>{
+    const usersMongoDao = new UsersMongoDao()
+    const results = await usersMongoDao.update(
+        {userEmail:'usuario1@example.com',
+        updateObject:{
+
+            firstName: 'Guillermoss',
+            age: 25,
+            documents: [{docName:'dgdgd',docReference:'dgdgdd'}]
+            
+        }})
+
+    res.json({results})
+})
+
+
+
 router.post('/repocarts',async(req,res)=>{
     const cartsRepository = new CartRepository()
-    const result = await cartsRepository.addProductInCart('668419db0bbd49392ccb2334','664504dc6cccb495261b2fcd',20)
+    //const creado = await cartsRepository.addProductInCart('6682fe0b40c3cfbe98c597f6','664504dc6cccb495261b2fcd',20)
     //const creado = await cartsRepository.updateProductQuantityInCart('6682fe0b40c3cfbe98c597f6','664504dc6cccb495261b2fcd',26)
     //const creado = await cartsRepository.deleteProductFromCart('6682fe0b40c3cfbe98c597f6','664504dc6cccb495261b2fcd')
     //const creado = await cartsRepository.clearCart('6682fe0b40c3cfbe98c597f6')
     //const creado = await cartsRepository.getCartById('6682fe0b40c3cfbe98c597f6')
     //const creado = await cartsRepository.createEmptyCart()
     //const creado = await cartsRepository.createCartWithProductsList([{product:'664504dc6cccb495261b2fcd',quantity:23}])
-    //const result = await cartsRepository.deleteCart('6670669cf941a85735b787b4')
+    const result = await cartsRepository.deleteCart('6670669cf941a85735b787b4')
     res.send(result)
 })
+
 
 router.post('/servicecarts',async(req,res)=>{
     const cartsService = new CartsService()
 
-    //const result = await cartsService.createCart()
+    const result = await cartsService.createCart()
     //const result = await cartsService.getCartById('6670669cf941a85735b787c0')
     //const result = await cartsService.getProductsInCart('6670669cf941a85735b787c0')
-    //const result = await cartsService.getProductQuantityInCart('668419db0bbd49392ccb2334','664504dc6cccb495261b2fcda')
-    //const result = await cartsService.addProductInCart('668419db0bbd49392ccb2334','664504dc6cccb495261b318f')
-    const result = await cartsService.deleteProductFromCart('668419db0bbd49392ccb2334','664504dc6cccb495261b318f')
-    const productsList = [
-        {productId: '664504dc6cccb495261b3185', quantity:2},
-        {productId: '664504dc6cccb495261b318d', quantity:4},
-        {productId: '664504dc6cccb495261b318f', quantity:6}
-    ]
-    //const result = await cartsService.addProductListToCart('668419db0bbd49392ccb2334',productsList)
-    //const result = await cartsService.clearCart('668419db0bbd49392ccb2334')
-    //const result = await cartsService.deleteProductListToCart('668419db0bbd49392ccb2334',productsList)
-    //const countProducts = await cartsService.countProductsInCart('668419db0bbd49392ccb2334')
-    //const cartAmount = await cartsService.cartAmount('668419db0bbd49392ccb2334')
-    //console.log('fdfsdddg',countProducts,cartAmount)
+    // --- const result = await cartsService.getProductQuantityInCart('668419db0bbd49392ccb2334','664504dc6cccb495261b2fcd')
+    
     res.send(result)
 })
 
@@ -264,52 +328,6 @@ router.post('/updaterole/:username/:role',async (req,res)=>{
 
 })
 
-router.post('/mongouserdao/:username',async(req,res)=>{
-    const {username} = req.params
-    const usersMongoDao = new UsersMongoDao()
-
-    const email = `${username}@gemail.com`
-    const password = 123456
-    const firstName = 'un nombre'
-    const lastName = 'un apellido'
-    const age = 22
-    const role = 'user'
-    const cartId = '666765b6718b28823f4c05db'
-
-    const resultCreate = await usersMongoDao.createUser(email,password,firstName,lastName,role,age,cartId)
-    console.log('Create: ',resultCreate)
-    const resultGetByEmail = await usersMongoDao.getUserByEmail(email)
-    console.log('ByEmail: ',resultGetByEmail)
-    const resultGetById = await usersMongoDao.getUserByEmail(email)
-    console.log('ById: ',resultGetById)
-
-    //Obtuve un DTO, lo modifico con sus set.
-    resultGetByEmail.setLastConnection(new Date())
-    console.log('Modificado en DTO: ', resultGetByEmail)
-    let updatedResult = await usersMongoDao.updateUser(resultGetByEmail)
-    console.log('Updated: ', updatedResult)
-
-    resultGetByEmail.setRole('admin')
-    console.log('Modificado en DTO: ', resultGetByEmail)
-    updatedResult = await usersMongoDao.updateUser(resultGetByEmail)
-    console.log('Updated role: ', updatedResult)
-
-    resultGetByEmail.addDocument('avatar','urlavatar')
-    resultGetByEmail.addDocument('avatar2','urlavatar2')
-    console.log('Modificado en DTO: ', resultGetByEmail)
-    updatedResult = await usersMongoDao.updateUser(resultGetByEmail)
-    console.log('Updated doc: ', updatedResult)
-
-    resultGetByEmail.setPassword('242424')
-    console.log('Modificado en DTO paswor: ', resultGetByEmail)
-    updatedResult = await usersMongoDao.updateUser(resultGetByEmail)
-    console.log('Updated passwc: ', updatedResult)
-
-    const deleteResult = await usersMongoDao.deleteUserByEmail(email)
-    console.log('Deleted: ', deleteResult)
-    res.send('Todo OK')
-
-})
 
 router.post('/usersrepository/:userid',async(req,res)=>{
      const {userid:userId}= req.params

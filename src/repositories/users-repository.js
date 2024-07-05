@@ -8,6 +8,7 @@ const usersDAO = new UsersDAO()
 export class UsersRepository{
 
      async createUserWithCart({email,firstName,lastName,age,role,cartId}){
+        //Crea un usuario con cart.
         try{
             //Controlo parametros primero
             //Si todo Ok creo el usuario y obtengo el dto para devolver.
@@ -20,10 +21,9 @@ export class UsersRepository{
     }
 
 
-    async createUserWithoutCart({email,firstName,lastName,age,role,cartId}){
+    async createUserWithoutCart({email,firstName,lastName,age,role}){
         try{
-            //Controlo parametros primero
-            //Si todo Ok creo el usuario y obtengo el dto para devolver.
+            //Crea un usuario sin cart.
             const createdUser = await usersDAO.create({email:email,firstName:firstName,lastName:lastName,age:age,role:role})
             return createdUser
         }catch(error){
@@ -33,12 +33,9 @@ export class UsersRepository{
     }
 
     async getAllUsers(){
-        //Toma el email recibido y lo valida que sea email valido.
-        //si lo es, lo busca en la bd. si esta devuelve dto,sino error.
+        /*Devuelve un array de UserDTO con todos los usuarios de la BD*/
         try{
-            //validar mail else therow error
             const allUsers = await usersDAO.get()
-            //Como se que devuelve arrays pero me devuelve 1 elemento deveulvo ese dto obtenido en posicion cero..
             return allUsers
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
@@ -47,26 +44,26 @@ export class UsersRepository{
     } 
 
     async getUserByEmail(email){
-        //Toma el email recibido y lo valida que sea email valido.
-        //si lo es, lo busca en la bd. si esta devuelve dto,sino error.
+        /*Busca en la BD un usuario por su email y lo devuelve, si no existe, devuelve el error de usuario no existe.*/
         try{
-            //validar mail else therow error
-            const searchedUser = await usersDAO.get({userEmail:email})
-            //Como se que devuelve arrays pero me devuelve 1 elemento deveulvo ese dto obtenido en posicion cero..
-            return searchedUser[0]
+            const searchResult = await usersDAO.get({userEmail:email})
+            /*Como se que devuelve arrays pero me devuelve 1 elemento deveulvo ese dto obtenido en posicion cero, y si el usuario no existe lanzo error...*/
+            if (searchResult.length > 0) return searchResult[0]
+            else throw new UsersServiceError(UsersServiceError.USER_NO_EXIST,'|UsersRepository.getUserByEmail|',`El usuario con emails ${email} no existe en la base de datos...`)
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.getUserByEmail|','Error interno del servidor...')
         }
     }
 
+
     async getUserByCart(cartId){
-        //Toma el email recibido y lo valida que sea email valido.
-        //si lo es, lo busca en la bd. si esta devuelve dto,sino error.
+       /*Busca en la BD por suun usuario por su cartId y lo devuelve, si no existe, devuelve el error de usuario no existe.*/
         try{
-            const searchedUser = await usersDAO.get({userCartId:cartId})
-            //Como se que devuelve arrays pero me devuelve 1 elemento deveulvo ese dto obtenido en posicion cero..
-            return searchedUser[0]
+            const searchResult = await usersDAO.get({userCartId:cartId})
+             /*Como se que devuelve arrays pero me devuelve 1 elemento deveulvo ese dto obtenido en posicion cero, y si el usuario no existe lanzo error...*/
+             if (searchResult.length > 0) return searchResult[0]
+            else throw new UsersServiceError(UsersServiceError.USER_NO_EXIST,'|UsersRepository.getUserByCart|',`El usuario con cartId ${cartId} no existe en la base de datos...`)
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.getUserByCart|','Error interno del servidor...')
@@ -78,9 +75,10 @@ export class UsersRepository{
         //Toma el email recibido y lo valida que sea email valido.
         //si lo es, lo busca en la bd. si esta devuelve dto,sino error.
         try{
-            const searchedUser = await usersDAO.get({userId:userId})
-            //Como se que devuelve arrays pero me devuelve 1 elemento deveulvo ese dto obtenido en posicion cero..
-            return searchedUser[0]
+            const searchResult = await usersDAO.get({userId:userId})
+              /*Como se que devuelve arrays pero me devuelve 1 elemento deveulvo ese dto obtenido en posicion cero, y si el usuario no existe lanzo error...*/
+            if (searchResult.length > 0) return searchResult[0]
+            else throw new UsersServiceError(UsersServiceError.USER_NO_EXIST,'|UsersRepository.getUserById|',`El usuario con usuario ${userId} no existe en la base de datos...`)
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.getUserById|','Error interno del servidor...')
@@ -89,17 +87,18 @@ export class UsersRepository{
 
 
     async setLastConnection(userEmail,newLastConnection){
-        //Recibe el email del user y lo valida para buscarlo en la capa de persistencia.
-        //Recibe de la capa de persistencia un userDTO, le setea lo requerido y le pide a la capa de persistencia el update.
-        //La capa de persistencia le envia el userDTO del registro modificado y esta capa lo envia a la capa service.
+        /* Setea el campo lastConnection del userEmail pasado por parametro.
+           Devuelve un userDTO con el usuario ya modificado.
+           Si hubo un problema durante la actualizacion devuelve error.
+        */
         try{
-            //Busca el usuario y recibe un DTO, si no hubiese usuario va a error por la implementacion de la capa de persistencia.
+     
             const updatedUser = await usersDAO.update({
                 userEmail:userEmail,
-                updateObjecto:{
+                updateObject:{
                     lastConnection:newLastConnection
                 }})
-            return updatedUser //Se deveulve el dto con el lastConnection modificado
+            return updatedUser 
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.setLastConnection|','Error interno del servidor...')
@@ -108,11 +107,11 @@ export class UsersRepository{
     }
 
     async setPassword(userEmail,newPassword){
-        //Recibe el email del user y lo valida para buscarlo en la capa de persistencia.
-        //Recibe de la capa de persistencia un userDTO, le setea lo requerido y le pide a la capa de persistencia el update.
-        //La capa de persistencia le envia el userDTO del registro modificado y esta capa lo envia a la capa service.
+        /* Setea el campo password del userEmail pasado por parametro.
+           Devuelve un userDTO con el usuario ya modificado.
+           Si hubo un problema durante la actualizacion devuelve error.
+        */
         try{
-            //Busca el usuario y recibe un DTO, si no hubiese usuario va a error por la implementacion de la capa de persistencia.
             const updatedUser = await usersDAO.update({
                 userEmail:userEmail,
                 updateObject:{
@@ -126,12 +125,13 @@ export class UsersRepository{
     
     }
 
+
     async setRole(userEmail,newRole){
-        //Recibe el email del user y lo valida para buscarlo en la capa de persistencia.
-        //Recibe de la capa de persistencia un userDTO, le setea lo requerido y le pide a la capa de persistencia el update.
-        //La capa de persistencia le envia el userDTO del registro modificado y esta capa lo envia a la capa service.
+          /* Setea el campo role del userEmail pasado por parametro.
+           Devuelve un userDTO con el usuario ya modificado.
+           Si hubo un problema durante la actualizacion devuelve error.
+        */
         try{
-            //Busca el usuario y recibe un DTO, si no hubiese usuario va a error por la implementacion de la capa de persistencia.
             const updatedUser = await usersDAO.update({
                 userEmail:userEmail,
                 updateObject:{
@@ -145,11 +145,13 @@ export class UsersRepository{
     
     }
 
-    //La usaremos para los users que inician sesion y vinciular a su carro de local storage
+    
+    //La usaremos para los users que inician sesion y estaban llenando su carro en el localsotrage lado cliente.
     async setCart(userEmail,newCartId){
-        //Recibe el email del user y lo valida para buscarlo en la capa de persistencia.
-        //Recibe de la capa de persistencia un userDTO, le setea lo requerido y le pide a la capa de persistencia el update.
-        //La capa de persistencia le envia el userDTO del registro modificado y esta capa lo envia a la capa service.
+          /* Setea el campo cart del userEmail pasado por parametro.
+             Devuelve un userDTO con el usuario ya modificado.
+            Si hubo un problema durante la actualizacion devuelve error.
+        */
         try{
             //Busca el usuario y recibe un DTO, si no hubiese usuario va a error por la implementacion de la capa de persistencia.
             const updatedUser = await usersDAO.update({
@@ -166,10 +168,13 @@ export class UsersRepository{
     }
 
 
-
+    //Lo vamos a usar para habilitar/inhabilitar usuarios en la app.
      async userSetEnabled(userEmail,newState){
         try{
-            //Busca el usuario y recibe un DTO, si no hubiese usuario va a error por la implementacion de la capa de persistencia.
+              /* Setea el campo enabled del userEmail pasado por parametro.
+                Devuelve un userDTO con el usuario ya modificado.
+                Si hubo un problema durante la actualizacion devuelve error.
+        */
             const updatedUser = await usersDAO.update({
                 userEmail:userEmail,
                 updateObject:{
@@ -184,7 +189,12 @@ export class UsersRepository{
     }
 
     
+    //Lo utilizaremos para el seteo de contraseñas.
     async setRecoveryPasswordInfo(userEmail,newRecoveryPasswordCode,newRecoveryPasswordExpiration){
+        /* Setea los campos recoveryPasswordCode y recoveryPasswordExpiration del userEmail pasado por parametro.
+           Devuelve un userDTO con el usuario ya modificado.
+           Si hubo un problema durante la actualizacion devuelve error.
+        */
         try{
       
             const updatedUser = await usersDAO.update({
@@ -201,7 +211,13 @@ export class UsersRepository{
     
     }
 
+
+    //Lo usaremos para modificar esta parte de informacion del perfil de usuario
     async setUserProfileInfo({userEmail,firstName,lastName,age}){
+        /* Setea los campos firstName,lastName y age del userEmail pasado por parametro.
+           Devuelve un userDTO con el usuario ya modificado.
+           Si hubo un problema durante la actualizacion devuelve error.
+        */
         try{
       
             const updatedUser = await usersDAO.update({
@@ -220,15 +236,17 @@ export class UsersRepository{
     }
 
     async addUserDocument(userEmail,newDocName,newDocReference){
-    
+        /* Agrega el usuario userEmail el documento newDocName y la referencia newDocReference
+           Devuelve un userDTO con el usuario ya modificado.
+           Si hubo un problema durante la actualizacion devuelve error.
+        */
         try{
             //Se busca el user en la base de datos y se mira su lista de documentos. Se le agrega el nuevo y se hace el update
-            const searchedUser = await this.getUserByEmail(userEmail)
-            //if user no existe lanzo error
+            const searchedUser = await this.getUserByEmail(userEmail)  //if user no existe se lanza error por accion de la funcion getUserByEmail
             //Leo desde el dto la lista de documentos actual y le agrego el documento.
             const currentDocsList = searchedUser.documents
             currentDocsList.push({docName:newDocName,docReference:newDocReference})
-            //Ahora inserto la lista ya actualizada y devuelvo el dto actualizado.
+            //Ahora inserto la lista ya actualizada a la base de datos y devuelvo el dto actualizado.
             const updatedUser = await usersDAO.update({
                 userEmail:userEmail,
                 updateObject:{
@@ -243,12 +261,16 @@ export class UsersRepository{
     
     }
 
+
     async deleteUserDocument(userEmail,docNameForDelete){
-    
+         /* Borra el al userEmail el documento docNameForDelete.
+            Si el documento a borrar no existe, se lanza error.
+            Devuelve un userDTO con el usuario ya modificado.
+            Si hubo un problema durante la actualizacion devuelve erro por accion del update del dao.
+        */
         try{
             //Se busca el user en la base de datos y se mira su lista de documentos. Se le agrega el nuevo y se hace el update
             const searchedUser = await this.getUserByEmail(userEmail)
-            //if user no existe lanzo error
             //Leo desde el dto la lista de documentos actual y le agrego el documento.
             const currentDocsList = searchedUser.documents
             //Busco si existe el docName que tenga el nombre pedido
@@ -263,7 +285,6 @@ export class UsersRepository{
                     documents: currentDocsList
                 }})
             return updatedUser //Se deveulve el dto con cartId Modificado
-        
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.deleteUserDocument|','Error interno del servidor...')
@@ -273,11 +294,14 @@ export class UsersRepository{
 
 
     async updateUserDocument(userEmail,docNameForUpdate,newDocReference){
-    
+        /*  Setea al userEmail el docNameForUpdate  con el valor newDocReference
+            Si el documento a actualizar no existe, se lanza error.
+            Devuelve un userDTO con el usuario ya modificado.
+            Si hubo un problema durante la actualizacion devuelve erro por accion del update del dao.
+        */
         try{
             //Se busca el user en la base de datos y se mira su lista de documentos. Se le agrega el nuevo y se hace el update
             const searchedUser = await this.getUserByEmail(userEmail)
-            //if user no existe lanzo error
             //Leo desde el dto la lista de documentos actual y le agrego el documento.
             const currentDocsList = searchedUser.documents
             //Busco si existe el docName que tenga el nombre pedido
@@ -292,7 +316,6 @@ export class UsersRepository{
                     documents: currentDocsList
                 }})
             return updatedUser
-        
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.updateUserDocument|','Error interno del servidor...')
@@ -303,13 +326,9 @@ export class UsersRepository{
     }
 
     async deleteUsersList(usersListForDelete){
+       
         try{
-            //Ya que la idea es mostrar los datos delos borrados primero los guardo
-            //Pido todos los users al DAO, los que estan en  lista los guardo en otra lista
-            //mando a borrar
-            //si salio todo ok y coincide todo envio los resultados
-            const deleteResults = await usersDAO.delete(usersListForDelete)
-
+           
         }catch(error){
 
         }

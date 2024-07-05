@@ -145,36 +145,76 @@ export default class UsersMongoDao{
 
     
     
-    async delete(usersListForDelete){
-        /*
-         Va a recibir una lista de emails o sea (users) para eliminar.
-         Va a recorrer la lista, va a eliminar cada uno de la lista y va a devolver una lista con el resultado de 
-         la eliminacion
-          Recibe: ['mail1@gmail.com','mail1@gmail.com','mail1@gmail.com','mail1@gmail.com',...,'mail1@gmail.com']
-          Quita si eventualment hay repetidos.
-          Recorre y elimina. Si salio todo ok pone en la lista de devolucion un objeto:{user: valor ,deleted:true}
-          //Si no es un email no lo borra.
-          Esto es mas que nada x si eventualmente me mandan un usuario no existente.
-        */
+    async deleteByUsersList(usersListForDelete){
+        /* Borra una lista de usuarios. La lista es una lista con los emails */
         try{
+            //Valido que sean email, de lo contrario lanzo error.
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            //Quitar repetidos para no hacer trabajo innecesario.
-            const resultsList = []
-            const usersToDelete = [...new Set(usersListForDelete)]
-            //POrocede a recorrer y eliminar.
-            for (const item of usersToDelete){
-                if (emailRegex.test(item)){
-                    const deleteResult = await UserModel.deleteOne({ email: item })
-                    if (deleteResult.deletedCount === 1) resultsList.push({user:item,deleted:true})
-                    else resultsList.push({user:item,deleted:false})
-                }else{
-                    resultsList.push({user:item , deleteResult: false})
-                }
+            usersListForDelete.forEach(item => {
+                if (!emailRegex.test(item))throw new UsersServiceError(UsersServiceError.DELETING_ERROR,'|UsersMongoDAO.deleteByUsersList|','En la lista de users a borrar hay datos que no son email...')
+            })
+
+            //Quitar repetidos(SI los hubiese) para no hacer peticiones demas a la BD.
+            const usersToDelete = [...new Set(usersListForDelete)] //Esto es una lista de emails.
+            
+            //Preparo el filtro para eliminar
+            const conditionsForDelete = { email: { $in: usersToDelete } };
+
+            //Busco en la BD los usuarios antes de eliminarlos...
+            const listOfUsersToDelete = await UserModel.find(conditionsForDelete)
+            if (!listOfUsersToDelete || listOfUsersToDelete.length === 0) {
+                throw new UsersServiceError(UsersServiceError.DELETING_ERROR, '|UsersMongoDAO.deleteByUsersList|', 'No se encontraron usuarios para eliminar.');
             }
-            return resultsList
+
+            //Estando todo en condiciones procedo al borrado....
+            const deleteResult = await UserModel.deleteMany(conditionsForDelete)
+           
+            //SI no todos fueron borrados lanzo error.
+            if (deleteResult.deletedCount < listOfUsersToDelete) throw new UsersServiceError(UsersServiceError.DELETING_ERROR,'|UsersMongoDAO.deleteByLastConnection|','Uno o mas registros no pudieron ser borrados correctamente...')
+            
+            //Convierto la lista en DTO y la devuelvo
+            const deletedUsersDTO = listOfUsersToDelete.map(item => (this.getUserDTO(item)))
+            return deletedUsersDTO 
+
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
-            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersMongoDAO.delete|')
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersMongoDAO.deleteByUsersList|')
+        }
+    }
+
+
+
+    async deleteByLastConnection(selectedLastConnection){
+        /* Borra todos los usuarios que su lastConnection sea anterior  lastConnection. 
+           Si no se encuentran usuarios a eliminar o se eliminan menos por alguna circunstancia lanza error.
+           Si el string de fecha pasado por parametro no cumple condiciones tambien lanza error.
+        */
+        try{
+            //Preparo las condiciones de borrado
+            const conditionDate = new Date(selectedLastConnection)
+            const conditionsForDelete = { lastConnection : {$lt: conditionDate}}
+
+            //Obtengo de la Base de datos todos los user que cumplen la condicion y me los guardo
+            const listOfUsersToDelete = await UserModel.find(conditionsForDelete)
+            
+            //SI ninguno cumple la condicion lanzo error.
+            if (!listOfUsersToDelete || listOfUsersToDelete.length === 0) {
+                throw new UsersServiceError(UsersServiceError.DELETING_ERROR, '|UsersMongoDAO.deleteByLastConnection|', 'No se encontraron usuarios para eliminar.');
+            }
+
+            //Procedo a borrar.
+            const deleteResult = await UserModel.deleteMany(conditionsForDelete)
+           
+            //Si alguno no fue borrado lanzo error.
+            if (deleteResult.deletedCount < listOfUsersToDelete) throw new UsersServiceError(UsersServiceError.DELETING_ERROR,'|UsersMongoDAO.deleteByLastConnection|','Uno o mas registros no pudieron ser borrados correctamente...')
+            
+            //Devuielvo dto con la lista de borrados.
+            const deletedUsersDTO = listOfUsersToDelete.map(item => (this.getUserDTO(item)))
+            return deletedUsersDTO 
+
+        }catch(error){
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersMongoDAO.deleteByLastConnection|',error)
         }
     }
 

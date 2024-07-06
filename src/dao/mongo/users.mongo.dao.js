@@ -2,7 +2,7 @@ import { UserModel } from "../../models/user.models.js";
 import { UserDTOERROR, UsersServiceError } from "../../services/errors.service.js";
 import { UserDTO } from "../../dto/users.dto.js";
 import { isEmail } from "../../utils/helpers.js";
-import { query } from "express";
+
 
 //Importar errores
 
@@ -21,7 +21,7 @@ export default class UsersMongoDao{
             lastName: userFromDB.lastName,
             age: userFromDB.age,
             role: userFromDB.role,
-            cartId: userFromDB.cart,
+            cartId: userFromDB.cartId,
             createdAt: userFromDB.createdAt,
             enabled: userFromDB.enabled,
             recoveryPasswordCode : userFromDB.recoveryPasswordCode,
@@ -51,7 +51,7 @@ export default class UsersMongoDao{
                 lastName: lastName,
                 age: age,
                 role: role,
-                cart: cartId || null
+                cartId: cartId || null
             })
             await newUser.save() // Lo guardo en la BD
             return this.getUserDTO(newUser)// Devuelvo el DTO
@@ -63,6 +63,7 @@ export default class UsersMongoDao{
 
 
   
+    //Sumar el caso en que el id no es de mongo
     async get(queryObject){
         /* Puede funcionar de 2 formas:
             A- Si no se pasa por parametro un queryObject devuelve un array de UserDTO con todos los registros de la coleccion.

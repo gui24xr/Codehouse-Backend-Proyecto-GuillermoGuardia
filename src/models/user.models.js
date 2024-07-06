@@ -30,7 +30,7 @@ const userSchema =  mongoose.Schema({
         default: "user", //Asignamos por default "user"
         required: true,
     },
-    cart:{
+    cartId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'carts',
         default: null

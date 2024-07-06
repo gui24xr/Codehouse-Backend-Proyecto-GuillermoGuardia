@@ -7,12 +7,13 @@ const usersDAO = new UsersDAO()
 
 export class UsersRepository{
 
-     async createUserWithCart({email,firstName,lastName,age,role,cartId}){
+     async createUserWithCart({email,password,firstName,lastName,age,role,cartId}){
         //Crea un usuario con cart.
+        //Validar que vengan los parametros correctos, si no, error
         try{
             //Controlo parametros primero
             //Si todo Ok creo el usuario y obtengo el dto para devolver.
-            const createdUser = await usersDAO.create({email:email,firstName:firstName,lastName:lastName,age:age,role:role,cartId:cartId})
+            const createdUser = await usersDAO.create({email:email,password:password, firstName:firstName,lastName:lastName,age:age,role:role,cartId:cartId})
             return createdUser
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
@@ -21,10 +22,11 @@ export class UsersRepository{
     }
 
 
-    async createUserWithoutCart({email,firstName,lastName,age,role}){
+    async createUserWithoutCart({email,password,firstName,lastName,age,role}){
         try{
             //Crea un usuario sin cart.
-            const createdUser = await usersDAO.create({email:email,firstName:firstName,lastName:lastName,age:age,role:role})
+              //Validar que vengan los parametros correctos, si no, error
+            const createdUser = await usersDAO.create({email:email, password:password,firstName:firstName,lastName:lastName,age:age,role:role})
             return createdUser
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
@@ -92,11 +94,11 @@ export class UsersRepository{
            Si hubo un problema durante la actualizacion devuelve error.
         */
         try{
-     
+            //Convertir en DATE ysi no se puede recuperar error en throw
             const updatedUser = await usersDAO.update({
                 userEmail:userEmail,
                 updateObject:{
-                    lastConnection:newLastConnection
+                    lastConnection:new Date(newLastConnection)
                 }})
             return updatedUser 
         }catch(error){
@@ -131,6 +133,7 @@ export class UsersRepository{
            Devuelve un userDTO con el usuario ya modificado.
            Si hubo un problema durante la actualizacion devuelve error.
         */
+       //validar queu sea un role valido en la BD
         try{
             const updatedUser = await usersDAO.update({
                 userEmail:userEmail,
@@ -195,13 +198,14 @@ export class UsersRepository{
            Devuelve un userDTO con el usuario ya modificado.
            Si hubo un problema durante la actualizacion devuelve error.
         */
+        //SI no se puede comvertir en DATE dara error
         try{
       
             const updatedUser = await usersDAO.update({
                 userEmail:userEmail,
                 updateObject:{
                     recoveryPasswordCode: newRecoveryPasswordCode,
-                    recoveryPasswordExpiration: newRecoveryPasswordExpiration
+                    recoveryPasswordExpiration: new Date(newRecoveryPasswordExpiration)
                 }})
             return updatedUser 
         }catch(error){
@@ -323,6 +327,17 @@ export class UsersRepository{
 
         
 
+    }
+
+    async deleteByLastConnectionBefore(selectedDate){
+       
+        try{
+           const result = await usersDAO.deleteByLastConnection(new Date(selectedDate))
+           return result
+        }catch(error){
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.deleteByLastConnectionBefore|','Error interno del servidor...')
+        }
     }
 
     async deleteUsersList(usersListForDelete){

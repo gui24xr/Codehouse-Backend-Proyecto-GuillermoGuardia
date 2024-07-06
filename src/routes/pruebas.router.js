@@ -20,7 +20,7 @@ import {  authMiddleware } from '../middlewares/authTokenMiddlewares.js'
 import { UsersService } from '../services/users.service.js'
 import { CartRepository } from '../repositories/carts-repository.js'
 import UsersMongoDao from '../dao/mongo/users.mongo.dao.js'
-import { UsersRepository as NuevoUsersRepository } from '../repositories/users-repository.js'
+import { UsersRepository } from '../repositories/users-repository.js'
 import ExchangePointsMongoDAO from '../dao/mongo/exchangepoints.mongo.dao.js'
 import { ExchangePointsRepository } from '../repositories/exchangepoints-repository.js'
 import { ExchangePointsService } from '../services/exchangepoints.service.js'
@@ -42,7 +42,35 @@ const usersService = new UsersService()
 
 export const router = express.Router()
 
+router.post('/repousers',async (req,res,err)=>{
 
+    try{
+        const user1 = { email: 'usuario27@example.com', password: '123456', firstName: 'Juan', lastName: 'Pérez', age: 30, role: 'user', cartId:'6670669cf941a85735b787b8' }
+        const user2 = { email: 'usuario29@example.com', password: '123456', firstName: 'Juan', lastName: 'Pérez', age: 30, role: 'user' }
+        const usersRepository = new UsersRepository()
+    
+        //const result = await usersRepository.createUserWithCart(user1)
+        //const result = await usersRepository.createUserWithoutCart(user2)
+        //const result = await usersRepository.getAllUsers()
+        //const result = await usersRepository.getUserByEmail(user1.email)
+        //const result = await usersRepository.getUserByCart('6670669cf941a85735b787b8')
+        //const result = await usersRepository.getUserById('66887ca062582de3b31c426f')
+        //const result = await usersRepository.setLastConnection(user1.email,'2024-6-2')
+        //const result = await usersRepository.setPassword(user1.email,'1234567891011')
+        //const result = await usersRepository.setRole(user1.email,'premium')
+        //-- REVISAR -- const result = await usersRepository.setCart(user1.email,'6670669cf941a85735b787c2')
+        //const result = await usersRepository.userSetEnabled(user1.email,false)
+        //const result = await usersRepository.setRecoveryPasswordInfo(user1.email,'242424','2024-7-1')
+        // -- REVISAR -- const result = await usersRepository.setUserProfileInfo(user1.email,'Gui','ller',24)
+        //const result = await usersRepository.addUserDocument(user1.email,'avatar','refAvat')
+        // -- REVISAR -- const result = await usersRepository.deleteUserDocument(user1.email,'avatar')
+        // -- REVISAR const result = await usersRepository.updateUserDocument(user1.email,'avatar','refAvat1')
+        res.send(result)
+    }catch(error){
+        res.status(500).json({message: `Error: - ${error.message}`})
+    }
+   
+})
 router.post('/mongousersdaocreate',async(req,res)=>{
 
     const usersMongoDao = new UsersMongoDao()

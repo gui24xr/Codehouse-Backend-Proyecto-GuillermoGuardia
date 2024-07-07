@@ -1,5 +1,5 @@
 import express from 'express'
-import { CartsController } from '../controllers/carts-controller.js'
+import { CartsController } from '../controllers/carts.controller.js'
 import { authMiddleware,blockRoleAccessMiddleware } from '../middlewares/authTokenMiddlewares.js'
 
 //Creo mi instancia de objeto Router

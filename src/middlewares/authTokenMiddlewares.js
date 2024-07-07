@@ -5,7 +5,7 @@ import { CartsService } from "../services/carts.service.js";
 const cartsService = new CartsService()
 
 import passport from "passport";
-import { UnauthorizedError, TokenVerificationError } from "../services/errors/custom-errors.js";
+import { UnauthorizedError, TokenVerificationError } from "../services/errors.service.js";
 
 
 //Este middleware lo utilizare para enviar a handlebars siempre los datos de sesion

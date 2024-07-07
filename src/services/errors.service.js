@@ -25,6 +25,21 @@ export class IncompleteFieldsError extends Error{
     }
 }
 
+export class InputValidationServiceError extends Error{
+    static INTERNAL_SERVER_ERROR = 0;
+    static INCOMPLETE_FIELDS = 1;
+    static INVALID_VALUES = 2; //No llego un userDTO
+
+    
+    constructor(errorCode,operationName,message){
+        super(message);
+        this.name = 'InputValidationServiceError';
+        this.code = errorCode || InputValidationServiceError.INTERNAL_SERVER_ERROR; //una constante static de codigo
+        this.operationName = operationName; //Funcion donde se dio la falla
+    }
+}
+
+
 
 //Todos los errore de lo que tiene que ver con el servicio de cualquier capa de usuarios
 export class UsersServiceError extends Error{
@@ -159,6 +174,83 @@ export class ProductDTOERROR extends Error{
         super(message);
         this.name = 'ProductDTOERROR';
         this.code = errorCode || ProductDTOERROR.INTERNAL_SERVER_ERROR; //una constante static de codigo
+        this.operationName = operationName; //Funcion donde se dio la falla
+    }
+}
+
+export class UnauthorizedError extends Error{
+
+    //Codigos posibles.
+    static INTERNAL_SERVER_ERROR = 0;
+    static NO_USER = 1;
+    static INVALID_ROLE = 2;
+ 
+    constructor(errorCode,operationName,message){
+        super(message);
+        this.name = 'UnauthorizedError';
+        this.code = errorCode || UnauthorizedError.INTERNAL_SERVER_ERROR; //una constante static de codigo
+        this.operationName = operationName; //Funcion donde se dio la falla
+    }
+}
+
+
+export class TokenVerificationError extends Error{
+
+    //Codigos posibles.
+    static INTERNAL_SERVER_ERROR = 0;
+    static GENERIC_ERROR = 1;
+
+ 
+    constructor(errorCode,operationName,message){
+        super(message);
+        this.name = 'TokenVerificationError';
+        this.code = errorCode || TokenVerificationError.INTERNAL_SERVER_ERROR; //una constante static de codigo
+        this.operationName = operationName; //Funcion donde se dio la falla
+    }
+}
+
+
+export class TicketsServiceError extends Error{
+
+    //Codigos posibles.
+    static INTERNAL_SERVER_ERROR = 0;
+    static GENERIC_ERROR = 1;
+
+ 
+    constructor(errorCode,operationName,message){
+        super(message);
+        this.name = 'TicketsService';
+        this.code = errorCode || TicketsService.INTERNAL_SERVER_ERROR; //una constante static de codigo
+        this.operationName = operationName; //Funcion donde se dio la falla
+    }
+}
+
+export class CheckoutServiceError extends Error{
+
+    //Codigos posibles.
+    static INTERNAL_SERVER_ERROR = 0;
+    static GENERIC_ERROR = 1;
+
+ 
+    constructor(errorCode,operationName,message){
+        super(message);
+        this.name = 'TicketsService';
+        this.code = errorCode || TicketsService.INTERNAL_SERVER_ERROR; //una constante static de codigo
+        this.operationName = operationName; //Funcion donde se dio la falla
+    }
+}
+
+export class InternalServerError extends Error{
+
+    //Codigos posibles.
+    static INTERNAL_SERVER_ERROR = 0;
+    static GENERIC_ERROR = 1;
+
+ 
+    constructor(errorCode,operationName,message){
+        super(message);
+        this.name = 'TicketsService';
+        this.code = errorCode || TicketsService.INTERNAL_SERVER_ERROR; //una constante static de codigo
         this.operationName = operationName; //Funcion donde se dio la falla
     }
 }

@@ -1,5 +1,5 @@
 import { TicketModel } from "../models/ticket.model.js";
-import { InternalServerError, TicketsServiceError } from "../services/errors/custom-errors.js";
+import { InternalServerError, TicketsServiceError } from "../services/errors.service.js"
 
 export class TicketsRepositories{
 

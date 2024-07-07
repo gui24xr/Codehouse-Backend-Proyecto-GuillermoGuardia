@@ -1,6 +1,6 @@
 import express from 'express'
 import { authMiddleware,blockRoleAccessMiddleware } from '../middlewares/authTokenMiddlewares.js'
-import { PurchasesController } from '../controllers/purchases-controller.js'
+import { PurchasesController } from '../controllers/purchases.controller.js'
 
 
 const purchaseController = new PurchasesController()

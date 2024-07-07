@@ -1,11 +1,22 @@
 import { ProductRepository } from "../repositories/products.repositories.js";
-//import { CartRepository } from "../repositories/cart.repositories.js";
 import { CartsService } from "../services/carts.service.js";
-
 import { TicketsRepositories } from "../repositories/ticket.repositories.js";
 import { CheckoutService } from "../services/checkout/checkout-service.js";
 import { getMissingFields } from "../utils/helpers.js";
-import { IncompleteFieldsError, UsersServiceError, CartsServiceError, InternalServerError, CheckoutServiceError, ProductsServiceError, TicketsServiceError } from "../services/errors/custom-errors.js";
+
+
+
+
+import { 
+  IncompleteFieldsError,
+  UsersServiceError,
+  CartsServiceError,
+  ProductsServiceError,
+  TicketsServiceError,
+  CheckoutServiceError,
+  InternalServerError
+
+} from "../services/errors.service.js";
 
 import { transformDate } from "../utils/hour.js";
 const productsRepository = new ProductRepository();
@@ -18,37 +29,6 @@ const ticketRepositories = new TicketsRepositories();
 export class ViewsController {
   
   
-  /*async viewHome(req, res) {
-    //Teniendo en cuenta que en res.locals.sessionData tenemos datos de si hay token activo
-    //SI al entrar a home encontramos que hay user logueado lo redirijo a la vista viewproductspaginate
-    //Si no hay user con token.
-    //console.log('ssfs: ',res.locals.sessionData)
-
-    if (res.locals.sessionData.login) {
-      res.redirect("/views/mainproductslist");
-    } else {
-      try {
-        const productsList = await productsRepository.getProducts();
-        const mappedProducts = productsList.map((item) => ({
-          id: item.id,
-          title: item.title,
-          description: item.description,
-          price: item.price,
-          img: item.img,
-          code: item.code,
-          category: item.category,
-          stock: item.stock,
-          status: item.status,
-          thumbnails: item.thumbnails,
-        }));
-        res.render("home", { productsList: mappedProducts });
-      } catch (error) {
-        throw new Error("Error al intentar mostrar la vista productos...");
-      }
-    }
-  }
-  */
-
   async viewProductsList(req, res,next) {
     console.log(res);
     try {
@@ -240,76 +220,7 @@ export class ViewsController {
     res.render("realTimeProducts");
   }
 
-  /*
-  viewLogout(req, res,next) {
-    //Diferente a logout de api
-    //Este logou es para vistas, hace lo mismo pero ademas redirigje y acomdoda variables
-    //Limpia de las cookies el token existente
-    //Busca el token que tiene el nombre de los token de nuestra app.
-    res.clearCookie(process.env.COOKIE_AUTH_TOKEN);
-    //Limpio mis variables de sesion
-    res.locals.sessionData.login = false;
-    res.redirect("/");
-  }
-    */
-
-  /*
-  async viewLoginPost(req, res,next) {
-    //Hace lo mismo que api/login pero si esta todo Ok redirecciona a home
-    //Si home detecta que hay un jwt valido entonces reenvia a products
-    //No es necesario setear las variablesd e sesion xq de eso se encarga el middleware que fabrique y extrae los datos del JWT y los pone en req.sessions.global
-    const { email, password } = req.body; // console.log(req.body)
-    const requiredFields = ['email', 'password']
-    const missingFields = getMissingFields(req.body,requiredFields)
-    try {
-      if (missingFields.length > 0)  throw new IncompleteFieldsError(`Faltan ingresar los siguientes campos: ${missingFields}`)
-      const authenticateUser = await usersRepository.authenticateUser(email,password)
-      //Salio Ok entonces envio token con la informacion del usuario
-      res.cookie(process.env.COOKIE_AUTH_TOKEN, generateJWT(authenticateUser), {maxAge: 3600000,  httpOnly: true  })
-      //Redirijo a la raiz y va a aparecer logueado y la barra de sesion con su info gracias a la lectura del token y el middleware
-      res.redirect("/")
-      
-    } catch (error) {
-      if (error instanceof IncompleteFieldsError) res.status(400).render("messagepage", { message: error.message });
-      else 
-      if (error instanceof  UsersServiceError) res.status(409).render("messagepage", { message: error.message });
-      else
-      next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||viewsController.viewLoginPost||...'))
-
-    }
-  }
-  */
-/*
-  async viewRegisterPost(req, res) {
-    //Por ahora vamos a bloquear que desde el fron se puedan crear admin
-    const {first_name, last_name, email, password,age, role} = req.body;
-    const requiredFields = ['first_name', 'last_name', 'email', 'password','age']
-    const missingFields = getMissingFields(req.body,requiredFields)
-
-    try {
-      //Controlamos que no falten datos necesarios para crear un user....
-      if (missingFields.length > 0)  throw new IncompleteFieldsError(`Faltan ingresar los siguientes campos: ${missingFields}`)
-      //SI Estan todos los campos necesarios entonces se procede...
-      const createdUser = await usersRepository.createUser({
-        first_name: first_name,
-        last_name: last_name,
-        email: email,
-        password: createHash(password),
-        age: age,
-        role: role,
-      });
-     //Salio todo Ok entonces procedo a renderizar....
-        res.status(200).render("messagepage", { message: `Se ha creado correctamente el usuario ${createdUser.email} !!` });
-     } catch (error) {
-      if (error instanceof IncompleteFieldsError) res.status(400).render("messagepage", { message: error.message });
-      else 
-      if (error instanceof  UsersServiceError) res.status(409).render("messagepage", { message: error.message });
-      else
-      next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||usersController.createUser||...'))
-    }
-  }
-  */
-
+ 
   viewLoginGet(req, res,next) {
     console.log('Entro a viewloginget')
     res.render("login");
@@ -368,40 +279,7 @@ export class ViewsController {
   }
 
 
-  /*
-  async viewPurchase(req, res,next) {
-    const { cid: cartId } = req.params;
-    try {
-      const checkoutResult = await checkoutService.checkOutCart(cartId);
-      //Tomo todo de checkout result para renderizar.
-      const moment = transformDate(checkoutResult.ticket.purchase_datetime);
-      
-      const valuesToRender = {
-        detailsList: checkoutResult.ticket.details,
-        price: checkoutResult.ticket.price.toFixed(1),
-        transactionDate: moment.date,
-        transactionHour: moment.hour,
-        ticketCode: checkoutResult.ticket.code,
-      }
-      
-      res.status(200).render("checkoutresult",valuesToRender );  
-      
-    } catch (error) {
-     if (
-        error instanceof CartsServiceError ||
-        error instanceof CheckoutServiceError ||
-        error instanceof ProductsServiceError ||
-        error instanceof TicketsServiceError
-    ) {
-        res.status(400).render("messagepage", { message: error.message });
-    } else {
-        next(new InternalServerError(InternalServerError.GENERIC_ERROR, 'Error in ||viewsController.viewPurchase||...'));
-    }
-    
-    }  
-    }
-  */
- 
+  
     
   async viewPurchase(req, res,next) {
     const { tcode: ticketCode } = req.params;
@@ -440,32 +318,6 @@ export class ViewsController {
 
 
 
-
-/*
-  async viewSinglePurchase(req, res,next) {
-    const { pid: productId, qid: quantity, uid: userId } = req.params; //console.log(req.params)
-    try {
-      const purchaseTicket = await checkoutService.checkoutProductBuy(productId,quantity,userId)
-    
-        //console.log('Detalle ticket: ', checkoutResult.ticket.details)
-        const moment = transformDate(purchaseTicket.purchase_datetime);
-        const valuesToRender =  {
-          detailsList: purchaseTicket.details,
-          price:purchaseTicket.price.toFixed(1),
-          transactionDate: moment.date,
-          transactionHour: moment.hour,
-          ticketCode: purchaseTicket.code,
-        }
-        res.status(200).render("checkoutresult",valuesToRender);
-     
-    } catch (error) {
-      if (error instanceof (CartsServiceError || CheckoutServiceError ||ProductsServiceError ||TicketsServiceError ))  res.status(400).render("messagepage", { message: error.message })
-        else {
-            next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||viewsController.viewSinglePurchase||...'))
-        }
-    }
-  }
-*/
 
 
   async viewTickets(req, res,next) {

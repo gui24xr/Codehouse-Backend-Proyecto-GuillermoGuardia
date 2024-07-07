@@ -1,5 +1,5 @@
 import { CheckoutService } from "../services/checkout/checkout-service.js"
-import { CheckoutServiceError,CartsServiceError,InternalServerError, ProductsServiceError, TicketsServiceError } from "../services/errors/custom-errors.js"
+import { CheckoutServiceError,CartsServiceError,InternalServerError, ProductsServiceError, TicketsServiceError } from "../services/errors.service.js"
 
 import { CartsService } from "../services/carts.service.js"
 const checkoutService = new CheckoutService()

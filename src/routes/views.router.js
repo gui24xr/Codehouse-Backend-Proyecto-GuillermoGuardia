@@ -1,6 +1,6 @@
 import express from 'express'
 import { infoUserFromToken, authMiddleware,blockRoleAccessMiddleware } from '../middlewares/authTokenMiddlewares.js'
-import { ViewsController } from '../controllers/views-controllers.js'
+import { ViewsController } from '../controllers/views.controllers.js'
 
 const viewsController = new ViewsController()
 

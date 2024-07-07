@@ -1,6 +1,5 @@
 import express from 'express'
-import { UsersController } from '../controllers/users-controller.js'
-import { ViewsController } from '../controllers/views-controllers.js'
+import { UsersController } from '../controllers/users.controller.js'
 import { authMiddleware } from '../middlewares/authTokenMiddlewares.js'
 
 
@@ -13,6 +12,10 @@ const usersController = new UsersController()
 //router.use(authMiddleware)
 
 
-router.get('/users/get',usersController.getUsers)
-router.delete('/users/delete',usersController.deleteInactiveUsers)
-//router.get('/updateusersrol',viewsController.viewTickets)
+router.get('/users',usersController.getUsers)
+router.delete('/users/delete/inactive',usersController.deleteInactiveUsers)
+router.delete('/users', usersController.deleteUser) //Borra al user pasado por query
+router.patch('/users/rol',usersController.updateUserRole)
+router.post('/users/recoverypassword',usersController.createRecoveryCode)
+router.post('/users/resetpassword',usersController.changeUserPassword)
+

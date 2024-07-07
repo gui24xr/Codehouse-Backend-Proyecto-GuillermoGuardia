@@ -128,7 +128,7 @@ export class UsersRepository{
     }
 
 
-    async setRole(userEmail,newRole){
+    async setRole({userEmail,newRole}){
           /* Setea el campo role del userEmail pasado por parametro.
            Devuelve un userDTO con el usuario ya modificado.
            Si hubo un problema durante la actualizacion devuelve error.
@@ -193,7 +193,7 @@ export class UsersRepository{
 
     
     //Lo utilizaremos para el seteo de contraseñas.
-    async setRecoveryPasswordInfo(userEmail,newRecoveryPasswordCode,newRecoveryPasswordExpiration){
+    async setRecoveryPasswordInfo({userEmail,newRecoveryPasswordCode,newRecoveryPasswordExpiration}){
         /* Setea los campos recoveryPasswordCode y recoveryPasswordExpiration del userEmail pasado por parametro.
            Devuelve un userDTO con el usuario ya modificado.
            Si hubo un problema durante la actualizacion devuelve error.
@@ -329,23 +329,29 @@ export class UsersRepository{
 
     }
 
-    async deleteByLastConnectionBefore(selectedDate){
+    async deleteUser(userEmail){
        
+        try{
+            //Pide al DAO que borre el usuario. Si todo salio ok me da el dto y lo devuelvo
+            //Si hubo algun problema o no existe esto va directamente a catch
+           const result = await usersDAO.deleteUser(userEmail)
+           return result
+        }catch(error){
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.deleteUsersByEmail|','Error interno del servidor...')
+        }
+    }
+
+
+    async deleteByLastConnectionBefore(selectedDate){
+        //Pide el dao que borre los usuarios con conexion anterior a selectedDate
+        //Devuelve [] si no hubo eliminados, o [UsersDTO] con los eliminados 
         try{
            const result = await usersDAO.deleteByLastConnection(selectedDate)
            return result
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.deleteByLastConnectionBefore|','Error interno del servidor...')
-        }
-    }
-
-    async deleteUsersList(usersListForDelete){
-       
-        try{
-           
-        }catch(error){
-
         }
     }
     

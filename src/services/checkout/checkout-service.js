@@ -13,7 +13,7 @@ import { MessagesService } from "../messages.service.js";
 import handlebars from 'handlebars';
 import fs from 'fs'
 import { transformDate } from "../../utils/hour.js";
-import { CartsServiceError, ProductsServiceError,TicketsServiceError, InternalServerError, CheckoutServiceError } from "../errors/custom-errors.js";
+import { CartsServiceError, ProductsServiceError,TicketsServiceError, InternalServerError, CheckoutServiceError } from '../errors.service.js'
 
 
 const productsRepository = new ProductRepository()

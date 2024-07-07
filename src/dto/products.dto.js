@@ -1,6 +1,5 @@
 
-import { IncompleteFieldsError } from "../services/errors/custom-errors.js"
-import { getMissingFields } from "../utils/helpers.js"
+
 import { ProductDTOERROR } from "../services/errors.service.js"
 
 export class ProductDTO{

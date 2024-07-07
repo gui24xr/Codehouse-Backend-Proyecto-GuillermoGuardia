@@ -1,6 +1,6 @@
 import express from 'express'
 import { authMiddleware, allowAccessRolesMiddleware } from '../middlewares/authTokenMiddlewares.js'
-import { ProductController } from '../controllers/products-controller.js'
+import { ProductController } from '../controllers/products.controller.js'
 
 //Creo mi router.
 export const router = express.Router()

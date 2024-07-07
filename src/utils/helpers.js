@@ -22,5 +22,17 @@ function isEmail(email) {
     return regex.test(email);
   }
 
+  function calcularMinutosTranscurridos(desdeFecha, hastaFecha) {
+    
+    // Calcular la diferencia en milisegundos entre las fechas
+    const diferenciaEnMilisegundos = Math.abs(hastaFecha - desdeFecha);
 
-export {getMissingFields,isEmail}
+    // Convertir la diferencia de milisegundos a minutos
+    const minutosTranscurridos = Math.floor(diferenciaEnMilisegundos / (1000 * 60));
+
+    return minutosTranscurridos;
+}
+
+
+
+export {getMissingFields,isEmail,calcularMinutosTranscurridos}

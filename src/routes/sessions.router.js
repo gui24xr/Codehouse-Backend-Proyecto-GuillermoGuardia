@@ -1,19 +1,18 @@
 import express from 'express'
 import { authMiddleware } from '../middlewares/authTokenMiddlewares.js'
-import { UsersController } from '../controllers/users-controller.js'
-
+import { SessionsController } from '../controllers/sessions.controller.js'
 
 
 export const router = express.Router()
-const usersController = new UsersController
+const sessionsController = new SessionsController()
 
 
-router.post('/sessions/register',usersController.createUser)
-router.post('/sessions/login',usersController.authenticateUser)
-router.get('/sessions/current',usersController.currentRoute)
+router.post('/sessions/register',sessionsController.registerUser)
+router.post('/sessions/login',sessionsController.loginUser)
+router.get('/sessions/current',sessionsController.currentRoute)
 
 //Para poder hacer logout es necesario estar con un token o sesion activa
-router.post('/sessions/logout', authMiddleware, usersController.logout)
+router.post('/sessions/logout', authMiddleware, sessionsController.logoutUser)
 
 
 

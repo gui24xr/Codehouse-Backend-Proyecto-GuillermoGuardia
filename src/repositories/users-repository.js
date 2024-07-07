@@ -332,7 +332,7 @@ export class UsersRepository{
     async deleteByLastConnectionBefore(selectedDate){
        
         try{
-           const result = await usersDAO.deleteByLastConnection(new Date(selectedDate))
+           const result = await usersDAO.deleteByLastConnection(selectedDate)
            return result
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error

@@ -9,7 +9,7 @@ import { CartsService } from "../carts.service.js";
 import { TicketsRepositories } from "../../repositories/ticket.repositories.js";
 
 import { UsersService } from "../users.service.js";
-import { MessagesService } from "../messages/messages-service.js";
+import { MessagesService } from "../messages.service.js";
 import handlebars from 'handlebars';
 import fs from 'fs'
 import { transformDate } from "../../utils/hour.js";

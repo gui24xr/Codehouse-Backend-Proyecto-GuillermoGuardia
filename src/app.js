@@ -19,6 +19,7 @@ import { routerProtectedViews } from './routes/views.router.js';
 import {router as routerCarts } from './routes/carts.router.js'
 import {router as routerProducts} from './routes/products.router.js'
 import {router as routerSessions} from './routes/sessions.router.js'
+import {router as routerUsers} from './routes/users.router.js'
 import {router as routerTesting} from './routes/testing.router.js'
 import {router as routerPruebas} from './routes/pruebas.router.js' //Interno para pruebas
 import { routerPurchases } from './routes/purchase.router.js';
@@ -56,6 +57,7 @@ app.use('/',routerProtectedViews)
 app.use('/api',routerCarts) 
 app.use('/api',routerProducts)
 app.use('/api',routerSessions)
+app.use('/api', routerUsers)
 app.use('/api', routerPurchases)
 app.use('/',routerTesting) //Rutas testing consignas.
 app.use('/pruebas', routerPruebas) //Rutas testing personal.

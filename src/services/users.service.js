@@ -6,6 +6,7 @@ import { isValidPassword,createHash } from "../utils/hashbcryp.js";
 import { UsersServiceError } from "./errors.service.js";
 import { CartsService } from "./carts.service.js";
 import { UserDTOERROR } from "./errors.service.js";
+import { MailingService } from "./mailing.service.js";
 
 
 const usersRepository = new UsersRepository()
@@ -14,17 +15,13 @@ export class UsersService{
 
    async createUser({email, password, role, firstName, lastName, age}){
         try{
-            //Se validan los datos y se controla la entrada de campos
-            //Esta validacion tmb se hace en la capa controllers pero aca se repite xq este servicio puede ser usado por otras capas.
-            //Entre esta validaciones se debe revisar que cumpla las reglas de contraseñas en nuestra app.
-            //Se crea un carro para el nuevo user y extrae el id del carro creado para asociar.
             const cartsService = new CartsService()
             const cartForNewUser = await cartsService.createCart()
             const {cartId} = cartForNewUser
             //Se crea instancia de createUserDto
             const newUser = await usersRepository.createUserWithCart({
                 email: email,
-                password: password,
+                password: createHash(password),
                 firstName: firstName,
                 lastName:lastName,
                 age: age,
@@ -54,13 +51,12 @@ export class UsersService{
             if (searchedUser) {     
                 console.log('Searcheduser: ',searchedUser)
                 if (isValidPassword(password,searchedUser.password)) {
-                    //Se crea el jsonwebtockn que se retornara ala capa controllers
-                    console.log('fffffffffffffffffffffffffff33332')
+                    //Se crea el jsonwebtockn que se retornara a la capa controllers
                     const updatedUser = await usersRepository.setLastConnection(email,new Date())
                     const userToken = generateJWT(updatedUser)
                     return {
-                        userData: searchedUser, 
-                        userToken:userToken
+                        userData: updatedUser, 
+                        userToken: userToken
                     }
                 } 
                 else throw new UsersServiceError(UsersServiceError.WRONG_PASSWORD,'|UsersService.authenticateUser|','El usuario y/la contraseña no coinciden...')
@@ -101,6 +97,16 @@ export class UsersService{
         }
     }
 
+    async getAllUsers(){
+        try{
+            const usersList = await usersRepository.getAllUsers()
+            return usersList
+        }catch(error){
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersService.getAllUsers|','Error interno del servidor...')
+        }
+    }
+
     async getUserByEmail(email){
         //Se valida que sea un email (hacerlo)
         try{
@@ -124,17 +130,57 @@ export class UsersService{
     }
 
 
-    async deleteInactiveUsers(selectedDate){
-        //Se valida que sea un email (hacerlo)
+    async deleteInactiveUsers(){
+        //Borra todos los users inactivos 30 minutos antes de la hora actual.
+        //Les envia un email dando aviso que su cuenta fue borrada por inacividad.
         try{
-            //Pido todos los usuarios y miro cuales tienen fecha anterior o igual a la selectedDate
-            //Si cumplen la condicion va a una lista ese email
-            //La lista de emails se la pasamos a repository al metodo deleteUsers
-            const searchedUser = await usersRepository.getUserByCart(cartId)
-            return searchedUser
+            //Obtengo la fecha actual y la fecha de hace 15 minutos.
+            const thisMoment  = new Date()
+            const inactivityHours = process.env.INACTIVITY_TIME_USERS_TO_DELETE || 1.5 //Para 15 mins
+            let elapsedTime = new Date(thisMoment - (60 * 60 * 1000) * inactivityHours)
+            console.log(elapsedTime)
+            //Pido a repositorio que borre los usuarios inactivos y me devolvera la lista de UserDTo borrados.
+           const deleteInactiveUsersResult = await usersRepository.deleteByLastConnectionBefore(elapsedTime)
+            //Pero como necesito enviar mails y mostrar los borrados mapeo para obtetener la lista de mails.
+            const deletedUsersMailsList = deleteInactiveUsersResult.map(item => (item.email))
+            //SI hubo users eliminados le pido al servicio de email que les de aviso.
+            if (deleteInactiveUsersResult.length > 0){
+                //Pido al servicio de email que mande mails dando aviso a cada una de las cuentas eliminadas...
+                deletedUsersMailsList.forEach( item => {
+                    MailingService.sendMail(`${item} tu cuenta ah sido suspendida por inactividad !!...`,item,'Cuenta suspendida.')
+                })
+                //devuelvo la lista de mails de users borrados al controller.
+                return deletedUsersMailsList
+            }else{
+                //si no se borraron users devuevlvo array vacio.
+                return [] 
+            }
+
+        
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersService.getUserByEmail|','Error interno del servidor...')
+        }
+    }
+
+
+    async recoveryPassword(){
+
+    }
+
+    async changeUserRole(){
+        try{
+
+        }catch(error){
+
+        }
+    }
+
+    async deleteUserByEmail(){
+        try{
+
+        }catch(error){
+            
         }
     }
 

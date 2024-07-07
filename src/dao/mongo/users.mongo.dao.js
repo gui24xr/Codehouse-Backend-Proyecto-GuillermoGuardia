@@ -194,15 +194,10 @@ export default class UsersMongoDao{
             //Preparo las condiciones de borrado
             const conditionDate = new Date(selectedLastConnection)
             const conditionsForDelete = { lastConnection : {$lt: conditionDate}}
-
+           
             //Obtengo de la Base de datos todos los user que cumplen la condicion y me los guardo
             const listOfUsersToDelete = await UserModel.find(conditionsForDelete)
-            
-            //SI ninguno cumple la condicion lanzo error.
-            if (!listOfUsersToDelete || listOfUsersToDelete.length === 0) {
-                throw new UsersServiceError(UsersServiceError.DELETING_ERROR, '|UsersMongoDAO.deleteByLastConnection|', 'No se encontraron usuarios para eliminar.');
-            }
-
+           
             //Procedo a borrar.
             const deleteResult = await UserModel.deleteMany(conditionsForDelete)
            

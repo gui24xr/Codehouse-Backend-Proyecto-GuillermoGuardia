@@ -12,7 +12,7 @@ import { CheckoutService } from '../services/checkout/checkout-service.js'
 
 import { TicketsRepositories } from '../repositories/ticket.repositories.js'
 import { ProductRepository } from '../repositories/products.repositories.js'
-import { MessagesService } from '../services/messages/messages-service.js'
+import { MessagesService } from '../services/messages.service.js'
 import {  authMiddleware } from '../middlewares/authTokenMiddlewares.js'
 
 

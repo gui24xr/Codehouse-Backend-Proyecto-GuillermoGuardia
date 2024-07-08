@@ -18,5 +18,5 @@ router.put('/products/:pid',productController.updateProduct)
 router.delete('/products/:pid',productController.deleteProduct)
 router.post('/products/addProductFromRealTimeProductsView', allowAccessRolesMiddleware(['admin','premium']),productController.addProductFromRealTimeProductsView)
 router.get('/products/:id/changestatus',productController.changeProductStatus)
-
+router.post('/products/add', productController.addProduct2)
 

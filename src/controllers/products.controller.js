@@ -1,7 +1,9 @@
 import { ProductRepository } from "../repositories/products.repositories.js";
 import { mySocketServer } from "../app.js";
-import { IncompleteFieldsError, InternalServerError } from "../services/errors.service.js"
+import { IncompleteFieldsError, InternalServerError, InputValidationServiceError } from "../services/errors.service.js"
 import { getMissingFields } from "../utils/helpers.js";
+import { InputValidationService } from "../services/validation.service.js";
+
 
 const productRepository = new ProductRepository()
 
@@ -97,6 +99,25 @@ async getProductsListPaginate(req,res,next){
             next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||productsController.updateProduct||...'))
         }
     }
+
+    async addProduct2(req,res,next){
+        const {title,description,price,img,category,stock,thumbnails} = req.body
+        try{
+            //Pasamos por la capa de validacion.
+           // InputValidationService.checkProductItem(req.body,'Add')
+
+            res.send('ok')
+        }catch(error){
+            if (error instanceof IncompleteFieldsError || error instanceof InputValidationServiceError)
+                    next(error)
+            
+              else{
+                next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||productsController.getProductById||...'))
+              }
+         
+        }
+    }
+
 
     async addProduct(req,res,next){
         const productToAdd = req.body

@@ -51,6 +51,21 @@ export class InputValidationService{
         if (missingFields.length > 0) throw new InputValidationServiceError(InputValidationServiceError.INCOMPLETE_FIELDS,functionName,`Dato/s incompleto/s ! El/los campos ||${missingFields}|| es/son requeridos.`)
     }
 
+     
+        static getMissingFields(oneObject,requiredFieldsArray,functionName){
+            //Retorna una lista con los campos faltantes.
+            const missingFields = []
+            // Verificar qué campos faltan
+            for (const field of requiredFieldsArray) {
+                if (!oneObject[field]) {
+                    missingFields.push(field);
+                }
+            }
+            
+            return missingFields
+        
+        }
+
     //Chequea que una lista de productos tenga el formato esperado
     //Las productList recibidds deben tener formato [{productId:'dgdggd', quantity:323}]
     static isAValidProductsList(productsList,functionName){
@@ -59,11 +74,8 @@ export class InputValidationService{
         if (!(Array.isArray(productsList))) throw new InputValidationServiceError(InputValidationServiceError.INVALID_PRODUCT_LISTS,functionName,`No se ingreso una lista valida.`)
         if (productsList.length < 1) throw new InputValidationServiceError(InputValidationServiceError.INVALID_PRODUCT_LISTS,functionName,`Se ingreso una lista de productos vacia, no hay nada para agregar al carrito...`)
 
-
         let count = 0
         for (const item of productsList){
-
-
 
             if(!item.hasOwnProperty('productId'))          
                 throw new InputValidationServiceError(InputValidationServiceError.INVALID_PRODUCT_LISTS,functionName,`El elemento ${count} de la lista no tiene la propiedad productId...`)
@@ -87,6 +99,40 @@ export class InputValidationService{
         
         }
 
+      
+        static checkProductItem(productItem,functionName){
+            //Chequeamos que el producto tenga los campos minimos necesarios y que no tenga campos innecesarios.
+              
+            //Estos son los campos minimos requeridos. Status no nos preocupa, luego se seteara al cargarse.
+            const invalidFieldsList = []
+            const requiredFields = ['title','description','price','img','category','stock','thumbnails']
+            const missingFieldsList = this.getMissingFields(productItem,requiredFields) 
+            if (missingFieldsList.length > 0) throw new InputValidationServiceError(InputValidationServiceError.INVALID_PRODUCT_ITEM,functionName,`Faltan los siguientes datos para ingresar producto: ${missingFieldsList}.`)
+            
+            //Ya sabemos que tiene las propiedades, ahora corroboramos los tipos de datos y metemos los erroneos en una lista.
+            if(typeof(item.title) !== 'string') invalidFieldsList.push('title')
+            if(typeof(item.title) !== 'string') invalidFieldsList.push('description')    
+            if(typeof(item.price) !== 'number') invalidFieldsList.push('price')     
+            if(typeof(item.img) !== 'string') invalidFieldsList.push('img') 
+            if(typeof(item.category) !== 'string') invalidFieldsList.push('category') 
+            if(typeof(item.stock) !== 'number') invalidFieldsList.push('stock')   
+            if (!Array.isArray(item.thumbnails)) invalidFieldsList.push('thumbnails')
+            for (let i = 0; i < item.thumbnails.length; i++) {
+                 if (typeof item.thumbnails[i] !== 'string') {
+                     invalidFieldsList.push('thumbnails') 
+                     break
+                    }
+                }
+
+            //AHora finalmente si la lista de invalidFields tiene elementos es xq hay algun tipo de dato no valido.
+            if (invalidFieldsList.length > 0) throw new InputValidationServiceError(InputValidationServiceError.INVALID_PRODUCT_ITEM,functionName,`Hay tipos de datos invalidos en los campos: ${invalidFieldsList}.`)
+            
+            //De esta manera validamos cada producto.
+        }
     }
+        
+    
+
+    
     
     

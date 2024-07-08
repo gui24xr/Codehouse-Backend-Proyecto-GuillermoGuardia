@@ -632,3 +632,13 @@
 ***[LOGGER]*** [error at 24-07-08 11:07:60] Type:CartsServiceError in PUT - /api/carts/6670669cf941a85735b787be from ::1
 ***[LOGGER]*** [error at 24-07-08 11:07:70] Type:CartsServiceError in PUT - /api/carts/6670669cf941a85735b787be from ::1
 ***[LOGGER]*** [error at 24-07-08 12:07:51] Type:CartsServiceError in PUT - /api/carts/6670669cf941a85735b787be from ::1
+***[LOGGER]*** [error at 24-07-08 17:07:11] Type:UnauthorizedError in POST - /api/products from ::1
+***[LOGGER]*** [error at 24-07-08 17:07:92] Type:UnauthorizedError in POST - /api/products from ::1
+***[LOGGER]*** [error at 24-07-08 17:07:78] Type:UnauthorizedError in POST - /api/products from ::1
+***[LOGGER]*** [fatal at 24-07-08 17:07:18] Type:TicketsService in POST - /api/products/add from ::1
+***[LOGGER]*** [fatal at 24-07-08 17:07:69] Type:TicketsService in POST - /api/products/add from ::1
+***[LOGGER]*** [fatal at 24-07-08 17:07:66] Type:TicketsService in POST - /api/products/add from ::1
+***[LOGGER]*** [fatal at 24-07-08 18:07:92] Type:TicketsService in POST - /api/products/add from ::1
+***[LOGGER]*** [fatal at 24-07-08 18:07:46] Type:TicketsService in POST - /api/products/add from ::1
+***[LOGGER]*** [fatal at 24-07-08 18:07:79] Type:TicketsService in POST - /api/products/add from ::1
+***[LOGGER]*** [fatal at 24-07-08 18:07:03] Type:TicketsService in POST - /api/products/add from ::1

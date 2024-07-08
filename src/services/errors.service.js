@@ -30,6 +30,7 @@ export class InputValidationServiceError extends Error{
     static INCOMPLETE_FIELDS = 1;
     static INVALID_VALUES = 2; //No llego un userDTO
     static INVALID_PRODUCT_LIST = 3;
+    static INVALID_PRODUCT_ITEM = 4;
 
     
     constructor(errorCode,operationName,message){

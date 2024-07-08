@@ -18,6 +18,7 @@ Para construir un UserDTO se requiere un objeto con las propiedads
 
 export class UserDTO{
     constructor(receivedUser){
+        console.log('en user dto: ', receivedUser.avatar)
         this.userId = receivedUser.userId;
         this.email = receivedUser.email;
         this.password = receivedUser.password;
@@ -32,5 +33,6 @@ export class UserDTO{
         this.recoveryPasswordExpiration = receivedUser.recoveryPasswordExpiration;
         this.lastConnection= receivedUser.lastConnection;
         this.documents=receivedUser.documents; // Una lista de objetos...
+        this.avatar= receivedUser.avatar || '/img/avatars/defaultavatar2.png'
     }
 }

@@ -385,12 +385,14 @@ async viewUsersList(req,res,next){
     //Me traigo todos los usuarios. Obtengo una lista de usersDTO
     const usersList = await usersService.getAllUsers()
     //Mapeo para que la hora se vea linda y el enabled se vea como activo o inactivo.
+    
     const mappedUsersList = usersList.map(item => ({
       email : item.email,
       enabled:  item.enabled ? 'Activo' : 'Inactivo',
       role: item.role,
       firstName: item.firstName,
       lastName: item.lastName,
+      avatar: item.avatar,
       createdAt: formatearFecha(item.createdAt)
     }))
     res.status(200).render("userslist",{usersList:mappedUsersList})

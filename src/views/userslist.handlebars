@@ -20,6 +20,9 @@
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Cambiar rol
             </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Acciones
+            </th>
         </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200">
@@ -32,7 +35,7 @@
                 <td class="px-6 py-4 whitespace-nowrap">
                     <div class="flex items-center">
                         <div class="flex-shrink-0 h-10 w-10">
-                            <img class="h-10 w-10 rounded-full" src="https://i.pravatar.cc/150?img=1" alt="">
+                            <img class="h-10 w-10 rounded-full" src={{avatar}} alt="">
                         </div>
                         <div class="ml-4">
                             <div class="text-sm font-medium text-gray-900">
@@ -56,39 +59,90 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {{role}}
                 </td>
-            
                 <td class="px-6 py-4 whitespace-nowrap  text-sm font-medium">
-                    
-                    <form action="/api/users/rol" method="POST">
-                       <input type="text" name="email" value={{email}} style="display: none"/>
-                       <input type="text" name="new_role" value="admin" style="display: none"/>
-                       <button class="text-indigo-600 hover:text-indigo-900" type="submit">Admin</button>
-                    </form>
-
-                      <form action="/api/users/rol" method="POST">
-                       <input type="text" name="email" value={{email}} style="display: none"/>
-                       <input type="text" name="new_role" value="user" style="display: none"/>
-                       <button class="text-blue-300 hover:text-indigo-900" type="submit">User</button>
-                    </form>
-
-                     <form action="/api/users/rol" method="POST">
-                       <input type="text" name="email" value={{email}} style="display: none"/>
-                       <input type="text" name="new_role" value="premium" style="display: none"/>
-                       <button class="text-blue-300 hover:text-indigo-900" type="submit">Premium</button>
-                    </form>
-
-                    
+                   <button class="text-indigo-600 hover:text-indigo-900" type="button" onclick="changeRolToUser(`{{email}}`,'admin')">Admin</button>
+                   <button class="text-blue-300 hover:text-indigo-900"   type="button" onclick="changeRolToUser(`{{email}}`,'user')">User</button>
+                   <button class="text-blue-300 hover:text-indigo-900"   type="button" onclick="changeRolToUser(`{{email}}`,'premium')">Premium</button>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap  text-sm font-medium">
+                   <button class="text-indigo-600 hover:text-indigo-900" type="button" onclick="deleteUser(`{{email}}`)">Eliminar</button>
+                 
                 </td>
             </tr>
     {{/each}}
 
-
-
-        
-
-
-
-        <!-- More rows... -->
-
     </tbody>
 </table>
+
+<script>
+
+    function changeRolToUser(userEmail,newRole){
+        /* Hace la solicitud http correspondiente para cambiar el rol del userEmail al rol pasado por parametro....*/
+        //console.log('Click en ',userEmail,newRole)
+         fetch(`/api/users/rol`,{
+            method: 'PUT',
+             headers: {'Content-Type': 'application/json'},
+             body: JSON.stringify({ email: userEmail,new_role: newRole })
+        })
+        .then( response => {
+            if (response.ok){
+                //SI la respuesta fue favorable tomo y uso los datos para le mensaje.
+                response.json()
+                .then( data => {
+
+                    Swal.fire({
+                        title: 'Cambio de rol exitoso !',
+                        text: data.message,
+                        icon: 'success',
+                        confirmButtonText: 'Continuar',
+                        allowOutsideClick: false, // No permitir cerrar al hacer clic fuera del diálogo
+                        allowEscapeKey: false     // No permitir cerrar con la tecla Escape
+                    }).then((swalResult)=>{
+                             window.location.href = `/views/users`
+                    })
+                })
+                .catch(
+
+                )
+            }
+        })
+
+    }
+
+
+    function deleteUser(userEmail){
+        //Hace la solicitud http correspondiente para borrar al userEmail correspondiente.
+        //console.log('eliminar',userEmail)
+         fetch(`/api/users`,{
+            method: 'DELETE',
+             headers: {'Content-Type': 'application/json'},
+             body: JSON.stringify({ email: userEmail })
+        })
+        .then( response => {
+            if (response.ok){
+                //SI la respuesta fue favorable tomo y uso los datos para le mensaje.
+                response.json()
+                .then( data => {
+                    Swal.fire({
+                        title: 'Eliminacion de user exitosa !',
+                        text: data.message,
+                        icon: 'success',
+                        confirmButtonText: 'Continuar',
+                        allowOutsideClick: false, // No permitir cerrar al hacer clic fuera del diálogo
+                        allowEscapeKey: false     // No permitir cerrar con la tecla Escape
+                    }).then((swalResult)=>{
+                             window.location.href = `/views/users`
+                    })
+                })
+                .catch( 
+                    
+                )
+            }
+        })
+    }
+        
+    
+
+
+
+</script>

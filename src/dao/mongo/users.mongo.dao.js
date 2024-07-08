@@ -13,6 +13,10 @@ export default class UsersMongoDao{
     //Esta es interna de cada dao x lo cual no debe ser homologado
     //Lo que es homologado es el 
     getUserDTO(userFromDB){
+
+        //Antes de retornar busca el avatar entre los docs para proveer a la propiedad avatar que necesita el dto.
+        const avatarPosition = userFromDB.documents.findIndex( item => item.docName == 'avatar')
+              
         return new UserDTO({
             userId: userFromDB._id.toString(),
             email: userFromDB.email,
@@ -27,7 +31,8 @@ export default class UsersMongoDao{
             recoveryPasswordCode : userFromDB.recoveryPasswordCode,
             recoveryPasswordExpiration : userFromDB.recoveryPasswordExpiration,
             lastConnection: userFromDB.lastConnection,
-            documents: userFromDB.documents.map ( item => ({docName: item.docName, docReference: item.docReference}))
+            documents: userFromDB.documents.map ( item => ({docName: item.docName, docReference: item.docReference})),
+            avatar: avatarPosition >= 0 && userFromDB.documents[avatarPosition].docReference //Si no hay avatar ira null y el dto proveera de uno x default
         })
     }
 

@@ -1,7 +1,10 @@
 import { CheckoutService } from "../services/checkout/checkout-service.js"
 import { CheckoutServiceError,CartsServiceError,InternalServerError, ProductsServiceError, TicketsServiceError } from "../services/errors.service.js"
-
 import { CartsService } from "../services/carts.service.js"
+import { InputValidationService } from "../services/validation.service.js"
+import { InputValidationServiceError } from "../services/errors.service.js"
+
+
 const checkoutService = new CheckoutService()
 const cartsService = new CartsService()
 
@@ -9,7 +12,10 @@ export class CartsController{
     async getCartById(req,res,next){
         const {cid:cartId} = req.params
         try {
-            //const cart = await cartRepository.getCartById(cid)
+            //Pasamos por la capa de validacion
+            InputValidationService.checkRequiredField(req.params,['cid'],'CartsController.getCartById')
+        
+            //Si todo salio ok procedemos a tomar el carro por su id.
             const cart = await cartsService.getCartById(cartId)
             res.status(200).json({
                 status: "success", 
@@ -17,7 +23,7 @@ export class CartsController{
                 cart:cart
                 })   
         } catch (error) {
-            if (error instanceof CartsServiceError) next(error)
+            if (error instanceof CartsServiceError || error instanceof InputValidationServiceError) next(error)
             else {
                 next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsController.getCartById||...'))
             }
@@ -26,9 +32,8 @@ export class CartsController{
 
     async createCart(req,res,next){
         try {
-            //const newCart = await cartRepository.createCart()
             const newCart = await cartsService.createCart()
-            console.log('controller: ',newCart)
+
             res.status(201).json({
                 status: "success", 
                 message: `Carrito creado satisfactoriamente con id ${newCart.id}`,
@@ -44,10 +49,12 @@ export class CartsController{
 
     async addProductInCart(req,res,next){
         const {cid:cartId,pid:productId} = req.params
-        console.log(req.params, req.body)
         const {quantity} = req.body    
         try {
-            //const resultCart = await cartRepository.addProductInCart(cartId,productId,quantity)
+            //Pasamos por la capa de validacion
+            InputValidationService.checkRequiredField(req.params,['cid','pid'],'CartsController.addProductInCart')
+            InputValidationService.checkRequiredField(req.body,['quantity'],'CartsController.addProductInCart')
+          
             const resultCart = await cartsService.addProductInCart(cartId,productId,quantity)
             res.status(201).json({
                 status: "success", 
@@ -55,7 +62,7 @@ export class CartsController{
                 cart:resultCart
                 })   
         } catch (error) {
-            if (error instanceof CartsServiceError) next(error)
+            if (error instanceof CartsServiceError || error instanceof InputValidationServiceError) next(error)
             else {
                 next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsController.AddProductInCart||...'))
             }
@@ -67,24 +74,36 @@ export class CartsController{
         const {cid:cartId} = req.params
         const {productsArray} = req.body 
         console.log(productsArray)
-        const resultCart = await cartsService.addProductListToCart(cartId,productsArray)
-        res.status(201).json({
-                status: "success", 
-                message: `Productos agregados satisfactoriametente en carrito ID${resultCart.id}`,
-                cart:resultCart
-                })   
-        } catch (error) {
-            if (error instanceof CartsServiceError) next(error)
+
+        try{
+             //Pasamos por la capa de validacion
+             InputValidationService.checkRequiredField(req.params,['cid'],'CartsController.addProductListInCart')
+             InputValidationService.checkRequiredField(req.body,['productsArray'],'CartsController.addProductListInCart')
+             InputValidationService.isAValidProductsList(productsArray,'CartsController.addProductListInCart')
+            // hACER Una funcion de validacion que valide que productsArray sea una productList
+
+            const resultCart = await cartsService.addProductListToCart(cartId,productsArray)
+            res.status(201).json({
+                    status: "success", 
+                    message: `Productos agregados satisfactoriametente en carrito ID${resultCart.id}`,
+                    cart:resultCart
+                    })   
+            } catch (error) {
+            if (error instanceof CartsServiceError  || error instanceof InputValidationServiceError) next(error)
             else {
                 next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsController.AddProductInCart||...'))
             }
         
+        }
     }
-
     //Elimina una lista de productos a un carro y devuelve el carro actualizado.
     async deleteProductFromCart(req,res,next){
         const {cid,pid} = req.params 
         try {
+             //Pasamos por la capa de validacion
+            InputValidationService.checkRequiredField(req.params,['cid','pid'],'CartsController.deleteProductFromCart') 
+
+            //Si todo salio ok procedemos.
             const deleteResult = await cartsService.deleteProductFromCart(cid,pid)
             res.status(201).json({
                 status: "success", 
@@ -93,7 +112,7 @@ export class CartsController{
                 })  
             } 
         catch(error){
-            if (error instanceof CartsServiceError) next(error)
+            if (error instanceof CartsServiceError  || error instanceof InputValidationServiceError) next(error)
             else {
                next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsController.deleteProductFromCart||...'))
             }
@@ -104,6 +123,8 @@ export class CartsController{
     async clearCart(req,res,next){
         const {cid:cartId} = req.params //Obtengo el id del carro a limpiar
         try{
+            InputValidationService.checkRequiredField(req.params,['cid'],'CartsController.clearCart') 
+            //Si todo salio OK procedemos.
             const clearedCart = await cartsService.clearCart(cartId)
             res.status(200).json({
                 status: "success", 
@@ -111,7 +132,7 @@ export class CartsController{
                 cart:clearedCart
                 })   
         }  catch (error) {
-            if (error instanceof CartsServiceError) next(error)
+            if (error instanceof CartsServiceError  || error instanceof InputValidationServiceError) next(error)
                 else {
                     next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsController.clearCart||...'))
                 }
@@ -122,6 +143,9 @@ export class CartsController{
     async cartCheckout(req,res,next){
         const {cid:cartId} = req.params
         try{
+            //Validamos
+            InputValidationService.checkRequiredField(req.params,['cid'],'CartsController.clearCart') 
+            //COntinuo
            const checkoutResult = await checkoutService.checkOutCart(cartId)
            console.log('cjec: ', checkoutResult)
            res.status(200).json({
@@ -134,7 +158,8 @@ export class CartsController{
                 error instanceof CartsServiceError ||
                 error instanceof CheckoutServiceError ||
                 error instanceof ProductsServiceError ||
-                error instanceof TicketsServiceError
+                error instanceof TicketsServiceError ||
+                error instanceof InputValidationServiceError
             ) {
                 
                 next(error)

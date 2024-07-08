@@ -30,6 +30,8 @@ export class UsersService{
                 cartId: cartId
             })
 
+            await usersRepository.addUserDocument(email,'avatar','/img/avatars/defaultavatar.png')
+
             return newUser
    
           } catch(error){

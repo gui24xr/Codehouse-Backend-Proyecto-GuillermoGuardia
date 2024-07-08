@@ -50,6 +50,43 @@ export class InputValidationService{
         
         if (missingFields.length > 0) throw new InputValidationServiceError(InputValidationServiceError.INCOMPLETE_FIELDS,functionName,`Dato/s incompleto/s ! El/los campos ||${missingFields}|| es/son requeridos.`)
     }
+
+    //Chequea que una lista de productos tenga el formato esperado
+    //Las productList recibidds deben tener formato [{productId:'dgdggd', quantity:323}]
+    static isAValidProductsList(productsList,functionName){
+        console.log('Products', productsList)
+        //1- Probamos que sea un array,
+        if (!(Array.isArray(productsList))) throw new InputValidationServiceError(InputValidationServiceError.INVALID_PRODUCT_LISTS,functionName,`No se ingreso una lista valida.`)
+        if (productsList.length < 1) throw new InputValidationServiceError(InputValidationServiceError.INVALID_PRODUCT_LISTS,functionName,`Se ingreso una lista de productos vacia, no hay nada para agregar al carrito...`)
+
+
+        let count = 0
+        for (const item of productsList){
+
+
+
+            if(!item.hasOwnProperty('productId'))          
+                throw new InputValidationServiceError(InputValidationServiceError.INVALID_PRODUCT_LISTS,functionName,`El elemento ${count} de la lista no tiene la propiedad productId...`)
+
+            if(!item.hasOwnProperty('quantity'))          
+                throw new InputValidationServiceError(InputValidationServiceError.INVALID_PRODUCT_LISTS,functionName,`El elemento ${count} de la lista no tiene la propiedad quantity...`)
+
+            if(!typeof(item.productId)=='string')          
+                throw new InputValidationServiceError(InputValidationServiceError.INVALID_PRODUCT_LISTS,functionName,`La propiedad productId del elemento ${count} de la lista no es un string...`)
+
+          
+            if(!typeof(item.quantity)=='number')            
+                throw new InputValidationServiceError(InputValidationServiceError.INVALID_PRODUCT_LISTS,functionName,`La propiedad quantity del elemento ${count} de la lista no es un numero...`)
+
+            if(!(item.quantity >= 1))     
+                throw new InputValidationServiceError(InputValidationServiceError.INVALID_PRODUCT_LISTS,functionName,`El elemento ${count} de la lista tiene quantity cantidad menor a cero , no se procedera...`)
+            
+            count++
+        
+        }
+        
+        }
+
+    }
     
     
-}

@@ -15,7 +15,7 @@ const usersController = new UsersController()
 router.get('/users',usersController.getUsers)
 router.delete('/users/delete/inactive',usersController.deleteInactiveUsers)
 router.delete('/users', authMiddleware,allowAccessRolesMiddleware('admin'),usersController.deleteUser) //Borra al user pasado por query
-router.post('/users/rol',authMiddleware,allowAccessRolesMiddleware('admin'), usersController.updateUserRole)
+router.put('/users/rol',authMiddleware,allowAccessRolesMiddleware('admin'), usersController.updateUserRole)
 router.post('/users/recoverypassword',usersController.createRecoveryCode)
 router.post('/users/resetpassword',usersController.changeUserPassword)
 

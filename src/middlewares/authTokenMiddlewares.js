@@ -100,6 +100,7 @@ function allowAccessRolesMiddleware(allowedRolesList) {
 
 
 function authMiddleware(req,res,next){
+  console.log('AUten: ',req.currentUser)
   //Va a mirar si en req hay currentUser y propiuedad authenticated... si hay,deja continuar, 
   //Si no hay nos envia a error xq se intentaria avanzar a una ruta protegida
   //console.log('Currentuser: ',req.currentUser, req.isAuthenticated)

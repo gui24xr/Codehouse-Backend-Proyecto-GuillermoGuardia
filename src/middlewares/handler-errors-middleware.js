@@ -7,7 +7,8 @@ import {
         CartsServiceError,
         InputValidationServiceError,
         ProductsServiceError,
-        InternalServerError
+        InternalServerError,
+        UnauthorizedError
 
  } from "../services/errors.service.js";
 
@@ -49,14 +50,25 @@ export const handlerErrorsMiddleware = (error, req, res, next) => {
         
     } 
 
-    /*
+    
     if (error instanceof UnauthorizedError){
-        //console.log('LLego al middleware Manejando erroressss')
+        
         logger.error(`Type:${error.name} in ${req.method} - ${req.originalUrl} from ${req.ip}`)
-        res.status(403).json({message: `Unauthorized Error.  - ${error.message}`})
+        
+        if (error.code == UnauthorizedError.NO_USER) 
+            res.status(403).json({
+                message: `Es necesesario inciar sesion para poder acceder...`,
+                url: req.originalUrl
+        })
+
+        if (error.code == UnauthorizedError.INVALID_ROLE) 
+            res.status(403).json({
+                message: `Usuario no autorizado a realizar esta funcion...`,
+                url: req.originalUrl
+        })
         
     } 
-
+/*
     if (error instanceof TokenVerificationError){
         //console.log('LLego al middleware Manejando erroressss')
         logger.error(`Type:${error.name} in ${req.method} - ${req.originalUrl} from ${req.ip}`)

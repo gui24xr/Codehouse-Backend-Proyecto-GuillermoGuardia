@@ -1,7 +1,7 @@
 import { UsersService } from "../services/users.service.js";
 import { InputValidationService } from "../services/validation.service.js";
 import {UsersServiceError, InputValidationServiceError} from "../services/errors.service.js";
-
+//import { minutosTranscurridosDesdeHora } from "../utils/helpers.js";
 
 
 const usersService = new UsersService();
@@ -98,7 +98,7 @@ export class UsersController {
    
       res.status(201).json({
         status: "success",
-        message: `Se elimino al user ${updatedUser.email}.`,
+        message: `Se cambio el rol del user ${updatedUser.email}. Ahora su nuevo rol es: ${updatedUser.role}`,
         updatedUser: updatedUser
       })
     }catch(error){

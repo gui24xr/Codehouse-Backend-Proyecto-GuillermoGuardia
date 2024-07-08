@@ -1,6 +1,6 @@
 import express from 'express'
 import { UsersController } from '../controllers/users.controller.js'
-import { authMiddleware } from '../middlewares/authTokenMiddlewares.js'
+import { allowAccessRolesMiddleware, authMiddleware, } from '../middlewares/authTokenMiddlewares.js'
 
 
 //Creo mi instancia de objeto Router
@@ -14,8 +14,8 @@ const usersController = new UsersController()
 
 router.get('/users',usersController.getUsers)
 router.delete('/users/delete/inactive',usersController.deleteInactiveUsers)
-router.delete('/users', usersController.deleteUser) //Borra al user pasado por query
-router.patch('/users/rol',usersController.updateUserRole)
+router.delete('/users', authMiddleware,allowAccessRolesMiddleware('admin'),usersController.deleteUser) //Borra al user pasado por query
+router.post('/users/rol',authMiddleware,allowAccessRolesMiddleware('admin'), usersController.updateUserRole)
 router.post('/users/recoverypassword',usersController.createRecoveryCode)
 router.post('/users/resetpassword',usersController.changeUserPassword)
 

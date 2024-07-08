@@ -1,12 +1,10 @@
 import express from 'express'
-import { infoUserFromToken, authMiddleware,blockRoleAccessMiddleware } from '../middlewares/authTokenMiddlewares.js'
+import { infoUserFromToken, authMiddleware,blockRoleAccessMiddleware,allowAccessRolesMiddleware } from '../middlewares/authTokenMiddlewares.js'
 import { ViewsController } from '../controllers/views.controllers.js'
 
 const viewsController = new ViewsController()
 
 //Divido en 3 routers las vistas por una cuestion de middlewares y diferentes usos.
-
-
 export const routerPublicViews = express.Router()
 export const routerProtectedViews = express.Router()
 
@@ -38,6 +36,7 @@ routerProtectedViews.get('/views/tickets/:uid', viewsController.viewTickets) //M
 routerProtectedViews.get('/views/products', viewsController.viewProductsList)
 routerProtectedViews.get('/views/mainproductslist', viewsController.viewMainProductsList)
 routerProtectedViews.get('/views/product/:pid', viewsController.viewProduct)
+routerProtectedViews.get('/views/users',allowAccessRolesMiddleware('admin'), viewsController.viewUsersList)
 
 
 

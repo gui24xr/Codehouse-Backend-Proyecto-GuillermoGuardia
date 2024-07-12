@@ -496,8 +496,7 @@ export class MongoProductsDAO{
 
     async deleteByQuery({productId,owner,status,code,brand,category,createdAt}){
         //Funciona igual que get pero devuelve el array de los DTO borrados Pero borra una lista de productos.
-        //Se debe ingresar {productId,owner,status,code,brand,category} para construir la query.
-        //Se devuelve un array de productsDTO con lo eminado, y un [] si nada se elimino.
+        //Se debe ingresar una lista de [{productId,owner,status,code,brand,category}] para construir la query.
         try{
 
          const query = {}
@@ -509,20 +508,17 @@ export class MongoProductsDAO{
         brand && (query.brand = brand)
         category && (query.category = category)
         createdAt && (query.createdAt = { $gte: createdAt })
-
-       
-        //Armo una lista de promeses
-        const deleteOperations = productsForDelete.map(item => (ProductModel.findOneAndDelete(query)))
-        //Espero que se resuelvan
+        //Con la query construida hago una busqueda de los productos a eliminar y que voy a devolver.
+        const productsForDelete = await ProductModel.find(query)
+        //uso la misma lista para tomar los id de los productos a borrar y preparar la lista de promesas
+        
+        const deleteOperations = productsForDelete.map(item => (ProductModel.findOneAndDelete({_id: item._id})))
         const deleteResults = await Promise.all(deleteOperations)
-            console.log('DeleteResults: ', deleteResults)
-        //Y dado que al resolverse ProductModel.findOneAndDelete(query) me devuelve copia del registreo eliminado
-        //DFevuelvo ese dto con todos los registros eliminados.
-        //const listOfDeletedProductsDTO = deleteResults.map( item => (this.getProductDTO(item)))
-        return 'eliminacion'  //listOfDeletedProductsDTO
-    
+
+        console.log('resultado elimiancion', deleteResults)
+          return  
         }catch(error){
-            console.log('error')
+
         }
     }
 

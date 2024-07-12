@@ -85,13 +85,13 @@ describe('Probando get products',function(){
 
         const productsList =[
             {title:'Producto 1', description: 'Descripcion Producto 1', price: 24, category: 'Categoria A',
-                code: 'codigoprod01', stock:85
+                code: 'codigoprod01', stock:85, owner:'pepeito'
             },
             {title:'Producto 2', description: 'Descripcion Producto 2', price: 24, category: 'Categoria B',
-                code: 'codigoprod2', stock:0
+                code: 'codigoprod2', stock:0, owner:'pepeito'
             },
             {title:'Producto 3',  price: 24, category: 'Categoria A',
-                code: 'codigoprod3', stock:85
+                code: 'codigoprod3', stock:85, owner:'pepeito'
             }
         ]
         const result = await this.productsDAO.createProducts(productsList)

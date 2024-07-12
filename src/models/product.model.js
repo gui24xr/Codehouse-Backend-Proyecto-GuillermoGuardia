@@ -5,13 +5,17 @@ import { isEmail } from "../utils/helpers.js"
 const collectionName = 'products'
 
 const productSchema = new mongoose.Schema({
+    brand: { 
+        type:String,
+        default: null,
+    },
     title: { 
         type:String,
-        required: true
+        required: true,
     },
     description: { 
         type:String,
-        required: true
+        default: null
     },
     price: { 
         type:Number,
@@ -19,12 +23,10 @@ const productSchema = new mongoose.Schema({
     },
     img: { 
         type:String,
-        required: true
     },
     code: { 
         type:String,
         required: true,
-        unique:true
     },
     category: { 
         type:String,
@@ -32,17 +34,16 @@ const productSchema = new mongoose.Schema({
     },
     stock: { 
         type:Number,
-        required: true
+        default: 0
     },
  
     status: { 
         type:Boolean,
-        required: true
+        default: true
     },
     thumbnails: { 
         type:[String],
         default:[]
-        //required: true
     },
     owner: {
         type: String,
@@ -58,6 +59,10 @@ const productSchema = new mongoose.Schema({
 
     }, 
     createdAt:{
+        type: Date,
+        default: Date.now
+    },
+    updatedAt:{
         type: Date,
         default: Date.now
     },

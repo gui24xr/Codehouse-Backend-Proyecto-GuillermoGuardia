@@ -156,4 +156,29 @@ describe('Testing de users.mongo.dao METODO GET', function(){
 })
     
 
-describe
+describe('Testing de users.mongo.dao METODO UPDATE', function(){
+    
+    before(function(){
+        this.usersDao = new UsersMongoDao()
+    })   
+
+    it('Validacion de updateObject. Si se reciben propiedades invalidas da error...',function(){
+
+    })
+
+    it('Validacion de updateObject. Si se reciben propiedades validas da error y el  user existe y se hace el update devuelve el user DTO actualizado...',function(){
+        //Aca comparo con el anterior
+    })
+
+    it('Validacion de updateObject. Si se reciben propiedades validas da error y el  user existe y se hace el update devuelve el user DTO actualizado...',function(){
+        //Aca comparo con el anterior y hago uno por cada propiedad.
+    })
+
+
+    it('Si no existe el usuario lanza error UsersServiceError.USER_NO_EXIST',function(){
+
+    })
+ 
+
+
+})

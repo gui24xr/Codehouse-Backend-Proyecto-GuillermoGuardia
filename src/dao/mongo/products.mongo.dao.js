@@ -1,4 +1,6 @@
 
+import { trusted } from "mongoose"
+import { ProductDTO } from "../../dto/products.dto.js"
 import { ProductModel } from "../../models/product.model.js"
 
 
@@ -247,6 +249,280 @@ export class MongoProductsDAO{
           
         }catch(error){
             throw new Error(`Error al intentar obtener lista de categorias desde mongoDao...`)
+        }
+    }
+
+
+
+    //--------- NUEVO DAO DESDE ACA -------------------------------------------------//
+    //--------- NUEVO DAO DESDE ACA -------------------------------------------------//
+    //--------- NUEVO DAO DESDE ACA -------------------------------------------------//
+    //--------- NUEVO DAO DESDE ACA -------------------------------------------------//
+    //--------- NUEVO DAO DESDE ACA -------------------------------------------------//
+
+
+    getProductDTO(productFromDB){
+        //Retorna el dto del product desde la base de datos. En este caso uso mongo asqieu transfromara segun los resultados vienen de mongo.
+    
+        return new ProductDTO({
+            productId:productFromDB._id.toString(),
+            brand:productFromDB.brand,
+            title:productFromDB.title,
+            description:productFromDB.description,
+            price:productFromDB.price,
+            img:productFromDB.img,
+            code:productFromDB.code,
+            category:productFromDB.category,
+            owner:productFromDB.owner,
+            stock:productFromDB.stock,
+            status:productFromDB.status,
+            createdAt:productFromDB.createdAt,
+            thumbnails:productFromDB.thumbnails,
+        })
+    }
+
+    async createProducts(productsList){
+        //Toma una lista, crea los productos todos juntos y devuelve una lista con los productDTO creados.
+        //Cada elemento de productsList debe contar con los siguientes campos:
+        //{title,description,price,img,code,category,owner,stock,status,thubnails} Si una propiedad no esta entonces se le da un valor por default
+        //Si ya hay un producto con el mismo code para el onwer el producto no sea crea.
+        //campos obligatorios: titulo, price, code,category,stock
+        //Si stock es cero, status sera false, si es stock es mayor a cero sera true, o sea estara activada para venderse.
+        //Se deveulve la lista de productDTO creados y otra lista con los code de los no creados.
+        try{
+            console.log('Entrada: ',productsList)
+            //Primero mapeo a productsList para tener una lista valida para mandar a crear
+            //la validacion de los productos nuevos sera responsabilidad de la capa de servicios y repositorio
+            //La regla sera que psi hay un codigo repetido para un owner deteminado entonces no se guarda xq ese owner ya tiene un producto con ese code
+            //los code se pueden repetir para la base de datos pero no para un owner determinado
+            const newProducts = productsList.map( item => (
+               { 
+                title : item.title,
+                description: item.description || null,
+                price : item.price,
+                img: item.img || null, //Aca hay que poner una imagen de producto por defecto
+                code: item.code,
+                category: item.category,
+                owner: item.owner || 'admin',
+                stock: item.stock,
+                status: item.stock > 0 ? true : false,
+                thubnails: item.thumbnails || [] //SI no hay thubnails se guarda un array vacio.
+               }
+            ))
+            //console.log('Lista new Products: ', newProducts)
+            
+
+            const createdProducts = await ProductModel.insertMany(newProducts)
+            const productsDTOList =    createdProducts.map(item => (this.getProductDTO(item)))
+            return productsDTOList
+        }catch(error){
+            
+        }
+    }
+
+    
+    async get({productId,owner,status,code,brand,category,createdAt}){
+       //Devuelve un array con productDTO que coincida la busqueda.
+       //Se puede combinar los parametros para hacer el get.
+       //Si no se pasa ninguna propiedad, o sea {} devuelve todos los productos.
+       //Todas las propiedades se comparan por igualdad excepto createdAT que se devuelve los anterior igual a la fecha ingresada.
+       try{
+          const query = {}
+          
+          //Voy construyendo el objeto de consulta de acuerdo a si estan o no los parametros.
+          productId && (query._id = productId)
+          owner && (query.owner = owner)
+          status !== undefined && (query.status = status) // Como puede ser true o false hay que probar que no sea undefined o null
+          code && (query.code = code)
+          brand && (query.brand = brand)
+          category && (query.category = category)
+          createdAt && (query.createdAt = { $gte: createdAt })
+         
+          //console.log('QUERY CONSTRUIDA: ', query)
+          const searchResult = await ProductModel.find(query)
+          //console.log('Search result: ',searchResult)
+            
+         const productsDTOList = searchResult.map(item => ( this.getProductDTO(item)))
+
+         return productsDTOList            
+       }catch(error){
+            throw error
+       }
+    }
+
+
+    async search({limit,page,orderBy,orderField,productId,owner,status,code,brand,category,createdAt}){
+        /*
+          paginateOptions
+          Hace una busqueda y devuelve utilizando paginacion.
+          Recibe un objeto con {limit,pageNumber, pageQuantity,orderBy,orderField,query}
+          limit: Cantidad de registros totales pedidos. Si no se especifica entonces seran solo 10.
+          pageNumber: Numero de pagina solicitada en la busqueda, si no se especifica sera la numero 1.
+          orderBy: 1 para Ascendente, 2 para descendente. Si no se especifica se ordena de manera descendente.
+          orderField: Campo por el cual se pide el ordenamiento. Pueden ser 'price' o 'stock' o 'createdAt'. Si 
+                    no se especifica se usara price.
+          
+          query: Objeto para la consulta. Funcion igual que get.
+
+          OBJETIVO DEL METODO DEVOLVER UN OBJETO ASI:
+          {
+               totalProducts: 630,
+               matches: seria el length de docs. O sea las coincidencias de busqueda.
+               productsList: Lista de dto obtenidos seria los docs transformados en caso de mongo.
+               limit: 40,
+               totalPages: 16,
+               page: 1,
+               pagingCounter: 1,
+               hasPrevPage: false,
+               HasNextPage: true,
+               prevPage: null,
+               nextPage: 2 
+          }
+        
+        */
+        try{
+            //Aca iria una validacion de limit,page que sean numeros, orderField que sea -1/1 y orderField un campo permitido.
+            const query = {}
+            const paginateOptions = {}
+
+            
+            paginateOptions.limit = limit || 10
+            paginateOptions.page = page  || 1
+            if (orderField) paginateOptions.sort = { orderField : orderBy || -1 } //Si no hay ordeber by el orden sera por defecto descendente.
+            paginateOptions.sort = { price : orderBy || -1 } //Si no hay ordeber by el orden sera por defecto descendente.
+            
+            //Voy construyendo el objeto de consulta de acuerdo a si estan o no los parametros.
+            productId && (query._id = productId)
+            owner && (query.owner = owner)
+            status !== undefined && (query.status = status) // Como puede ser true o false hay que probar que no sea undefined o null
+            code && (query.code = code)
+            brand && (query.brand = brand)
+            category && (query.category = category)
+            createdAt && (query.createdAt = { $gte: createdAt })
+            
+            //Procedemos a la busqueda y paginacion.
+            let searchResult = await ProductModel.paginate(query,paginateOptions)
+
+            /*
+            console.log('Search result: ',searchResult)
+            console.log('Search result length docs: ',searchResult.docs.length)
+            console.log('QUERY CONSTRUIDA: ', query)
+            console.log('OPTIONS SEARCH CONSTRUIDA: ', paginateOptions)
+              */
+            //Saliendo todo OK esto deberia construir el objeto propuesto.
+            return {
+                productsQueryList: searchResult.docs.map(item => ( this.getProductDTO(item))),
+                totalProducts: searchResult.totalDocs,
+                limit: limit,
+                totalPages: searchResult.totalPages,
+                page: searchResult.page,
+                pagingCounter: searchResult.pagingCounter,
+                hasPrevPage: searchResult.hasPrevPage,
+                hasNextPage: searchResult.hasNextPage,
+                prevPage: searchResult.prevPage,
+                nextPage: searchResult.nextPage 
+            }
+        }catch(error){
+
+        }
+    }
+
+
+
+    async getDistinct(selectedField){
+        //Este metodo tendra cada dao para devolver una lista con los distintos valores del campo pasado por parametro
+        try{
+            const distinctValuesList = await ProductModel.distinct(selectedField)
+            return distinctValuesList
+        }catch(error){
+
+        }
+    }
+
+    async getCodesListoForOwner(selectedOwner){
+        //Devuelve una lista con todos los codigos de productos para un owner determinados
+        //De este modo el repositorio y/o capa de servicio saben que no podran ocupar los codigos de esa lista
+        try{
+            const codesListProductsOwner = await ProductModel.distinct('code',{ owner: selectedOwner })
+            return codesListProductsOwner
+        }catch(error){
+
+        }
+    }
+
+    async updateProductsListById(productsForUpdate){
+        /* Tomamos una lista de productos para updatear y devolvemos los DTO actualizados....*/
+        /* La idea es aceptar grupos de productos a actualizar...*/
+        try{
+           /*Mapeo la lista productsForUpdate para saber que campos se quieren actualizar */
+           /*{productId:669006295797512a8efc7a41, updateInfo:{newTitle:valor,newDescription} }*/
+           /* si no se pasa una propiedasd eje newTitle, no se actualizq xq para mongoose es ndefined
+            asique simplemente la idea es pasar newPropiedad por cada propiedad a actualizar.
+           */
+            const operationsList = productsForUpdate.map( item => (
+                ProductModel.findOneAndUpdate(
+                    {_id:item.productId},
+                    { $set:
+                        {
+                            owner: item.updateInfo.newOwner,
+                            brand:item.updateInfo.newBrand,
+                            title:item.updateInfo.newTitle,
+                            description: item.updateInfo.newDescription,
+                            price: item.updateInfo.newPrice,
+                            img: item.updateInfo.newImg,
+                            code: item.updateInfo.newCode,
+                            category: item.updateInfo.newCategory,
+                            stock: item.updateInfo.newStock,
+                            status:  item.updateInfo.newStatus,
+                            thumbnails: item.updateInfo.newThumbnails,
+                            updatedAt: Date.now()
+
+                        }},
+                    { new: true } //Para que me devuelva el registro actualizado.
+                    )
+            ))
+
+            //Resuelvo la lista de promesas y espero a que termine, o sea hago todas las actualizaciones.
+            //Los resultados de cada promesa, o sea actualizacion quedan en cada posicion de updateResult
+            const updateResults = await Promise.all(operationsList)
+            const updatedProductsDTOList = updateResults.map(item => (this.getProductDTO(item)))
+            //console.log('Operations: ', updatedProductsDTOList)
+            return updatedProductsDTOList
+        }catch(error){
+            console.log(error)
+        }
+    }
+
+
+    async deleteByQuery({productId,owner,status,code,brand,category,createdAt}){
+        //Funciona igual que get pero devuelve el array de los DTO borrados Pero borra una lista de productos.
+        //Se debe ingresar {productId,owner,status,code,brand,category} para construir la query.
+        //Se devuelve un array de productsDTO con lo eminado, y un [] si nada se elimino.
+        try{
+
+         const query = {}
+          //Voy construyendo el objeto de consulta de acuerdo a si estan o no los parametros.
+        productId && (query._id = productId)
+        owner && (query.owner =owner)
+        status !== undefined && (query.status = status) // Como puede ser true o false hay que probar que no sea undefined o null
+        code && (query.code = code)
+        brand && (query.brand = brand)
+        category && (query.category = category)
+        createdAt && (query.createdAt = { $gte: createdAt })
+
+       
+        //Armo una lista de promeses
+        const deleteOperations = productsForDelete.map(item => (ProductModel.findOneAndDelete(query)))
+        //Espero que se resuelvan
+        const deleteResults = await Promise.all(deleteOperations)
+            console.log('DeleteResults: ', deleteResults)
+        //Y dado que al resolverse ProductModel.findOneAndDelete(query) me devuelve copia del registreo eliminado
+        //DFevuelvo ese dto con todos los registros eliminados.
+        //const listOfDeletedProductsDTO = deleteResults.map( item => (this.getProductDTO(item)))
+        return 'eliminacion'  //listOfDeletedProductsDTO
+    
+        }catch(error){
+            console.log('error')
         }
     }
 

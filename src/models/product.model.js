@@ -58,6 +58,10 @@ const productSchema = new mongoose.Schema({
         }
             */
 
+    },
+    purchasesCount:{ 
+        type: Number, 
+        default: 0 
     }, 
     createdAt:{
         type: Date,

@@ -17,6 +17,7 @@ export class ProductDTO{
         this.owner = receivedProduct.owner;
         this.stock = receivedProduct.stock;
         this.status = receivedProduct.status;
+        this.purchasesCount = receivedProduct.purchasesCount;
         this.createdAt = receivedProduct.createdAt || 'S/Fecha Creacion';
         this.thumbnails = receivedProduct.thumbnails;
         

@@ -26,6 +26,7 @@ export default class UsersMongoDao{
             age: userFromDB.age,
             role: userFromDB.role,
             cartId: userFromDB.cartId,
+            score: userFromDB.score,
             createdAt: userFromDB.createdAt,
             enabled: userFromDB.enabled,
             recoveryPasswordCode : userFromDB.recoveryPasswordCode,

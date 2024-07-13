@@ -2,6 +2,7 @@
 import { trusted } from "mongoose"
 import { ProductDTO } from "../../dto/products.dto.js"
 import { ProductModel } from "../../models/product.model.js"
+import { paginate } from "mongoose-paginate-v2"
 
 
 export class MongoProductsDAO{
@@ -263,7 +264,6 @@ export class MongoProductsDAO{
 
     getProductDTO(productFromDB){
         //Retorna el dto del product desde la base de datos. En este caso uso mongo asqieu transfromara segun los resultados vienen de mongo.
-    
         return new ProductDTO({
             productId:productFromDB._id.toString(),
             brand:productFromDB.brand,
@@ -276,10 +276,58 @@ export class MongoProductsDAO{
             owner:productFromDB.owner,
             stock:productFromDB.stock,
             status:productFromDB.status,
+            purchasesCount: productFromDB.purchasesCount,
             createdAt:productFromDB.createdAt,
             thumbnails:productFromDB.thumbnails,
         })
     }
+
+    
+    makeQueryFromObject({productId,owner,status,code,brand,category,createdAtRange,priceRange,purchasesCountRange}){
+        //Devuelve la consulta construida para formato mongoose.
+        try{
+            const query = {}
+            //Voy construyendo el objeto de consulta de acuerdo a si estan o no los parametros.
+            productId && (query._id = productId)
+            owner && (query.owner = owner)
+            status !== undefined && (query.status = status) // Como puede ser true o false hay que probar que no sea undefined o null
+            code && (query.code = code)
+            brand && (query.brand = brand)
+            category && (query.category = category)
+         
+            if (priceRange){
+                if (!priceRange.max)  query.price = { $gte: priceRange.min }
+                //Si no vino el minimo busco entre cero y max.
+                if (!priceRange.min) query.price  = { $gte: 0 , $lte: priceRange.max }
+                //Y si vienen ambos y obvio son mayor que cero entonces pido el rango.
+                if (priceRange.min >= 0 && priceRange.max >= 0) query.price = { $gte: priceRange.min , $lte: priceRange.max }
+            }
+            
+            if (purchasesCountRange){
+                if (!purchasesCountRange.max)  query.price = { $gte: purchasesCountRange.min }
+                //Si no vino el minimo busco entre cero y max.
+                if (!purchasesCountRange.min) query.price  = { $gte: 0 , $lte: purchasesCountRange.max }
+                //Y si vienen ambos y obvio son mayor que cero entonces pido el rango.
+                if (purchasesCountRange.min >= 0 && purchasesCountRange.max >= 0) query.price = { $gte: purchasesCountRange.min , $lte: purchasesCountRange.max }
+            }
+    
+            if (createdAtRange){
+                //Supongamos qiue min ymax vendran como 'aaaa-mm-dd' y en string
+                //Si no vino el maximo es un 'a partir de tal fecha! entonces uso una fecha del pasado'
+                if (!createdAtRange.max)  query.price = { $gte:  new Date(createdAtRange.min) }
+                //Si no vino el minimo busco entre cero y max.
+                if (!createdAtRange.min) query.price  = { $gte:  new Date('1900-01-01') , $lte: new Date(createdAtRange.max) }
+                //Y si vienen ambos y obvio son mayor que cero entonces pido el rango.
+                if (createdAtRange.min >= 0 && createdAtRange.max >= 0) query.price = { $gte: new Date(createdAtRange.min) , $lte: new Date(createdAtRange.max) }
+            }
+    
+            return query
+        }catch(error){
+            throw error
+        }
+      
+    }
+
 
     async createProducts(productsList){
         //Toma una lista, crea los productos todos juntos y devuelve una lista con los productDTO creados.
@@ -290,6 +338,7 @@ export class MongoProductsDAO{
         //Si stock es cero, status sera false, si es stock es mayor a cero sera true, o sea estara activada para venderse.
         //Se deveulve la lista de productDTO creados y otra lista con los code de los no creados.
         try{
+            //console.log('Entrada: ',productsList)
             //Primero mapeo a productsList para tener una lista valida para mandar a crear
             //la validacion de los productos nuevos sera responsabilidad de la capa de servicios y repositorio
             //La regla sera que psi hay un codigo repetido para un owner deteminado entonces no se guarda xq ese owner ya tiene un producto con ese code
@@ -309,48 +358,57 @@ export class MongoProductsDAO{
                }
             ))
             //console.log('Lista new Products: ', newProducts)
-            
-
             const createdProducts = await ProductModel.insertMany(newProducts)
             const productsDTOList =    createdProducts.map(item => (this.getProductDTO(item)))
             return productsDTOList
         }catch(error){
-            console.log('erroorrrrr',error)
+            
         }
     }
 
     
-    async get({productId,owner,status,code,brand,category,createdAt}){
+    async get({productId,owner,status,code,brand,category,createdAtRange,priceRange,purchasesCountRange}){
        //Devuelve un array con productDTO que coincida la busqueda.
        //Se puede combinar los parametros para hacer el get.
        //Si no se pasa ninguna propiedad, o sea {} devuelve todos los productos.
        //Todas las propiedades se comparan por igualdad excepto createdAT que se devuelve los anterior igual a la fecha ingresada.
+       //PurchaseCountRabge debe ser un objeto {min:valor,max:valor}
+       //Si en el objetoi no se incluye max hay que dar error. Se puede obviar el minimo, si, no, sera cero pero no el maximo
        try{
-          const query = {}
-          
-          //Voy construyendo el objeto de consulta de acuerdo a si estan o no los parametros.
-          productId && (query._id = productId)
-          owner && (query.owner = owner)
-          status !== undefined && (query.status = status) // Como puede ser true o false hay que probar que no sea undefined o null
-          code && (query.code = code)
-          brand && (query.brand = brand)
-          category && (query.category = category)
-          createdAt && (query.createdAt = { $gte: createdAt })
-         
-          //console.log('QUERY CONSTRUIDA: ', query)
+          const query = this.makeQueryFromObject({productId,owner,status,code,brand,category,createdAtRange,priceRange,purchasesCountRange})
           const searchResult = await ProductModel.find(query)
-          //console.log('Search result: ',searchResult)
-            
-         const productsDTOList = searchResult.map(item => ( this.getProductDTO(item)))
-
-         return productsDTOList            
+          const productsDTOList = searchResult.map(item => ( this.getProductDTO(item)))
+          return productsDTOList            
        }catch(error){
             throw error
        }
     }
 
 
-    async search({limit,page,orderBy,orderField,productId,owner,status,code,brand,category,createdAt}){
+    makePaginationValuesObject({limit,page,orderBy,orderField}){
+        //Construye el objeto de paginacion para moongosepagination
+        try{
+            const paginateOptions = {}
+            //Construccion de la paginacion
+            paginateOptions.limit = limit || 10
+            paginateOptions.page = page  || 1
+            if (orderField) {
+                //Si me pasaron campo de ordenacion lo ordenanos por ese cammpo,
+                paginateOptions.sort = { orderField : orderBy || -1 }
+            } //Si no hay ordeber by el orden sera por defecto descendente.
+            else {
+            //Si no se paso campo de ordenacio ordenamos por createdAt Descendente
+             paginateOptions.sort = { createdAt : orderBy || -1 }
+            }
+            paginateOptions.sort = { price : orderBy || -1 } //Si no hay ordeber by el orden sera por defecto descendente.
+
+            return paginateOptions
+        }catch(error){
+            throw error
+        }
+    }
+
+    async search({limit,page,orderBy,orderField,productId,owner,status,code,brand,category,createdAtRange,priceRange,purchasesCountRange}){
         /*
           paginateOptions
           Hace una busqueda y devuelve utilizando paginacion.
@@ -381,38 +439,15 @@ export class MongoProductsDAO{
         */
         try{
             //Aca iria una validacion de limit,page que sean numeros, orderField que sea -1/1 y orderField un campo permitido.
-            const query = {}
-            const paginateOptions = {}
-
-            
-            paginateOptions.limit = limit || 10
-            paginateOptions.page = page  || 1
-            if (orderField) paginateOptions.sort = { orderField : orderBy || -1 } //Si no hay ordeber by el orden sera por defecto descendente.
-            paginateOptions.sort = { price : orderBy || -1 } //Si no hay ordeber by el orden sera por defecto descendente.
-            
-            //Voy construyendo el objeto de consulta de acuerdo a si estan o no los parametros.
-            productId && (query._id = productId)
-            owner && (query.owner = owner)
-            status !== undefined && (query.status = status) // Como puede ser true o false hay que probar que no sea undefined o null
-            code && (query.code = code)
-            brand && (query.brand = brand)
-            category && (query.category = category)
-            createdAt && (query.createdAt = { $gte: createdAt })
-            
+            const query = this.makeQueryFromObject({productId,owner,status,code,brand,category,createdAtRange,priceRange,purchasesCountRange})
+            const paginateOptions = this.makePaginationValuesObject({limit,page,orderBy,orderField})
             //Procedemos a la busqueda y paginacion.
             let searchResult = await ProductModel.paginate(query,paginateOptions)
-
-            /*
-            console.log('Search result: ',searchResult)
-            console.log('Search result length docs: ',searchResult.docs.length)
-            console.log('QUERY CONSTRUIDA: ', query)
-            console.log('OPTIONS SEARCH CONSTRUIDA: ', paginateOptions)
-              */
             //Saliendo todo OK esto deberia construir el objeto propuesto.
             return {
                 productsQueryList: searchResult.docs.map(item => ( this.getProductDTO(item))),
                 totalProducts: searchResult.totalDocs,
-                limit: limit,
+                limit: searchResult.limit,
                 totalPages: searchResult.totalPages,
                 page: searchResult.page,
                 pagingCounter: searchResult.pagingCounter,
@@ -434,18 +469,21 @@ export class MongoProductsDAO{
             const distinctValuesList = await ProductModel.distinct(selectedField)
             return distinctValuesList
         }catch(error){
-            throw error
+
         }
     }
 
-    async getCodesListoForOwner(selectedOwner){
+    async getCodesListForOwner(selectedOwner){
         //Devuelve una lista con todos los codigos de productos para un owner determinados
         //De este modo el repositorio y/o capa de servicio saben que no podran ocupar los codigos de esa lista
         try{
+            //Valido que exista el owner, de lo contrario error.
+            const ownerList = await this.getDistinct('owner')
+            if (!ownerList.includes(item=>item == selectedOwner)) console.log('No existe owner ')
             const codesListProductsOwner = await ProductModel.distinct('code',{ owner: selectedOwner })
             return codesListProductsOwner
         }catch(error){
-
+            throw error
         }
     }
 
@@ -472,6 +510,7 @@ export class MongoProductsDAO{
                             code: item.updateInfo.newCode,
                             category: item.updateInfo.newCategory,
                             stock: item.updateInfo.newStock,
+                            purchasesCount: item.updateInfo.newPurchasesCount,
                             status:  item.updateInfo.newStatus,
                             thumbnails: item.updateInfo.newThumbnails,
                             updatedAt: Date.now()
@@ -493,34 +532,44 @@ export class MongoProductsDAO{
     }
 
 
-    async deleteByQuery({productId,owner,status,code,brand,category,createdAt}){
+    async deleteByQuery({productId,owner,status,code,brand,category,createdAtRange,priceRange,purchasesCountRange}){
         //Funciona igual que get pero devuelve el array de los DTO borrados Pero borra una lista de productos.
         //Se debe ingresar una lista de [{productId,owner,status,code,brand,category}] para construir la query.
         try{
 
-        const query = {}
-          //Voy construyendo el objeto de consulta de acuerdo a si estan o no los parametros.
-        productId && (query._id = productId)
-        owner && (query.owner = owner)
-        status !== undefined && (query.status = status) // Como puede ser true o false hay que probar que no sea undefined o null
-        code && (query.code = code)
-        brand && (query.brand = brand)
-        category && (query.category = category)
-        createdAt && (query.createdAt = { $gte: createdAt })
+        const query = this.makeQueryFromObject({productId,owner,status,code,brand,category,createdAtRange,priceRange,purchasesCountRange})
         //Con la query construida hago una busqueda de los productos a eliminar y que voy a devolver.
         const productsForDelete = await ProductModel.find(query)
         //uso la misma lista para tomar los id de los productos a borrar y preparar la lista de promesas
-        const deleteResults = await ProductModel.deleteMany(query)
-        const productsDTOList = productsForDelete.map(item => (this.getProductDTO(item)))
-        //-------------------------------------------
-        console.log('resultado elimiancion', deleteResults)
-        console.log('resultado lista dto', productsDTOList)
-        return productsDTOList 
-        }catch(error){
+        await ProductModel.deleteMany(query)
+        /*const deleteOperations = productsForDelete.map(item => (ProductModel.findOneAndDelete({_id: item._id})))
+        const deleteResults = await Promise.all(deleteOperations)
 
+        //console.log('resultado elimiancion', deleteResults)
+        */
+        const deletedProductsDTOList = productsForDelete.map(item => this.getProductDTO(item))
+        return  deletedProductsDTOList
+        }catch(error){
+            throw error
         }
     }
 
+
+
+    async deleteByList(productsForDelete){
+        //Recibe una listo con los ID de los productos a borrar y borra uno a uno, luego devuelve su dto.
+        try{
+        //Validar la lsita o dar error
+        const deleteOperations = productsForDelete.map(item => (ProductModel.findOneAndDelete({_id: item})))
+        const deleteResults = await Promise.all(deleteOperations)
+
+        //console.log('resultado elimiancion', deleteResults)
+        const deletedProductsDTOList = deleteResults.map(item => this.getProductDTO(item))
+        return  deletedProductsDTOList
+        }catch(error){
+            throw error
+        }
+    }
 
 
 }

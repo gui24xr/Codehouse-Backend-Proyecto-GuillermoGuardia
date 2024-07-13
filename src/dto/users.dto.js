@@ -27,6 +27,7 @@ export class UserDTO{
         this.age = receivedUser.age;
         this.role = receivedUser.role;
         this.cartId = receivedUser.cartId;
+        this.score = receivedUser.score;
         this.createdAt = receivedUser.createdAt;
         this.enabled = receivedUser.enabled;
         this.recoveryPasswordCode = receivedUser.recoveryPasswordCode;

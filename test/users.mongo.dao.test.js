@@ -20,7 +20,7 @@ const arrayUsersPrueba = [
 
 
 
-const connectResult = await mongoose.connect('mongodb+srv://gui24xrdev:2485javiersolis@cluster0.a6zgcio.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=Cluster0')
+const connectResult = await mongoose.connect('mongodb+srv://gui24xrdev:2485javiersolis@cluster0.a6zgcio.mongodb.net/ecommerce2?retryWrites=true&w=majority&appName=Cluster0')
 if (connectResult) {
     console.log('Conexión exitosa con MongoDB!');
 } else {
@@ -47,14 +47,11 @@ const assert = Assert.strict;
 describe('Testing de users.mongo.dao METODO CREATE', function(){
     
     before(function(){
+        //mongoose.connection.collections.users.drop()
         this.usersDao = new UsersMongoDao()
     })
 
-    this.afterAll(function (){
-        mongoose.connection.collections.users.drop()
-    
-    })
-    
+ 
 
     it('EL metodo create debe crear y devolver la instancia dl UserDTO creado.',async function(){
         const result = await this.usersDao.create({...userPrueba0})

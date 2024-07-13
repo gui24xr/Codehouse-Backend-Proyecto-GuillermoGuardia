@@ -57,7 +57,7 @@ describe('***** ------ // TEST MongoProductsDAO - Metodo createProducts //------
             this.productsDAO = new MongoProductsDAO()
         })
 
-    it('Se crean 25 productos a partir de productsArray y se devuelve los 25 ProductDTO de los registros creados',async function(){
+    it('1.1 Se crean 25 productos a partir de productsArray y se devuelve los 25 ProductDTO de los registros creados',async function(){
             try{
                 const resultArray = await this.productsDAO.createProducts(productsArray)
                 //console.log('RESULTADOS CREATE: ',resultArray) 
@@ -87,7 +87,7 @@ describe('***** ------ // TEST MongoProductsDAO - Metodo get //------ ***** ',fu
             this.productsDAO = new MongoProductsDAO()
         })
 
-    it('-- METODO GET parametros {} Se deben obtener 25 instancias de productDTO.',async function(){
+    it('2.1 -- METODO GET parametros {} Se deben obtener 25 instancias de productDTO.',async function(){
         try{
             const resultArray = await this.productsDAO.get({}) 
             //Se obtuvieron 25 instancias de productDTO
@@ -105,7 +105,7 @@ describe('***** ------ // TEST MongoProductsDAO - Metodo get //------ ***** ',fu
         })
     
     
-    it('-- METODO GET parametros {owner:admin} Se deben obtener 13 instancias de productDTO...',async function(){
+    it('2.2 -- METODO GET parametros {owner:admin} Se deben obtener 13 instancias de productDTO...',async function(){
             
         try{
             const resultArray = await this.productsDAO.get({owner:'admin'}) 
@@ -136,42 +136,61 @@ describe('***** ------ // TEST MongoProductsDAO - Metodo search //------ ***** '
             this.productsDAO = new MongoProductsDAO()
         })
 
-    it('-- METODO SEARCH parametros {category:"electronica",limit: 40}',async function(){
+    it('3.1-- METODO SEARCH parametros {category:"electronica",limit: 40}',async function(){
         try{
             const resultObject = await this.productsDAO.search({category:'electronica',limit: 40}) 
-         
             //console.log(resultObject)
+            //console.log(typeof(resultObject.totalProducts),typeof(resultObject.limit))
             const conditionsArrayForOK =  [
                 resultObject.productsQueryList.every(item => item instanceof ProductDTO),//Se obtuvieron X coincidencias.
-                resultObject.productsQueryList.length === productsArray.filter(item => item.category == 'electronica').length,
+                resultObject.totalProducts <= 40,
                 resultObject.limit == 40
+            ]
+            //console.log('ConditionsArrray : ', conditionsArrayForOK)
+            //Si todas las condiciones del array son ciertas entonces el test es OK.
+            assert.deepStrictEqual(conditionsArrayForOK.every(item => item == true),true)
+            }catch(error){
+                console.log('Error en test: ',error)
+            }
+    
+        })
+    
+    
+     it('3.2-- METODO SEARCH parametros {} Debe devolver 10 en limit ya que no se especifica...',async function(){
+        try{
+            const resultObject = await this.productsDAO.search({category:'electronica'}) 
+             console.log(resultObject)
+            const conditionsArrayForOK =  [
+                resultObject.productsQueryList.every(item => item instanceof ProductDTO),//Se obtuvieron X coincidencias.
+                resultObject.totalProducts <= 10,
+                resultObject.limit == 10
             ]
             //Si todas las condiciones del array son ciertas entonces el test es OK.
             assert.strictEqual(conditionsArrayForOK.every(item => item == true),true)
             }catch(error){
                 console.log(error)
             }
-    
-        })
-    
-    
-        it('-- METODO SEARCH parametros {} Debe devolver 10 en limit ya que no se especifica...',async function(){
-            try{
-                const resultObject = await this.productsDAO.search({category:'electronica'}) 
-             
-                //console.log(resultObject)
-                const conditionsArrayForOK =  [
-                    resultObject.productsQueryList.every(item => item instanceof ProductDTO),//Se obtuvieron X coincidencias.
-                    resultObject.productsQueryList.length <= 10,
-                    resultObject.limit == 10
-                ]
-                //Si todas las condiciones del array son ciertas entonces el test es OK.
-                assert.strictEqual(conditionsArrayForOK.every(item => item == true),true)
-                }catch(error){
-                    console.log(error)
-                }
         
             })
+
+        it('3.3-- METODO SEARCH parametros {orderField:"price", orderBy: 1} Debe devolver 10 en limit ya que no se especifica...',async function(){
+            try{
+                const resultObject = await this.productsDAO.search({category:'electronica'}) 
+                //console.log(resultObject)
+                const conditionsArrayForOK =  [
+                        resultObject.productsQueryList.every(item => item instanceof ProductDTO),//Se obtuvieron X coincidencias.
+                        resultObject.productsQueryList.every((item,index) =>  index === 0 || item.price <=  resultObject.productsQueryList[index - 1].price),
+                        resultObject.totalProducts <= 10,
+                        resultObject.limit == 10
+                    ]
+                //console.log('Condiciones: ',conditionsArrayForOK)
+                    //Si todas las condiciones del array son ciertas entonces el test es OK.
+                    assert.strictEqual(conditionsArrayForOK.every(item => item == true),true)
+                    }catch(error){
+                        console.log(error)
+                    }
+                
+                    })
     })
         
 

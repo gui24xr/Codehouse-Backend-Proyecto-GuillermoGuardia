@@ -40,6 +40,10 @@ const userSchema =  mongoose.Schema({
         type: Boolean,
         default: true
     },
+    score:{ 
+        type: Number, 
+        default: 0 
+    }, 
     createdAt:{
         type: Date,
         default: Date.now

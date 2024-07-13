@@ -1,8 +1,7 @@
 
-import { trusted } from "mongoose"
 import { ProductDTO } from "../../dto/products.dto.js"
 import { ProductModel } from "../../models/product.model.js"
-import { paginate } from "mongoose-paginate-v2"
+import { ProductsServiceError, ProductDTOERROR } from "../../services/errors.service.js"
 
 
 export class MongoProductsDAO{
@@ -323,7 +322,8 @@ export class MongoProductsDAO{
     
             return query
         }catch(error){
-            throw error
+            if (error instanceof ProductsServiceError) throw error
+            else throw new UsersServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|MongoProductsDAO.makeQueryFromObject|','Error interno del servidor...')
         }
       
     }
@@ -343,6 +343,7 @@ export class MongoProductsDAO{
             //la validacion de los productos nuevos sera responsabilidad de la capa de servicios y repositorio
             //La regla sera que psi hay un codigo repetido para un owner deteminado entonces no se guarda xq ese owner ya tiene un producto con ese code
             //los code se pueden repetir para la base de datos pero no para un owner determinado
+            
             const newProducts = productsList.map( item => (
                { 
                 title : item.title,
@@ -362,7 +363,8 @@ export class MongoProductsDAO{
             const productsDTOList =    createdProducts.map(item => (this.getProductDTO(item)))
             return productsDTOList
         }catch(error){
-            
+            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+            else throw new UsersServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|MongoProductsDAO.createProducts|','Error interno del servidor...')
         }
     }
 
@@ -380,7 +382,8 @@ export class MongoProductsDAO{
           const productsDTOList = searchResult.map(item => ( this.getProductDTO(item)))
           return productsDTOList            
        }catch(error){
-            throw error
+        if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+        else throw new UsersServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|MongoProductsDAO.get|','Error interno del servidor...')
        }
     }
 
@@ -404,7 +407,8 @@ export class MongoProductsDAO{
 
             return paginateOptions
         }catch(error){
-            throw error
+            if (error instanceof ProductsServiceError) throw error
+            else throw new UsersServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|MongoProductsDAO.makePaginationValuesObject|','Error interno del servidor...')
         }
     }
 
@@ -457,7 +461,8 @@ export class MongoProductsDAO{
                 nextPage: searchResult.nextPage 
             }
         }catch(error){
-            throw error
+            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+            else throw new UsersServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|MongoProductsDAO.search|','Error interno del servidor...')
         }
     }
 
@@ -469,7 +474,8 @@ export class MongoProductsDAO{
             const distinctValuesList = await ProductModel.distinct(selectedField)
             return distinctValuesList
         }catch(error){
-
+            if (error instanceof ProductsServiceError) throw error
+            else throw new UsersServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|MongoProductsDAO.getDistinct|','Error interno del servidor...')
         }
     }
 
@@ -483,7 +489,8 @@ export class MongoProductsDAO{
             const codesListProductsOwner = await ProductModel.distinct('code',{ owner: selectedOwner })
             return codesListProductsOwner
         }catch(error){
-            throw error
+            if (error instanceof ProductsServiceError) throw error
+            else throw new UsersServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|MongoProductsDAO.getCodesListForOwner|','Error interno del servidor...')
         }
     }
 
@@ -527,7 +534,8 @@ export class MongoProductsDAO{
             //console.log('Operations: ', updatedProductsDTOList)
             return updatedProductsDTOList
         }catch(error){
-            console.log(error)
+            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+            else throw new UsersServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|MongoProductsDAO.updateProductsListById|','Error interno del servidor...')
         }
     }
 
@@ -550,7 +558,8 @@ export class MongoProductsDAO{
         const deletedProductsDTOList = productsForDelete.map(item => this.getProductDTO(item))
         return  deletedProductsDTOList
         }catch(error){
-            throw error
+            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+            else throw new UsersServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|MongoProductsDAO.deleteByQuere|','Error interno del servidor...')
         }
     }
 
@@ -567,7 +576,8 @@ export class MongoProductsDAO{
         const deletedProductsDTOList = deleteResults.map(item => this.getProductDTO(item))
         return  deletedProductsDTOList
         }catch(error){
-            throw error
+            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+            else throw new UsersServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|MongoProductsDAO.deleteByList|','Error interno del servidor...')
         }
     }
 

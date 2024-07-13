@@ -1,17 +1,18 @@
 
 import { MongoProductsDAO } from "../dao/mongo/products.mongo.dao.js";
+import { ProductsServiceError, ProductDTOERROR } from "../services/errors.service.js";
 
+const productsDao = new MongoProductsDAO()
 
-const mongoProductsDAO = new MongoProductsDAO()
-
-export class ProductRepository{
+export class ProductsRepository{
    
     async getProducts(){
         try {
-            const products = await mongoProductsDAO.getProducts()
+            const products = await productsDao.get({})
             return products
         } catch (error) {
-            throw new Error('Error al obtener productos...')
+            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+            else throw new UsersServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.getProducts|','Error interno del servidor...')
         }
    }
 
@@ -19,20 +20,22 @@ export class ProductRepository{
 
    async getProductById(productId){
          try {
-            const searchedProduct = await mongoProductsDAO.getProductById(productId)
-            return searchedProduct
+            const searchedProduct = await productsDao.get({productId:productId})
+            return searchedProduct[0]
         } catch (error) {
-            throw new Error('Error al obtener producto...')
+            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+            else throw new UsersServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.getProductById|','Error interno del servidor...')
         }
 
    }
 
    async getProductStock(productId){
     try {
-       const searchedProduct = await mongoProductsDAO.getProductStock(productId)
-       return searchedProduct
+        const searchedProduct = await productsDao.get({productId:productId})
+        return searchedProduct[0].stock
    } catch (error) {
-       throw new Error('Error al obtener producto...')
+    if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+    else throw new UsersServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.getProductStock|','Error interno del servidor...')
    }
 
 }
@@ -40,16 +43,22 @@ export class ProductRepository{
 
    async updateProductStock(productId,newStockQuantity){
      try{
-        await mongoProductsDAO.updateProductStock(productId,newStockQuantity)
+        const updatedProductsList = await productsDao.updateProductsListById([
+            { productId:productId, 
+              updateInfo:{newStock: newStockQuantity} }
+        ])
+        //como recibo lista de dto y es solo uno
+        return updatedProductsList[0]
      } catch(error){
-      throw new Error('Error al intentar actualizar  stock producto...')
+        if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+        else throw new UsersServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.updateProductStock|','Error interno del servidor...')
      }
    }
 
 
    async updateProduct(productId,newProduct){
     try {
-        const updatedProduct = await mongoProductsDAO.updateProduct(productId,newProduct)
+        const updatedProduct = await productsDao.updateProduct(productId,newProduct)
         return updatedProduct
     } catch (error) {
         throw new Error('Error al intentar actualizar producto...')
@@ -58,7 +67,7 @@ export class ProductRepository{
 
    async deleteProduct(productId){
    try {
-        const deletedResult = await mongoProductsDAO.deleteProduct(productId)
+        const deletedResult = await productsDao.deleteProduct(productId)
         return deletedResult
         }  catch (error) {
         throw new Error('Error al intentar eliminar producto...')
@@ -67,7 +76,7 @@ export class ProductRepository{
 
    async getProductsPaginate(limit,page,sort,query){
     try {
-        const products = await mongoProductsDAO.getProductsPaginate(limit,page,sort,query)
+        const products = await productsDao.getProductsPaginate(limit,page,sort,query)
         return products
     } catch (error) {
       console.log('Error al recuperar los productos...')
@@ -77,7 +86,7 @@ export class ProductRepository{
 
   async getProductsByFilter(filter,pageSize,pageNumber){
     try {
-        const result = await mongoProductsDAO.getProductsByFilter(filter,pageSize,pageNumber)
+        const result = await productsDao.getProductsByFilter(filter,pageSize,pageNumber)
         return result
     } catch (error) {
       console.log('Error al intentar getproductsFilter desde repository products...')
@@ -91,7 +100,7 @@ export class ProductRepository{
         
         //console.log('En repository: ',title, description,price,img,code,category,stock,status,thumbnails)
         try{
-           const addResult = await mongoProductsDAO.addProduct({title, description,price,img,code,category,stock,status,thumbnails})
+           const addResult = await productsDao.addProduct({title, description,price,img,code,category,stock,status,thumbnails})
            return addResult
         }catch(error){
             res.status(500)
@@ -100,7 +109,7 @@ export class ProductRepository{
 
     async changeProductStatus(productId){
         try{ 
-            const updateStateResult = await mongoProductsDAO.changeProductStatus(productId)
+            const updateStateResult = await productsDao.changeProductStatus(productId)
             return updateStateResult   
         }catch(error){
             throw new Error(`Error al intentar cambiar estado a producto ${productId} desde productRepository...`)
@@ -110,7 +119,7 @@ export class ProductRepository{
     async getProductsCategoriesList(){
         //Devuelve todas las diferentes categorias del catalogo de productos.
         try{
-            const categoriesList = await mongoProductsDAO.getProductsCategoriesList()
+            const categoriesList = await productsDao.getProductsCategoriesList()
             return categoriesList
         }catch(error){
             throw new Error(`Error al intentar obtener lista de categorias desde productRepository...`)

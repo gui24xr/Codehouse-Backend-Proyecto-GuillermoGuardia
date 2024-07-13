@@ -1,11 +1,11 @@
-import { ProductRepository } from "../repositories/products.repositories.js";
+import { ProductsRepository } from "../repositories/products.repositories.js";
 import { mySocketServer } from "../app.js";
 import { IncompleteFieldsError, InternalServerError, InputValidationServiceError } from "../services/errors.service.js"
 import { getMissingFields } from "../utils/helpers.js";
 import { InputValidationService } from "../services/validation.service.js";
 
 
-const productRepository = new ProductRepository()
+const productRepository = new ProductsRepository()
 
 export class ProductController{
 

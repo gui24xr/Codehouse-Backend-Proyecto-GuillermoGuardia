@@ -48,7 +48,7 @@ const productSchema = new mongoose.Schema({
     owner: {
         type: String,
         default: 'admin',
-        validate: {
+       /* validate: {
             validator: (value) => {
                 if ((value === 'admin') || 
                     (isEmail(value))) return true
@@ -56,6 +56,7 @@ const productSchema = new mongoose.Schema({
             },
             message: props => `${props.value} no es un email.`
         }
+            */
 
     }, 
     createdAt:{

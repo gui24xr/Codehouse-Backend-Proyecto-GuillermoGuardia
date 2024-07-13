@@ -290,7 +290,6 @@ export class MongoProductsDAO{
         //Si stock es cero, status sera false, si es stock es mayor a cero sera true, o sea estara activada para venderse.
         //Se deveulve la lista de productDTO creados y otra lista con los code de los no creados.
         try{
-            console.log('Entrada: ',productsList)
             //Primero mapeo a productsList para tener una lista valida para mandar a crear
             //la validacion de los productos nuevos sera responsabilidad de la capa de servicios y repositorio
             //La regla sera que psi hay un codigo repetido para un owner deteminado entonces no se guarda xq ese owner ya tiene un producto con ese code
@@ -316,7 +315,7 @@ export class MongoProductsDAO{
             const productsDTOList =    createdProducts.map(item => (this.getProductDTO(item)))
             return productsDTOList
         }catch(error){
-            
+            console.log('erroorrrrr',error)
         }
     }
 
@@ -423,7 +422,7 @@ export class MongoProductsDAO{
                 nextPage: searchResult.nextPage 
             }
         }catch(error){
-
+            throw error
         }
     }
 
@@ -435,7 +434,7 @@ export class MongoProductsDAO{
             const distinctValuesList = await ProductModel.distinct(selectedField)
             return distinctValuesList
         }catch(error){
-
+            throw error
         }
     }
 
@@ -499,10 +498,10 @@ export class MongoProductsDAO{
         //Se debe ingresar una lista de [{productId,owner,status,code,brand,category}] para construir la query.
         try{
 
-         const query = {}
+        const query = {}
           //Voy construyendo el objeto de consulta de acuerdo a si estan o no los parametros.
         productId && (query._id = productId)
-        owner && (query.owner =owner)
+        owner && (query.owner = owner)
         status !== undefined && (query.status = status) // Como puede ser true o false hay que probar que no sea undefined o null
         code && (query.code = code)
         brand && (query.brand = brand)
@@ -511,12 +510,12 @@ export class MongoProductsDAO{
         //Con la query construida hago una busqueda de los productos a eliminar y que voy a devolver.
         const productsForDelete = await ProductModel.find(query)
         //uso la misma lista para tomar los id de los productos a borrar y preparar la lista de promesas
-        
-        const deleteOperations = productsForDelete.map(item => (ProductModel.findOneAndDelete({_id: item._id})))
-        const deleteResults = await Promise.all(deleteOperations)
-
+        const deleteResults = await ProductModel.deleteMany(query)
+        const productsDTOList = productsForDelete.map(item => (this.getProductDTO(item)))
+        //-------------------------------------------
         console.log('resultado elimiancion', deleteResults)
-          return  
+        console.log('resultado lista dto', productsDTOList)
+        return productsDTOList 
         }catch(error){
 
         }

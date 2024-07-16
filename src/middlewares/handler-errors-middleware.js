@@ -21,6 +21,12 @@ export const handlerErrorsMiddleware = (error, req, res, next) => {
         
     } 
 
+    if (error instanceof ProductsServiceError){
+        // logger.error(`Type:${error.name} in ${req.method} - ${req.originalUrl} from ${req.ip}`)
+         res.status(500).json({message: error.message})
+         
+     } 
+
     if (error instanceof IncompleteFieldsError){
         //console.log('LLego al middleware Manejando erroressss')
         logger.error(`Type:${error.name} in ${req.method} - ${req.originalUrl} from ${req.ip}`)
@@ -44,9 +50,19 @@ export const handlerErrorsMiddleware = (error, req, res, next) => {
 
     
     if (error instanceof CartsServiceError){
-        //console.log('LLego al middleware Manejando erroressss')
+        console.log('LLego al middleware Manejando erroressss')
         logger.error(`Type:${error.name} in ${req.method} - ${req.originalUrl} from ${req.ip}`)
-        res.status(500).json({message: `Error en el CartServices - ${error.message}`})
+
+
+        
+        if (error.code == CartsServiceError.BLOCKED_TO_PREMIUM_USERS) 
+            res.status(403).json({
+                message: `Operacion no permitida para usuarios premium. Se inento agregar un producto prodpio a su carro.`,
+                url: req.originalUrl
+        })
+
+
+
         
     } 
 
@@ -64,6 +80,12 @@ export const handlerErrorsMiddleware = (error, req, res, next) => {
         if (error.code == UnauthorizedError.INVALID_ROLE) 
             res.status(403).json({
                 message: `Usuario no autorizado a realizar esta funcion...`,
+                url: req.originalUrl
+        })
+
+        if (error.code == UnauthorizedError.USER_LOGGED_EXIST) 
+            res.status(403).json({
+                message: `Es necesario cerrar sesion para iniciar una nueva sesion...`,
                 url: req.originalUrl
         })
         

@@ -6,14 +6,14 @@
 import express from 'express'
 import fs from 'fs'
 
-import { MongoProductsDAO } from '../dao/mongo/products.mongo.dao.js'
+import  ProductsMongoDAO  from '../dao/mongo/products.mongo.dao.js'
 
 import { CheckoutService } from '../services/checkout/checkout-service.js'
 
 import { TicketsRepositories } from '../repositories/ticket.repositories.js'
-import { ProductRepository } from '../repositories/products.repositories.js'
+import { ProductsRepository } from '../repositories/products-repositories.js'
 import { MessagesService } from '../services/messages.service.js'
-import {  authMiddleware } from '../middlewares/authTokenMiddlewares.js'
+
 
 
 
@@ -25,16 +25,16 @@ import ExchangePointsMongoDAO from '../dao/mongo/exchangepoints.mongo.dao.js'
 import { ExchangePointsRepository } from '../repositories/exchangepoints-repository.js'
 import { ExchangePointsService } from '../services/exchangepoints.service.js'
 import { exchangePointsArray } from '../../datos/exchangepointsarray.js'
-import { ProductsRepository } from '../repositories/products-repository.js'
+//import { ProductsRepository } from '../repositories/products-repository.js'
 import { ProductsService } from '../services/products.service.js'
-import { ProductConstructionObject } from '../dto/products.dto.js'
+
 import { CartsService } from '../services/carts.service.js'
-const mongoProductsDAO = new MongoProductsDAO()
+const mongoProductsDAO = new ProductsMongoDAO()
 
 const checkoutService = new CheckoutService()
 
 const ticketRepositories = new TicketsRepositories
-const productsRepository = new ProductRepository()
+
 
 const cartsService = new CartsService()
 const usersService = new UsersService()
@@ -179,9 +179,6 @@ router.get('/prueba',async(req,res)=>{
 
 
 
-router.get('/authmiddleware',authMiddleware,(req,res)=>{
-    res.send(res.locals.sessionData)
-})
 
 
 router.get('/changeproductstatus/:id',async(req,res)=>{
@@ -496,17 +493,17 @@ router.get('/points/delivery', async (req, res) => {
 
 router.get('/productsnew/:pid', async (req, res) => {
     const {pid:productId} = req.params
-    const productRepository = new ProductsRepository()
-    const product = await productRepository.getProductById(productId)
+    const productsRepository = new ProductsRepository()
+    const product = await productsRepository.getProductById(productId)
     res.send(product)
 
 })
 
 router.get('/productscode/:code', async (req, res) => {
     const {code} = req.params
-    const productRepository = new ProductsRepository()
-    const product = await productRepository.getProductByCode(code)
-    const exist = await productRepository.existProductByCode(code)
+    const productsRepository = new ProductsRepository()
+    const product = await productsRepository.getProductByCode(code)
+    const exist = await productsRepository.existProductByCode(code)
     console.log('Existe: ',exist)
     res.send(product)
 
@@ -514,24 +511,24 @@ router.get('/productscode/:code', async (req, res) => {
 
 router.post('/productstock/:pid', async (req, res) => {
     const {pid:productId} = req.params
-    const productRepository = new ProductsRepository()
-    const product = await productRepository.updateStock(productId,241)
+    const productsRepository = new ProductsRepository()
+    const product = await productsRepository.updateStock(productId,241)
     res.send(product)
 
 })
 
 router.post('/productstatus/:pid', async (req, res) => {
     const {pid:productId} = req.params
-    const productRepository = new ProductsRepository()
-    const product = await productRepository.changeProductStatus(productId)
+    const productsRepository = new ProductsRepository()
+    const product = await productsRepository.changeProductStatus(productId)
     res.send(product)
 
 })
 
 router.delete('/productdelete/:pid', async (req, res) => {
     const {pid:productId} = req.params
-    const productRepository = new ProductsRepository()
-    const product = await productRepository.deleteProduct(productId)
+    const productsRepository = new ProductsRepository()
+    const product = await productsRepository.deleteProduct(productId)
     res.send(product)
 
 })

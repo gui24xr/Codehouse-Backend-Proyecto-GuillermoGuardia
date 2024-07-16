@@ -1,5 +1,6 @@
-import { CartsServiceError, CartDTOERROR } from "./errors.service.js"
+import { CartsServiceError, CartDTOERROR, ProductsServiceError, ProductDTOERROR } from "./errors.service.js"
 import { CartRepository } from "../repositories/carts-repository.js"
+import { ProductsService } from "./products.service.js"
 
 /*Aca hacemos toda la logica de negocio usando nuestro repositories */
 const cartsRepository = new CartRepository()
@@ -71,13 +72,43 @@ export class CartsService {
         }
 
 
-    async addProductInCart(cartId,productId,quantity){
+
+    async checkProductOwner({user,productId}){
+        /*Esta funcion va a pedir al servicio de productos el owner del producto.
+          Si owner producto igual user enonces lanza error y no se lleva  a cabo la agregacion.
+        */
+        console.log('check: ', user,productId)
+        try{
+            const productsService =  new ProductsService()
+            const searchResultObject = await productsService.findProducts({productId:productId,owner:user})
+            if (searchResultObject.totalProducts > 0){
+             console.log('Habria que lanzar error para no permitir el agregado.')
+             throw new CartsServiceError(CartsServiceError.BLOCKED_TO_PREMIUM_USERS,'CartsService.checkProductOwner','Los usuarios no premium no pueden agregar sus propios productos al carrito.')
+            }   
+        }catch(error){
+      
+            if (error instanceof CartsServiceError || error instanceof CartDTOERROR || error instanceof ProductsService||error instanceof ProductDTOERROR) throw error
+            else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsService.checkProductOwner|')
+        }
+     
+        
+    }    
+
+
+    async addProductInCart({user,role,cartId,productId,quantity}){
         try {
-          //La logica del negocio dice:
-          //1-Si no existe el producto en el carro, lo agrego...
-          //2- Si no conozco la cantidad deseada agrego 1, si no quantity
-          //Si el producto esta en el carro sumo la cantidad quantity y si no conozco la cantidad le sumom 1 unidad
-          //Deveulve el carro actualizado
+          /* La logica del negocio dice:
+            1-Si no existe el producto en el carro, lo agrego...
+            2- Si no conozco la cantidad deseada agrego 1, si no quantity
+            3- Si el producto esta en el carro sumo la cantidad quantity y si no conozco la cantidad le sumom 1 unidad
+
+            4- Si el user es premium y es owner de el producto entonces no lo agrega
+           Deveulve el carro actualizado si es que el producto finalmente se agrego, y error en caso contrario
+            */
+
+           //Si el rol es premium chequeamos que no coincidan productId y owner
+          if (role == 'premium') await this.checkProductOwner({user:user,productId:productId})
+         
           const productQuantityInCart = await this.getProductQuantityInCart(cartId,productId)
           if (productQuantityInCart < 1){
           const updatedCart = await cartsRepository.addProductInCart(cartId,productId,quantity || 1)
@@ -90,7 +121,8 @@ export class CartsService {
           }
 
         } catch (error) {
-            if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
+            console.log('error en cartser: ', error)
+            if (error instanceof CartsServiceError || error instanceof CartDTOERROR || error instanceof ProductsService||error instanceof ProductDTOERROR) throw error
             else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsService.addProductInCart|')
         }
     }

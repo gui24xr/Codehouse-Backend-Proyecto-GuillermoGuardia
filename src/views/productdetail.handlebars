@@ -1,19 +1,16 @@
 
 <!--CONTAINER PAGE -->
 <div>
-     <!--BANNER SUPERIOR -->
-    <div class="w-full flex items-center pl-10 bg-blue-600 text-white object-fill py-4">
-      <p class="text-2xl leading-none">/productdetail</p>
-    </div>
+ 
 
     <!--CONTAINER GRIDS PRODUCTS -->
    <div class="text-gray-700 body-font overflow-hidden bg-white">
         <div class="container px-5 py-24 mx-auto">
             <div class="lg:w-4/5 mx-auto flex flex-wrap">
-            <img class="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200" src={{productDetail.img}}>
+            <img class="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200" src={{product.img}}>
             <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
-                <h2 class="text-sm title-font text-gray-500 tracking-widest">{{productDetail.category}}</h2>
-                <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">{{productDetail.title}}</h1>
+                <h2 class="text-sm title-font text-gray-500 tracking-widest">{{product.category}}</h2>
+                <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">{{product.title}}</h1>
                 <div class="flex mb-4">
                 <span class="flex items-center">
                     <svg fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 text-red-500" viewBox="0 0 24 24">
@@ -54,7 +51,7 @@
                 </div>
 
        
-                <p class="leading-relaxed">{{productDetail.description}}</p>
+                <p class="leading-relaxed">{{product.description}}</p>
                 <div class="flex mt-6 items-center pb-5 border-b-2 border-gray-200 mb-5">
               
                
@@ -62,7 +59,7 @@
                         <span class="flex items-center">
                    
                
-                    <span class="text-gray-600 ml-3">Precio {{productDetail.price}}</span>
+                    <span class="text-gray-600 ml-3">Precio {{product.price}}</span>
                
                
                 </span>
@@ -83,13 +80,13 @@
                             <div  class="flex flex-col justify-center">
                                 <label for="counter-input" class="block text-sm font-medium text-gray-900 dark:text-white">Cantidad</label>
                                 <div class="relative flex items-center">
-                                    <button type="button" id="decrement-button-{{productDetail.id}}" onclick="decrementCounterQuantity(`{{productDetail.id}}`)"  class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                                    <button type="button" id="decrement-button-{{product.productId}}" onclick="decrementCounterQuantity(`{{product.productId}}`)"  class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
                                         <svg class="w-2.5 h-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
                                         </svg>
                                     </button>
-                                    <input type="number"  min="1" max="{{productDetail.stock}}" id="counter-input-{{productDetail.id}}" class="flex-shrink-0 text-gray-900 dark:text-white border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center" value="1" required />
-                                    <button type="button" id="increment-button-{{productDetail.id}}" onclick="incrementCounterQuantity(`{{productDetail.id}}`,`{{productDetail.stock}}`)"  class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                                    <input type="number"  min="1" max="{{product.stock}}" id="counter-input-{{product.productId}}" value="1"   required />
+                                    <button type="button" id="increment-button-{{product.productId}}" onclick="incrementCounterQuantity(`{{product.productId}}`,`{{product.stock}}`)"  class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
                                         <svg class="w-2.5 h-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
                                         </svg>
@@ -98,15 +95,15 @@
                             </div>
 
                             
-                            <p class="text-sm text-gray-500 truncate dark:text-gray-400">({{productDetail.stock}} disponibles)</p>
+                            <p class="text-sm text-gray-500 truncate dark:text-gray-400">({{product.stock}} disponibles)</p>
                             
-                                 <button id={{productDetail.id}} type="button" onclick="addThisProduct(event)"  class="flex flex-row text-blue-500 hover:text-green-800 ">
+                            <button id={{product.productId}} type="button" onclick="addToCartThisProduct(`{{product.productId}}`,`{{currentUser.cartId}}`)"  class="flex flex-row text-blue-500 hover:text-green-800 ">
                                 <svg class="w-3.5 h-2.5 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 21">
                                     <path d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z"/>
                                 </svg>
                                Agregar al carrito
                             </button>
-                            <button id='button-{{productDetail.id}}' type="button" onclick="purchaseThisProduct(event)"  class="text-white bg-red-500 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-s px-5 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Comprar este producto</button>
+                            <button id='button-{{product.productId}}' type="button" onclick="purchaseThisProduct(`{{product.productId}}`,`{{currentUser.email}}`)"  class="text-white bg-red-500 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-s px-5 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Comprar este producto</button>
 
 
                 </div>
@@ -121,51 +118,21 @@
 
 
 <script>
-    /*--MANEJO DEL AGREGADO DE PRODUCTOS AL CARRO Y MANIPULACION DEL DOM PARA QUE SE VEA REFLEJADO EN LA VISTA
-        -A travez de handlebars traje la iformacion del usuario logueado en la app.
-        -La plantilla renderiza una card por cada producto. Cada Boton 'agregar a carro' llevara por ID el product ID correspondiente
-    */
-    const loggedUserInfo = {{{loggedUserInfo}}} //console.log('User Info: ', loggedUserInfo)
-    const actualCart = loggedUserInfo.user.cart 
-    const actualUserId = loggedUserInfo.user._id
+    /*Utilizo los datos traidos en handlebars para renderizar la plantilla.*/
 
-    function redirectToLogin(event){
-        //Tomo el event porque voy a guardar esos datos en localstorage para al iniciar sesion hacer con el producto lo que el user queria hacer ejemplo agregar al carro o ir a comprar.
-          
-          //Muestro notificacion que para hacer la operacion es necesario estar logueado y redirijo.
-          
-           Swal.fire({
-                
-                    text: `Es necesario iniciar sesion para guardar productos en el carrito !`,
-                    icon: 'info',
-                    confirmButtonText: 'Continuar',
-                    allowOutsideClick: false, // No permitir cerrar al hacer clic fuera del diálogo
-                    allowEscapeKey: false     // No permitir cerrar con la tecla Escape
-                })
-                .then(()=>{
-                    window.location.href = `/views/login`
-                })
-                
-    }
-    
-    function addThisProduct(event){
-        //Con esta condicion si el user no esta logueado lo mando a iniciar sesion.
-        if (!loggedUserInfo.login) return redirectToLogin(event)
-          //sabemos que el boton tiene el id del producto x lo tanto tenemos el id del producto a agregar
-        const productId = event.target.id
-         //sabemos que el input de cantidad se llama counter input y tiene el ID del producto. Tomamos su valor o sea la cantidad.
+    function addToCartThisProduct(productId,currentUserCartId){
+
         const selectedQuantity = document.getElementById(`counter-input-${productId}`).value
-        //Tenemos la cantidad seleccionada, el productID y el cart donde agregar, usamos fetch para llevar a cabo la operacacion haciendo solicitud.
-        //Y de acuerdo a lo que envia el server mando una notiicacion de tostify
-        //console.log(productId,selectedQuantity)
-       fetch(`/api/carts/${actualCart}/products/${productId}`,
+        console.log(productId,currentUserCartId,selectedQuantity)
+     
+        //Procedo a agregar al carro del currentUser el ProductId en la cantidad indicada.
+         fetch(`/api/carts/${currentUserCartId}/products/${productId}`,
             {
                 method:'POST', 
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ quantity: Number(selectedQuantity) })
                })
                 .then(response => {
-                    //console.log(response)
                    //Segun la respuesta mostramos un alert o finalmente actualizamos el carro en el dom en la barra
                     if (!response.ok){
                         response.json()
@@ -176,25 +143,24 @@
                     else{
                         response.json().
                         then( res => {
-                     
-                             console.log(res)
+                            console.log(res) //Cambio la cantidad en el carrito en la barra.
                             document.getElementById('productsQuantityInUserCart').innerText = res.cart.countProducts
                         })
-                        //Si el estado es OK puedo agregar al carro...
-                        //Manipulando Dom el cambiamos la cantidad de carritos en el navbar
-                       
                     }
 
                 })
-                
-        }
+    }
 
+    //---------------------------------------------------------------------------------------------------------------------------
+    
+    function purchaseThisProduct(productId,currentUserEmail){
 
-
-     
-    function purchaseThisProduct(event){
+        const selectedQuantity = document.getElementById(`counter-input-${productId}`).value
+        console.log(productId,currentUserEmail,selectedQuantity)
+        
+      
         //Con esta condicion si el user no esta logueado lo mando a iniciar sesion.
-        if (!loggedUserInfo.login) return redirectToLogin(event)
+        /*if (!loggedUserInfo.login) return redirectToLogin(event)
           //sabemos que el boton tiene el nombre boton+'-'iddelproducto' del producto x lo tanto tenemos el id del producto a agregar
         const pressedButtonId = event.target.id //Hay que recortarlo a partir del '-'
         const separatorPosition = pressedButtonId.indexOf('-')
@@ -240,6 +206,7 @@
                     })
             }
         })
+        */
         }
 </script>
 

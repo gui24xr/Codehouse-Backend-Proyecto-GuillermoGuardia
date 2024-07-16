@@ -1,6 +1,6 @@
 import express from 'express'
 import { UsersController } from '../controllers/users.controller.js'
-import { allowAccessRolesMiddleware, authMiddleware, } from '../middlewares/authTokenMiddlewares.js'
+import { allowAccessRolesMiddleware, onlyAuthUsers, } from '../middlewares/authTokenMiddlewares.js'
 
 
 //Creo mi instancia de objeto Router
@@ -12,10 +12,10 @@ const usersController = new UsersController()
 //router.use(authMiddleware)
 
 
-router.get('/users',usersController.getUsers)
-router.delete('/users/delete/inactive',usersController.deleteInactiveUsers)
-router.delete('/users', authMiddleware,allowAccessRolesMiddleware('admin'),usersController.deleteUser) //Borra al user pasado por query
-router.put('/users/rol',authMiddleware,allowAccessRolesMiddleware('admin'), usersController.updateUserRole)
+router.get('/users',onlyAuthUsers,usersController.getUsers)
+router.delete('/users/delete/inactive',onlyAuthUsers,usersController.deleteInactiveUsers)
+router.delete('/users', onlyAuthUsers,onlyAuthUsers,allowAccessRolesMiddleware('admin'),usersController.deleteUser) //Borra al user pasado por query
+router.put('/users/rol',onlyAuthUsers,allowAccessRolesMiddleware('admin'), usersController.updateUserRole)
 router.post('/users/recoverypassword',usersController.createRecoveryCode)
 router.post('/users/resetpassword',usersController.changeUserPassword)
 

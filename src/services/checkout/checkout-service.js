@@ -3,7 +3,7 @@
     GENERACION DE TICKET, ETC
 */
 
-import { ProductRepository } from "../../repositories/products.repositories.js";
+import { ProductsRepository } from "../../repositories/products-repositories.js";
 
 import { CartsService } from "../carts.service.js";
 import { TicketsRepositories } from "../../repositories/ticket.repositories.js";
@@ -16,7 +16,7 @@ import { transformDate } from "../../utils/hour.js";
 import { CartsServiceError, ProductsServiceError,TicketsServiceError, InternalServerError, CheckoutServiceError } from '../errors.service.js'
 
 
-const productsRepository = new ProductRepository()
+const productsRepository = new ProductsRepository()
 
 const cartsService = new CartsService()
 const ticketsRepository = new TicketsRepositories()

@@ -1,5 +1,5 @@
 import express from 'express'
-import { authMiddleware } from '../middlewares/authTokenMiddlewares.js'
+import { onlyAuthUsers, onlyWithoutAuthToken } from '../middlewares/authTokenMiddlewares.js'
 import { SessionsController } from '../controllers/sessions.controller.js'
 
 
@@ -12,7 +12,7 @@ router.post('/sessions/login',sessionsController.loginUser)
 router.get('/sessions/current',sessionsController.currentRoute)
 
 //Para poder hacer logout es necesario estar con un token o sesion activa
-router.post('/sessions/logout', authMiddleware, sessionsController.logoutUser)
+router.post('/sessions/logout',onlyAuthUsers, sessionsController.logoutUser)
 
 
 

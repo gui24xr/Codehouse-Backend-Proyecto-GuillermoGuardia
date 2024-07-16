@@ -3,10 +3,10 @@ import {Server} from 'socket.io'
 
 
 import { MessagesRepository } from "../repositories/messages.repositories.js"
-import { ProductRepository } from "../repositories/products.repositories.js"
+import { ProductsRepository } from "../repositories/products-repositories.js"
 
 const messagesRepository = new MessagesRepository()
-const productRepository = new ProductRepository()
+const productRepository = new ProductsRepository()
 
 export class SocketManager{
 

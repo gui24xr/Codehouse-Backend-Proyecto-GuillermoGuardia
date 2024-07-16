@@ -30,6 +30,7 @@ export class UsersService{
                 cartId: cartId
             })
 
+            //Provee de un avatar por default.
             await usersRepository.addUserDocument(email,'avatar','/img/avatars/defaultavatar.png')
 
             return newUser
@@ -56,7 +57,19 @@ export class UsersService{
                 if (isValidPassword(password,searchedUser.password)) {
                     //Se crea el jsonwebtockn que se retornara a la capa controllers
                     const updatedUser = await usersRepository.setLastConnection(email,new Date())
-                    const userToken = generateJWT(updatedUser)
+                    //Al token vamos a poner solo algunas propiedades del UserDTO
+                    const userToken = generateJWT({
+                        userId:updatedUser.userId,
+                        email: updatedUser.email,
+                        firstName: updatedUser.firstName,
+                        lastName: updatedUser.lastName,
+                        age: updatedUser.age,
+                        role: updatedUser.role,
+                        cartId: updatedUser.cartId,
+                        score: updatedUser.score,
+                        lastConnection: updatedUser.lastConnection,
+                        avatar: updatedUser.avatar
+                    })
                     return {
                         userData: updatedUser, 
                         userToken: userToken

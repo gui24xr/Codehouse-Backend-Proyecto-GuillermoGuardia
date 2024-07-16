@@ -1,42 +1,32 @@
 import express from 'express'
-import { infoUserFromToken, authMiddleware,blockRoleAccessMiddleware,allowAccessRolesMiddleware } from '../middlewares/authTokenMiddlewares.js'
-import { ViewsController } from '../controllers/views.controllers.js'
+import { onlyAuthUsers,onlyWithoutAuthToken,blockRoleAccessMiddleware,allowAccessRolesMiddleware } from '../middlewares/authTokenMiddlewares.js'
+import {ViewsController} from '../controllers/views.controllers.js'
 
 const viewsController = new ViewsController()
 
 //Divido en 3 routers las vistas por una cuestion de middlewares y diferentes usos.
-export const routerPublicViews = express.Router()
-export const routerProtectedViews = express.Router()
-
-
-routerPublicViews.use(infoUserFromToken)
-
-//Vistas publicas
-routerPublicViews.get('/',viewsController.viewMainProductsList)
-
-//Si hay un usuario con token valido hay que proteger estas vistas
-routerPublicViews.get('/views/register', viewsController.viewRegisterGet)
-routerPublicViews.get('/views/login', viewsController.viewLoginGet)
+export const router = express.Router()
 
 
 
 
-routerProtectedViews.use(authMiddleware)
-//vistas privadas
-//SI no hay user no se puede acceder 
+//Vistas no protegidas
+router.get('/',viewsController.viewMainProductsList)
 
-routerProtectedViews.get('/views/realtimeproducts', blockRoleAccessMiddleware('user'),viewsController.viewRealTimeProducts)
-routerProtectedViews.get('/views/chat',blockRoleAccessMiddleware('admin'),viewsController.viewChat)
-routerProtectedViews.get('/views/profile', viewsController.viewProfile)
-routerProtectedViews.get('/views/carts/:cid', viewsController.viewCart)
-routerProtectedViews.get('/views/:tcode/purchase', viewsController.viewPurchase) //Muestra el resultado de una compra ticket
+//Si hay un usuario con token valido se protegen estas rutas.
+router.get('/views/register', onlyWithoutAuthToken,viewsController.viewRegisterGet)
+router.get('/views/login', onlyWithoutAuthToken,viewsController.viewLoginGet)
 
-routerProtectedViews.get('/views/tickets/:uid', viewsController.viewTickets) //Muestra todos los tickets de userId
 
-routerProtectedViews.get('/views/products', viewsController.viewProductsList)
-routerProtectedViews.get('/views/mainproductslist', viewsController.viewMainProductsList)
-routerProtectedViews.get('/views/product/:pid', viewsController.viewProduct)
-routerProtectedViews.get('/views/users',allowAccessRolesMiddleware('admin'), viewsController.viewUsersList)
+//Vistas que necesitan tenter autorizacion del token para ingresar.
+router.get('/views/products/:pid', onlyAuthUsers,viewsController.viewProductDetail)
+router.get('/views/realtimeproducts', onlyAuthUsers,blockRoleAccessMiddleware('user'),viewsController.viewRealTimeProducts)
+router.get('/views/chat',onlyAuthUsers,blockRoleAccessMiddleware('admin'),viewsController.viewChat)
+router.get('/views/profile', onlyAuthUsers,viewsController.viewProfile)
+router.get('/views/carts/:cid', onlyAuthUsers,viewsController.viewCart)
+router.get('/views/:tcode/purchase', onlyAuthUsers, viewsController.viewPurchase) //Muestra el resultado de una compra ticket
+router.get('/views/tickets/:uid', onlyAuthUsers,viewsController.viewTickets) //Muestra todos los tickets de userId
+router.get('/views/users',onlyAuthUsers,allowAccessRolesMiddleware('admin'), viewsController.viewUsersList)
 
 
 
@@ -45,4 +35,4 @@ routerProtectedViews.get('/views/users',allowAccessRolesMiddleware('admin'), vie
 //router.post('/views/login', viewsController.viewLoginPost)
 
 //Eliminar cuando pase al api completamente
-//routerProtectedViews.get('/views/:pid/singlepurchase/:qid/:uid', viewsController.viewSinglePurchase) //Compra un producto
+//router.get('/views/:pid/singlepurchase/:qid/:uid', viewsController.viewSinglePurchase) //Compra un producto

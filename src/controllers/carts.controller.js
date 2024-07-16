@@ -49,13 +49,19 @@ export class CartsController{
 
     async addProductInCart(req,res,next){
         const {cid:cartId,pid:productId} = req.params
-        const {quantity} = req.body    
+        const {quantity} = req.body 
         try {
             //Pasamos por la capa de validacion
             InputValidationService.checkRequiredField(req.params,['cid','pid'],'CartsController.addProductInCart')
             InputValidationService.checkRequiredField(req.body,['quantity'],'CartsController.addProductInCart')
-          
-            const resultCart = await cartsService.addProductInCart(cartId,productId,quantity)
+            const resultCart = await cartsService.addProductInCart(
+                {
+                    cartId:cartId,
+                    productId:productId,
+                    quantity:quantity,
+                    user: req.currentUser.email,
+                    role: req.currentUser.role,
+                })
             res.status(201).json({
                 status: "success", 
                 message: `Productos agregados satisfactoriametente en carrito ID${resultCart.id}`,

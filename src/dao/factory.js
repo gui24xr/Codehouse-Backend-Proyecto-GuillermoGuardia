@@ -9,7 +9,7 @@ export let ticketsDAO
 
 switch (process.env.database){
     case 'mongo':
-        const {default:ProductsMongoDAO} = await import('./mongo/products.mongo.dao.remake.js')
+        const {default:ProductsMongoDAO} = await import('./mongo/products.mongo.dao.js')
         const {default:CartsMongoDAO} = await import('./mongo/carts.mongo.dao.js')
         const {default:UsersMongoDAO} = await import('./mongo/users.mongo.dao.js')
         const {default:ExchangePointsMongoDAO} = await import('./mongo/exchangepoints.mongo.dao.js')
@@ -25,6 +25,7 @@ switch (process.env.database){
         console.log('Entro sequelize')
 
     break
+
     case 'firebase':
         console.log('Entro firebase')
     break

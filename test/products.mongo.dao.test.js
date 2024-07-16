@@ -1,5 +1,5 @@
 import { ProductDTO } from "../src/dto/products.dto.js";
-import { MongoProductsDAO } from "../src/dao/mongo/products.mongo.dao.js";
+import  MongoProductsDAO  from "../src/dao/mongo/products.mongo.dao.js";
 import { ProductsServiceError } from "../src/services/errors.service.js";
 
 import Assert from 'assert';

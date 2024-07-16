@@ -45,7 +45,8 @@ export class SessionsController{
         //Tomo los datos ingresados por el cliente.
         const { email, password } = req.body
         const requiredFields = ["email", "password"];
-    
+        console.log(req.body)
+   
         try {
             //Paso por la capa de validacion la cual lanza una instancia de  error si hay problemas en los datos ingresados.
             InputValidationService.checkRequiredField(req.body,requiredFields,'SessionsController.loginUser')
@@ -77,10 +78,14 @@ export class SessionsController{
         //Si eso salio todo ok entonces invalida la cookie del token y setea las res que se usan para el render de plantillas
         const { userId, email } = req.currentUser
         try {
+
+          //Antes que nada, si no hubiese currentUser al cual cerrar la cesion lanzamos error.
+          //Esto puede pasar cuando quedo abierto y caduco el token.
+          if (!req.currentUser) new UsersServiceError(UsersServiceError.USER_NO_EXIST,"|UsersControllers.logout|","No hay user...")
           const updatedUser = await usersService.logout(userId)
           //Inavalidamos la cookie.
           res.clearCookie(process.env.COOKIE_AUTH_TOKEN); //Limpíamos la cookie.
-          res.locals.sessionData.login = false; // Seteamos las variables de handbars
+         
           //Enviamos respuesta
           res.status(201).json({
             status: "success",

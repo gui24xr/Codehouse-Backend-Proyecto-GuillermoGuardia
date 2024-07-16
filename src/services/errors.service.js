@@ -56,6 +56,7 @@ export class UsersServiceError extends Error{
     static DELETING_ERROR = 6;
     static WRONG_PASSWORD = 7;
     static GET_ERROR = 8;
+    static BLOCKED_TO_PREMIUM_USERS = 9;
     
     constructor(errorCode,operationName,message){
         super(message);
@@ -82,7 +83,7 @@ export class CartsServiceError extends Error{
     static GET_ERROR = 8;
     static UPDATING_PRODUCT_QUANTITY_ERROR = 9;
     static DELETING_PRODUCT_IN_CART_ERROR = 10;
-    
+    static BLOCKED_TO_PREMIUM_USERS = 11;
     constructor(errorCode,operationName,message){
         super(message);
         this.name = 'CartsServiceError';
@@ -186,6 +187,7 @@ export class UnauthorizedError extends Error{
     static INTERNAL_SERVER_ERROR = 0;
     static NO_USER = 1;
     static INVALID_ROLE = 2;
+    static USER_LOGGED_EXIST= 3;
  
     constructor(errorCode,operationName,message){
         super(message);

@@ -1,15 +1,13 @@
-import { ProductRepository } from "../repositories/products.repositories.js";
+import { UsersService } from "../services/users.service.js";
+import { ProductsService } from "../services/products.service.js";
+import { ProductsRepository } from "../repositories/products-repositories.js";
 import { CartsService } from "../services/carts.service.js";
 import { TicketsRepositories } from "../repositories/ticket.repositories.js";
 import { CheckoutService } from "../services/checkout/checkout-service.js";
-import { getMissingFields } from "../utils/helpers.js";
 
-//------------------------- NUEVO --------------
 
-import { UsersService } from "../services/users.service.js";
+
 //-----------------------------------
-
-
 import { 
   IncompleteFieldsError,
   UsersServiceError,
@@ -23,7 +21,7 @@ import {
 } from "../services/errors.service.js";
 
 import { transformDate } from "../utils/hour.js";
-const productsRepository = new ProductRepository();
+const productsRepository = new ProductsRepository();
 
 //const cartsRepository = new CartRepository();
 const cartsService = new CartsService()
@@ -35,160 +33,57 @@ const ticketRepositories = new TicketsRepositories();
 
 //-------------------------------------------
 const usersService = new UsersService()
+const productsService = new ProductsService()
 //-------------------------------------------
 
 export class ViewsController {
   
   
-  async viewProductsList(req, res,next) {
-    console.log(res);
-    try {
-      const productsList = await productsRepository.getProducts();
-      const mappedProducts = productsList.map((item) => ({
-        id: item.id,
-        title: item.title,
-        description: item.description,
-        price: item.price,
-        img: item.img,
-        code: item.code,
-        category: item.category,
-        stock: item.stock,
-        status: item.status,
-        thumbnails: item.thumbnails,
-      }));
 
-      //Ademas de enviar los productos mapeados para handlebar envio la informacion de sesion para utilizar en el script
-      res.render("products", { productsList: mappedProducts });
-    } catch (error) {
-      throw new Error("Error al intentar mostrar la vista productos...");
-    }
-  }
-
+  //FUNCIONA Y FALTA DEREIVAR A ERRORES
   async viewMainProductsList(req, res,next) {
     const {selectedCategory,selectedQuantityPerPage,selectedPage} = req.query
     const defaultQuantityPerPage = 15
     const defaultPage = 1
-    console.log('query: ', req.query)
+    try {
+      const filter = !selectedCategory ? {status:true} : {category:selectedCategory.toLowerCase(),status:true}
+      const quantityPerPage = !selectedQuantityPerPage ? defaultQuantityPerPage : selectedQuantityPerPage
+      const page = !selectedPage ? defaultPage : selectedPage 
+       
+       // Pido los productos al servicioy me da los productDTO mas el paginado.
+       const filteredDataObject = await productsService.findProducts({
+          limit: quantityPerPage,
+          page: page,
+          category: filter.category,
+          status: filter.status
+       })
 
-      try {
-        const filter = !selectedCategory ? {status:true} : {category:selectedCategory.toLowerCase(),status:true}
-        const quantityPerPage = !selectedQuantityPerPage ? defaultQuantityPerPage : selectedQuantityPerPage
-        const page = !selectedPage ? defaultPage : selectedPage    
-        console.log('page: ', page )
-
-        const categoriesList = await productsRepository.getProductsCategoriesList() 
-        const filteredData = await productsRepository.getProductsByFilter(filter,quantityPerPage,page)
-       // console.log('Filtrados: ',filteredData)
-      //Hago un mapeo de docs para mandar a rendrizar en handlebars.
-      const mappedProducts = filteredData.matches.map((item) => ({
-        id: item.id,
-        title: item.title,
-        description: item.description,
-        price: item.price,
-        img: item.img,
-        code: item.code,
-        category: item.category,
-        stock: item.stock,
-        status: item.status,
-        thumbnails: item.thumbnails,
-      }));
+       //Lista de categorias.
+       const categoriesList = await productsService.getProductsCategories()
 
       //Valores que necesito para renderizar con handlebars.
       const valuesToRender = {
         //AH categories list le agrego productsPerPage para el renderizado de hbs que no permite inresar directo.
-        categoriesList:categoriesList.map(item => ({...item,productsPerPage:!selectedQuantityPerPage ? defaultQuantityPerPage : selectedQuantityPerPage,})),
+        categoriesList:categoriesList.map(item => ({categoryName:item,productsPerPage:!selectedQuantityPerPage ? defaultQuantityPerPage : selectedQuantityPerPage,})),
         selectedCategory: !selectedCategory ? 'Todas las categorias': selectedCategory.toUpperCase(),
         selectedPage: !selectedPage ? defaultPage : selectedPage,
-        productsQuantity: filteredData.totalMatches,
+        productsQuantity: filteredDataObject.totalProducts,
         productsPerPage: !selectedQuantityPerPage ? defaultQuantityPerPage : selectedQuantityPerPage,
-        productsList: mappedProducts,
-        pagesQuantity: filteredData.pagesQuantity,
-        pagesNumberArray: Array.from({ length: filteredData.pagesQuantity }, (_, indice) => indice + 1),
-        //En esta propiedad viaja la ifnromacion del user logueado.
-        loggedUserInfo: JSON.stringify(res.locals.sessionData),
+        productsList: filteredDataObject.productsQueryList,
+        pagesQuantity: filteredDataObject.totalPages,
+        pagesNumberArray: Array.from({ length: filteredDataObject.totalPages }, (_, indice) => indice + 1),   
+        currentUser: req.currentUser,
+
         selectedValueFilters : JSON.stringify({
           actualSelectedCategory: !selectedCategory ? undefined : selectedCategory,
           actualSelectedPage: !selectedPage ? defaultPage : selectedPage,
           actualProductsPerPage: !selectedQuantityPerPage ? defaultQuantityPerPage : selectedQuantityPerPage,
-          actualPagesQuantity: filteredData.pagesQuantity,
+          actualPagesQuantity: filteredDataObject.page,
         })
-      };
-
-      
+      }
       res.render("mainproducts", valuesToRender);
     } catch (error) {
-      res.status(500).json({ error: "Error del servidor" });
-      throw new Error("Error al intentar obtener productos con paginacion...");
-    }
-  }
-
-
-
-  //Aca buscamos el
-  async viewSearchPage(req, res,next) {
-    const {requiredFilter} = req.params
-    const { reqQuantity, page, sort, selectedCategory } = req.query;
-    console.log('Parametros que llegaron', req.query)
-    //console.log('Variables de sesion: ',res.locals.sessionData)
-  
-    try {
-
-      const categoriesList = await productsRepository.getProductsCategoriesList() 
-
-      if ((Object.keys(req.query).length < 1) && Object.keys(req.params).length < 1)  {
-        //uso la filter
-      }
-      //Sort el formulario solo permitira que solo llegue -1,1 o 0
-      //Por ahora dejo query para que entre por params
-      //La idea es cuanto este implementado en el form armar la query para enviar al manager
-      const sortValue = sort == "1" ? 1 : sort == "-1" ? -1 : 0; //console.log('SortValue', sortValue)
-      
-      //Filtro es siempre todoas {} //Recordar que productPagiante lo configure para devolver solo productos status:true
-      //A ese status true se le agregara nada si mando {} o sea quiero ver solo lo activo
-      //Pero si me pasaron uan categoria que existe entonces mando el filtro
-      let filter = {}
-
-      
-
-      const paginate = await productsRepository.getProductsPaginate(2,1,1,{status:true})
-
-     //console.log('ppp: ', paginate)
-
-//      //Hago un mapeo de docs para mandar a rendrizar en handlebars.
-      const mappedProducts = paginate.docs.map((item) => ({
-        id: item.id,
-        title: item.title,
-        description: item.description,
-        price: item.price,
-        img: item.img,
-        code: item.code,
-        category: item.category,
-        stock: item.stock,
-        status: item.status,
-        thumbnails: item.thumbnails,
-      }));
-
-      //Valores que necesito para renderizar con handlebars.
-      const valuesToRender = {
-        categoriesList:categoriesList,
-        selectedCategory: selectedCategory,
-        productsList: mappedProducts,
-        totalDocs: paginate.totalDocs,
-        hasPrevPage: paginate.hasPrevPage ? "SI" : "No",
-        hasNextage: paginate.hasNextPage ? "SI" : "No",
-        prevPage: paginate.prevPage ? paginate.prevPage : "-",
-        nextPage: paginate.nextPage ? paginate.nextPage : "-",
-        actualPage: paginate.page,
-        totalPages: paginate.totalPages,
-        limit: paginate.limit,
-        order: sortValue == '-1' ? 'Mayor a menor precio' : 'Menor a mayor precio',
-        paginateValuesToScript: JSON.stringify(paginate),
-        //En esta propiedad viaja la ifnromacion del user logueado.
-        loggedUserInfo: JSON.stringify(res.locals.sessionData),
-      };
-
-      res.render("productspaginate", valuesToRender);
-    } catch (error) {
+    
       res.status(500).json({ error: "Error del servidor" });
       throw new Error("Error al intentar obtener productos con paginacion...");
     }
@@ -198,34 +93,31 @@ export class ViewsController {
 
 
 
-
-  async viewProduct(req, res,next) {
+  async viewProductDetail(req, res,next) {
     const { pid: productId } = req.params;
-    try {
-      const product = await productsRepository.getProductById(productId);
-      //ya tengo el producto, ahora lo proceso para poder usarlo en handlebars
-      const productDetail = {
-        id: product._id,
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        img: product.img,
-        code: product.code,
-        category: product.category,
-        stock: product.stock,
-        status: product.status,
-        thumbnails: product.thumbnails,
-      };
 
-      const valuesToRender = {
-        productDetail: productDetail,
-        loggedUserInfo: JSON.stringify(res.locals.sessionData),
-      };
-      res.render("productdetail", valuesToRender);
+    try {
+        // Pido al servicio de productos el producto por su id y me devuelve el objeto paginacion.
+        const filteredDataObject = await productsService.findProducts({productId:productId})
+
+       //Lista de categorias para seguirlas teniendo en el menu.
+       const categoriesList = await productsService.getProductsCategories()
+       //Como sabemos que viene dentro del objeto de busqueda.
+       if (!(filteredDataObject.productsQueryList.totalProducts > 0)) console.log('LANZAR ERROR DE VISTAS')
+       //Como sabemos que es solo uno, viene en la posicion cero
+       const product = filteredDataObject.productsQueryList[0]
+      //ya tengo el producto, ahora lo proceso para poder usarlo en handlebars
+      
+     
+      res.render("productdetail", {
+        product: product,
+        currentUser: req.currentUser,
+      })
     } catch (error) {
       throw new Error("Error al intentar mostrar vista producto...");
     }
   }
+
 
   viewRealTimeProducts(req, res) {
     res.render("realTimeProducts");
@@ -234,7 +126,7 @@ export class ViewsController {
  
   viewLoginGet(req, res,next) {
     console.log('Entro a viewloginget')
-    res.render("login");
+    res.render("login",{currentUser: req.currentUser});
   }
 
   viewRegisterGet(req, res,next) {
@@ -252,7 +144,7 @@ export class ViewsController {
     /*Esta vista envia a los datos de perfil del usuario renderizando la plantilla profile.
     en este caso dado que tengo el middleware que agrega los datos del token al objeto res 
     uso el objeto res en la plantilla, asique simplemente la mando a renderizar */
-    res.render("profile");
+    res.render("profile",{currentUser: req.currentUser});
   }
 
 
@@ -261,25 +153,13 @@ export class ViewsController {
     try {
       const searchedCart = await cartsService.getCartById(cartId) 
 
-
-      /* GRACIAS AL USO DE CARTDTO YA NO ES NECESARIO ESTO PORQUE ESTANDARICE EL OBJETO CART
-        y ahora es un DTO y sus productos estan formato ProducDTO
-     // Mapeo con lo que necesito para renderizar y para entregar a hbds
-      const productsInCart = searchedCart.products.map((item) => ({
-        id: item.product.indice,
-        img: item.product.img,
-        title: item.product.title,
-        price: item.product.price,
-        quantity: item.quantity,
-        totalAmount: (Number(item.quantity) * Number(item.product.price)).toFixed(2),
-      }
-    ))
-    */
-      
       res.render("cart", {
         cartId:cartId,
         productsList: searchedCart.products,//productsInCart,
         cartAmount: searchedCart.cartAmount,
+        currentUser: req.currentUser,
+
+
       })
 
     } catch (error) {

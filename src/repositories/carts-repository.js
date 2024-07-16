@@ -1,7 +1,6 @@
-import { CartDTO } from "../dto/carts.dto.js"
 import { CartsDAO } from "../dao/factory.js"
 import { CartsServiceError, CartDTOERROR } from "../services/errors.service.js"
-import CartsMongoDAO from "../dao/mongo/carts.mongo.dao.js"
+
 
 const cartsDAO = new CartsDAO()
 

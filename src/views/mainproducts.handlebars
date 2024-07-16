@@ -4,6 +4,7 @@
     <!--BANNER SUPERIOR con informacion de los parametros de paginate -->
         <div class="px-4 py-2 w-full flex justify-between items-center pl-10 bg-blue-600 text-white object-fill">
             <p class="text-2xl ">/products</p>
+      
         </div>
 
         <div>
@@ -16,9 +17,9 @@
 
             <div id='menucategorias' class="hidden md:block">
              <div class="uppercase px-4 space-y-3 w-full flex-col bg-red-600 text-white text-medium md:flex-row md:w-full md:space-x-4">
-                <a id='linktodaslascategorias' href="/views/mainproductslist/?selectedQuantityPerPage={{productsPerPage}}">Todas las categorias</a>
+                <a id='linktodaslascategorias' href="/?selectedQuantityPerPage={{productsPerPage}}">Todas las categorias</a>
                 {{#each categoriesList}}
-                <a  href='/views/mainproductslist?selectedCategory={{this.categoryName}}&selectedQuantityPerPage={{this.productsPerPage}}'>{{this.categoryName}}</a>
+                <a  href='/?selectedCategory={{this.categoryName}}&selectedQuantityPerPage={{this.productsPerPage}}'>{{this.categoryName}}</a>
         
             {{/each}}
             </div>
@@ -94,9 +95,9 @@
     //Siu cambio la cantidad por pagina se veulve a la pagina 1
    
    if (actualSelectedCategory)
-    window.location.href=`/views/mainproductslist?selectedCategory=${actualSelectedCategory}&selectedQuantityPerPage=${selecterQuantity.value}&selectedPage=1`
+    window.location.href=`/?selectedCategory=${actualSelectedCategory}&selectedQuantityPerPage=${selecterQuantity.value}&selectedPage=1`
     else
-      window.location.href=`/views/mainproductslist?selectedQuantityPerPage=${selecterQuantity.value}&selectedPage=1`
+      window.location.href=`/?selectedQuantityPerPage=${selecterQuantity.value}&selectedPage=1`
               
     })
 
@@ -104,9 +105,9 @@
     selecterPage.addEventListener('change',()=>{
     
        if (actualSelectedCategory)
-    window.location.href=`/views/mainproductslist?selectedCategory=${actualSelectedCategory}&selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${selecterPage.value}`
+    window.location.href=`/?selectedCategory=${actualSelectedCategory}&selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${selecterPage.value}`
     else
-    window.location.href=`/views/mainproductslist?selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${selecterPage.value}`
+    window.location.href=`/?selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${selecterPage.value}`
 
     })
 
@@ -115,9 +116,9 @@
         const backPage = Number(actualSelectedPage) - 1
         if (backPage>=1){
             if (actualSelectedCategory)
-            window.location.href=`/views/mainproductslist?selectedCategory=${actualSelectedCategory}&selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${backPage}`
+            window.location.href=`/?selectedCategory=${actualSelectedCategory}&selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${backPage}`
             else
-            window.location.href=`/views/mainproductslist?selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${backPage}`
+            window.location.href=`/?selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${backPage}`
         }
     }
 
@@ -125,9 +126,9 @@
           const nextPage = Number(actualSelectedPage) + 1
         if (nextPage<=actualPagesQuantity){
             if (actualSelectedCategory)
-            window.location.href=`/views/mainproductslist?selectedCategory=${actualSelectedCategory}&selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${nextPage}`
+            window.location.href=`/?selectedCategory=${actualSelectedCategory}&selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${nextPage}`
             else
-            window.location.href=`/views/mainproductslist?selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${nextPage}`
+            window.location.href=`/?selectedQuantityPerPage=${actualProductsPerPage}&selectedPage=${nextPage}`
         }
     }
 

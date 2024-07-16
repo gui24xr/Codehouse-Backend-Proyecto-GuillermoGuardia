@@ -13,11 +13,13 @@
                 <div class="px-8 py-6">
                     <p><em class="text-blue-400">const</em> <span class="text-green-400">aboutMe</span> <span class="text-pink-500">=</span> <em class="text-blue-400">function</em>() {</p>
                     <p>&nbsp;&nbsp;<span class="text-pink-500">return</span> {</p>
-                    <p>&nbsp;&nbsp;&nbsp;&nbsp;nombre: <span class="text-yellow-300">'{{sessionData.user.first_name}}'</span>,</p>
-                    <p>&nbsp;&nbsp;&nbsp;&nbsp;apellido: <span class="text-yellow-300">'{{sessionData.user.last_name}}'</span>,</p>
-                    <p>&nbsp;&nbsp;&nbsp;&nbsp;email: <span class="text-yellow-300">'{{sessionData.user.email}}'</span>,</p>
-                    <p>&nbsp;&nbsp;&nbsp;&nbsp;edad: <span class="text-yellow-300">'{{sessionData.user.age}}'</span>,</p>
-                    <p>&nbsp;&nbsp;&nbsp;&nbsp;rol: <span class="text-yellow-300">'{{sessionData.user.role}}'</span>,</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;nombre: <span class="text-yellow-300">'{{currentUser.firstName}}'</span>,</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;apellido: <span class="text-yellow-300">'{{currentUser.lastName}}'</span>,</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;email: <span class="text-yellow-300">'{{currentUser.email}}'</span>,</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;edad: <span class="text-yellow-300">'{{currentUser.age}}'</span>,</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;rol: <span class="text-yellow-300">'{{currentUser.role}}'</span>,</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;Puntaje: <span class="text-yellow-300">'{{currentUser.score}}'</span>,</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;Ultima conexion: <span class="text-yellow-300">'{{currentUser.lastConnection}}'</span>,</p>
                     <p>&nbsp;&nbsp;}</p>
                     <p>}</p>
                 </div>

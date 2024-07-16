@@ -13,6 +13,7 @@ export default class CartsMongoDAO{
     //Por lo cual getCartDTO es diferente en cada DAO segun la BD que use.
     getCartDTO(cartFromDB){
         return new CartDTO({
+          
             cartId: cartFromDB._id.toString(), 
             products: cartFromDB.products.map( item => (
                 {                
@@ -31,6 +32,7 @@ export default class CartsMongoDAO{
                         thumbnails: item.product.thumbnails
                         
                     }
+                        
                 }
             
             ))})}

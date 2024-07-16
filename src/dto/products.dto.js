@@ -25,38 +25,3 @@ export class ProductDTO{
        
     }
 }
-
-
-export class ProductConstructionObject {
-    constructor(productData) {
-        const requiredFields = ['title', 'description', 'price', 'img', 'code', 'category', 'stock', 'status']
-        const missingFields = getMissingFields(productData,requiredFields)
-        if (missingFields.length > 0) throw ProductDTOERROR(ProductDTOERROR.MISSING_FIELDS,'|ProductoConstructionObject.constructor|',`|Faltan ingresar los campos : ${missingFields}|`)
-        // Destructuramos el objeto productData para asignar propiedades
-        const {
-            title,
-            description,
-            price,
-            img,
-            code,
-            category,
-            owner,
-            stock,
-            status,
-            thumbnails
-        } = productData;
-
-
-
-        this.title = title;
-        this.description = description;
-        this.price = price;
-        this.img = img;
-        this.code = code;
-        this.category = category;
-        this.owner = owner || 'admin';
-        this.stock = stock;
-        this.status = status;
-        this.thumbnails = thumbnails;
-    }
-}

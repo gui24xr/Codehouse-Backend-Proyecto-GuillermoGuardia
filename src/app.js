@@ -8,14 +8,14 @@ import cors from 'cors'
 //Importacion de configuraciones
 import { configHandlebars } from "./config/handlebars-config.js"
 import { initDataBaseConnection } from "./config/database.js"
-// import { configSessionMongo } from "./config/sessions-config.js"; En desuso, se adopto totalmente JWT
+import { configSessionMongo } from "./config/sessions-config.js"; //En desuso, se adopto totalmente JWT
 import { initializePassport } from "./config/passport.config.js"
 
 // Importacion de middlewares.
 import { loggerMiddleware } from './middlewares/logger-middleware.js'
-import { verifyTokenMiddleware } from './middlewares/authTokenMiddlewares.js';
-import { routerPublicViews } from './routes/views.router.js';
-import { routerProtectedViews } from './routes/views.router.js';
+import { getUserFromTokenMiddleware } from './middlewares/authTokenMiddlewares.js';
+
+import {router as routerViews } from './routes/views.router.js';
 import {router as routerCarts } from './routes/carts.router.js'
 import {router as routerProducts} from './routes/products.router.js'
 import {router as routerSessions} from './routes/sessions.router.js'
@@ -49,11 +49,10 @@ initializePassport()
 
 //Middlewares generales
 app.use(loggerMiddleware) //Para tener registro del flujo.
-app.use(verifyTokenMiddleware) //En cada solicitud verifica la existencia de token y nos provee de req.currentUser.
+app.use(getUserFromTokenMiddleware) //En cada solicitud verifica la existencia de token y nos provee de req.currentUser.
 
 //Usos de rutas.
-app.use('/',routerPublicViews)
-app.use('/',routerProtectedViews)
+app.use('/',routerViews)
 app.use('/api',routerCarts) 
 app.use('/api',routerProducts)
 app.use('/api',routerSessions)

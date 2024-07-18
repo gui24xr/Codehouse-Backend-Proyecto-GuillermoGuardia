@@ -9,7 +9,8 @@
     "testproducts": "mocha test/products.mongo.dao.test.js",
     "notestproducts": "nodemon test/products.mongo.dao.notest.js",
     "dev": "nodemon src/app.js --mode desarrollo",
-    "start": "node src/app.js --mode desarrollo"
+    "start": "node src/app.js",
+    "start2": "node src/app.js --mode desarrollo"
   },
   "author": "Guillermo Guardia",
   "license": "ISC",

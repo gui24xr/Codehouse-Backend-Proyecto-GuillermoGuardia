@@ -286,7 +286,10 @@ async viewUsersList(req,res,next){
       avatar: item.avatar,
       createdAt: formatearFecha(item.createdAt)
     }))
-    res.status(200).render("userslist",{usersList:mappedUsersList})
+    res.status(200).render("userslist",{
+      usersList:mappedUsersList
+      currentUser: req.currentUser,
+    })
     
   }catch(error){
    

@@ -14,6 +14,7 @@ import { UnauthorizedError, TokenVerificationError } from "../services/errors.se
 
  //Simplemente mira si hay un token, si hay lo mete a propiedad req.currentUser.
 function getUserFromTokenMiddleware(req,res,next){
+  console.log('Middleware: ','getUserFromTokenMiddleware')
 passport.authenticate('jwt', { session: false }, async (err, user, info) => {
     if (err) {
      return next(new TokenVerificationError.GENERIC_ERROR, err.message)  //Si hay un error por parte de passport vamos al manejador de errores.
@@ -36,9 +37,7 @@ passport.authenticate('jwt', { session: false }, async (err, user, info) => {
 
 
  function onlyAuthUsers(req,res,next){
-
-  console.log(console.log('En middleware: ',req.params))
-
+  console.log('Middleware: ','onlyAuthUsers')
   passport.authenticate('jwt', { session: false }, async (err, user, info) => {
     if (err) {
      return next(new TokenVerificationError.GENERIC_ERROR, err.message)  //Si hay un error por parte de passport vamos al manejador de errores.
@@ -52,6 +51,15 @@ passport.authenticate('jwt', { session: false }, async (err, user, info) => {
   }
 })(req, res, next)
 }
+
+/*
+function onlyAuthUsers(req,res,next){
+  console.log('Middleware: ','onlyAuthUsers')
+  if (!req.currentUser) {
+    return next(new UnauthorizedError(UnauthorizedError.NO_USER, 'No hay usuario con sesión iniciada/token válido.'));
+  }
+  next();
+}*/
 
 //Es para bloquear rutas cuando existe un user con token, ejemplo, no se puede ir a login si ya un user con token.
 function onlyWithoutAuthToken(req,res,next){

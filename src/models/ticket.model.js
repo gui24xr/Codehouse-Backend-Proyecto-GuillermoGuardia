@@ -10,31 +10,30 @@ const ticketSchema = mongoose.Schema({
         required: true,
         default: shortid.generate
     },
-    purchase_datetime: {
+    purchaseDateTime: {
         type: Date,
-        required: true,
-        default: Date.now // No se necesita () aquí, solo se referencia la función Date.now
+        default: Date.now 
     },
-    
     price: { 
         type: Number,
         required: true
     },
-
-   //Detalles del ticket. //quitar cuando genere el neuevo modelo
-    details:[{
+  
+    detailsList:[{
     }],
 
-    purchaser: {
-        type: mongoose.Schema.Types.Mixed,
-        refPath: 'purchaserType',
-        required: true
-    },
-    purchaserType: {
+    purchaser: { //Usaremos el email
         type: String,
         required: true,
-        enum: ['users', 'preorders']
-    }
+    },
+    payLink: { //Link de pago
+        type: String,
+    },
+    paymentDateTime: {
+        type: Date,
+        default: null
+    },
+
 
 });
 

@@ -4,7 +4,7 @@ export let UsersDAO
 export let ExchangePointsDAO
 export let PurchasesDAO
 export let MessagesDAO
-export let ticketsDAO
+export let TicketsDAO
 
 
 switch (process.env.database){
@@ -12,6 +12,7 @@ switch (process.env.database){
         const {default:ProductsMongoDAO} = await import('./mongo/products.mongo.dao.js')
         const {default:CartsMongoDAO} = await import('./mongo/carts.mongo.dao.js')
         const {default:UsersMongoDAO} = await import('./mongo/users.mongo.dao.js')
+        const {default:TicketsMongoDAO} = await import('./mongo/tickets.mongo.dao.js')
         const {default:ExchangePointsMongoDAO} = await import('./mongo/exchangepoints.mongo.dao.js')
 
         //Como yo quiero que se llame igual siempre al importar se lo asgino a CartsDao
@@ -20,6 +21,7 @@ switch (process.env.database){
         CartsDAO = CartsMongoDAO
         UsersDAO = UsersMongoDAO
         ExchangePointsDAO = ExchangePointsMongoDAO
+        TicketsDAO = TicketsMongoDAO
     break
     case 'sequelize':
         console.log('Entro sequelize')

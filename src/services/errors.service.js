@@ -229,17 +229,22 @@ export class TicketsServiceError extends Error{
     }
 }
 
-export class CheckoutServiceError extends Error{
+export class CheckoutsServiceError extends Error{
 
     //Codigos posibles.
     static INTERNAL_SERVER_ERROR = 0;
     static GENERIC_ERROR = 1;
+    static CART_WITHOUT_PRODUCTS = 2;
+    static CREATE_TICKET_ERROR = 3;
+    static GET_TICKET_ERROR = 4;
+    static UPDATE_TICKET_ERROR = 5;
+    
 
  
     constructor(errorCode,operationName,message){
         super(message);
-        this.name = 'TicketsService';
-        this.code = errorCode || TicketsService.INTERNAL_SERVER_ERROR; //una constante static de codigo
+        this.name = 'CheckoutsServiceError';
+        this.code = errorCode || CheckoutsServiceError.INTERNAL_SERVER_ERROR; //una constante static de codigo
         this.operationName = operationName; //Funcion donde se dio la falla
     }
 }
@@ -255,6 +260,21 @@ export class InternalServerError extends Error{
         super(message);
         this.name = 'TicketsService';
         this.code = errorCode || TicketsService.INTERNAL_SERVER_ERROR; //una constante static de codigo
+        this.operationName = operationName; //Funcion donde se dio la falla
+    }
+}
+
+
+export class TicketDTOERROR extends Error{
+
+    //Codigos posibles.
+    static INTERNAL_SERVER_ERROR = 0;
+    static INCOMPLETE_FIELDS = 1;
+    static INVALIDS_FIELDS = 2;
+    constructor(errorCode,operationName,message){
+        super(message);
+        this.name = 'TicketDTOERROR';
+        this.code = errorCode || TicketDTOERROR.INTERNAL_SERVER_ERROR; //una constante static de codigo
         this.operationName = operationName; //Funcion donde se dio la falla
     }
 }

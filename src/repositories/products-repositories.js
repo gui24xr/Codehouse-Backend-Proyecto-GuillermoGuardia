@@ -114,7 +114,6 @@ export class ProductsRepository{
             }
               */
         try{
-            console.log('-------------')
             //Recibe una lista de productsList para hacer update, las mapea para el DAO
              const listForProductsDAO = productsListForUpdate.map(item => (
                 {
@@ -127,7 +126,7 @@ export class ProductsRepository{
                         newImg: item.img,
                         newCode: item.code,
                         newCategory: item.category,
-                        newStock: item.newStock,
+                        newStock: item.stock,
                         newStatus:  item.status,
                         newThumbnails: item.thumbnails,
                     }
@@ -155,11 +154,6 @@ export class ProductsRepository{
     }
 
 
-
-
-    
-   //-----------------------------------------------
-    
     async getProducts(){
         try {
             const products = await productsDAO.get({})
@@ -171,6 +165,10 @@ export class ProductsRepository{
    }
 
 
+    
+   //-----------------------------------------------
+    
+  
 
 
 
@@ -184,109 +182,6 @@ export class ProductsRepository{
 
 
 
-
-
-
-
-   async getProductById(productId){
-         try {
-            const searchedProduct = await productsDAO.get({productId:productId})
-            return searchedProduct[0]
-        } catch (error) {
-            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
-            else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.getProductById|','Error interno del servidor...')
-        }
-
-   }
-
-   async getProductStock(productId){
-    try {
-        const searchedProduct = await productsDAO.get({productId:productId})
-        return searchedProduct[0].stock
-   } catch (error) {
-    if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
-    else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.getProductStock|','Error interno del servidor...')
-   }
-
-}
-
-
-   async updateProductStock(productId,newStockQuantity){
-     try{
-        const updatedProductsList = await productsDAO.updateProductsListById([
-            { productId:productId, 
-              updateInfo:{newStock: newStockQuantity} }
-        ])
-        //como recibo lista de dto y es solo uno
-        return updatedProductsList[0]
-     } catch(error){
-        if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
-        else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.updateProductStock|','Error interno del servidor...')
-     }
-   }
-
-
-   async updateProduct(productId,newProduct){
-    try {
-        const updatedProduct = await productsDAO.updateProduct(productId,newProduct)
-        return updatedProduct
-    } catch (error) {
-        if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
-        else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.updateProduct|','Error interno del servidor...')
-    }
-   }
-
-   async deleteProduct(productId){
-   try {
-        const deletedResult = await productsDAO.deleteProduct(productId)
-        return deletedResult
-        }  catch (error) {
-            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
-            else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.deleteProduct|','Error interno del servidor...')
-    }
-   }
-
-   async getProductsPaginate(limit,page,sort,query){
-    try {
-        const products = await productsDAO.getProductsPaginate(limit,page,sort,query)
-        return products
-    } catch (error) {
-      console.log('Error al recuperar los productos...')
-      throw error
-    }
-  }
-
-  async getProductsByFilter(filter,pageSize,pageNumber){
-    try {
-        const result = await productsDAO.getProductsByFilter(filter,pageSize,pageNumber)
-        return result
-    } catch (error) {
-      console.log('Error al intentar getproductsFilter desde repository products...')
-      throw error
-    }
-  }
-
-
-
-    async addProduct({title, description,price,img,code,category,stock,status,thumbnails}){
-        
-        //console.log('En repository: ',title, description,price,img,code,category,stock,status,thumbnails)
-        try{
-           const addResult = await productsDAO.addProduct({title, description,price,img,code,category,stock,status,thumbnails})
-           return addResult
-        }catch(error){
-            res.status(500)
-        }
-    }
-
-    async changeProductStatus(productId){
-        try{ 
-            const updateStateResult = await productsDAO.changeProductStatus(productId)
-            return updateStateResult   
-        }catch(error){
-            throw new Error(`Error al intentar cambiar estado a producto ${productId} desde productRepository...`)
-        }
-    }
 
 
 

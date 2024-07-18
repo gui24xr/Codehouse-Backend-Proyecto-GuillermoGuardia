@@ -46,6 +46,12 @@
                                     </svg>
                                             Agregar al carrito
                                 </button>
+                                
+                                <div class="items-center flex flex-col text-blue-500 hover:text-green-800 ">
+                                  <p class="text-sm text-gray-500 truncate dark:text-gray-400">Vendedor</p>
+                                  <p class="text-sm text-gray-500 truncate dark:text-gray-400">({{this.owner}})</p>
+                                </div>
+                                
 
                                 <button id='button-{{this.productId}}' type="button" onclick="purchaseThisProduct(`{{this.productId}}`,`{{../currentUser.email}}`)"  class="text-white bg-red-500 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-s px-5 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Comprar</button>
                              
@@ -75,7 +81,11 @@
     function addToCartThisProduct(productId,currentUserCartId){
 
         const selectedQuantity = document.getElementById(`counter-input-${productId}`).value
-        console.log('pid: ',productId,'cu:' ,currentUserCartId,'qua:', selectedQuantity)
+        //console.log('pid: ',productId,'cu:' ,currentUserCartId,'qua:', selectedQuantity)
+        if (!currentUserCartId) {
+            Swal.fire({icon: 'error',text: 'Inicia sesion!', text: 'Para poder agregar productos al carro o comprar, tenes que iniciar sesion !!',})
+            return
+        }
      
         //Procedo a agregar al carro del currentUser el ProductId en la cantidad indicada.
          fetch(`/api/carts/${currentUserCartId}/products/${productId}`,
@@ -88,6 +98,7 @@
                    //Segun la respuesta mostramos un alert o finalmente actualizamos el carro en el dom en la barra
                     if (!response.ok){
                         response.json()
+                        
                         .then(data =>{
                              Swal.fire({icon: 'error',title: 'Error al intentar comprar...',text: data.message})
                         })
@@ -95,12 +106,14 @@
                     else{
                         response.json().
                         then( res => {
-                            console.log(res) //Cambio la cantidad en el carrito en la barra.
+                            //console.log(res) //Cambio la cantidad en el carrito en la barra.
                             document.getElementById('productsQuantityInUserCart').innerText = res.cart.countProducts
                         })
                     }
 
                 })
+        
+              
     }
 
     //---------------------------------------------------------------------------------------------------------------------------
@@ -110,6 +123,11 @@
         const selectedQuantity = document.getElementById(`counter-input-${productId}`).value
         console.log(productId,currentUserEmail,selectedQuantity)
         
+         if (!currentUserEmail) {
+            Swal.fire({icon: 'error',text: 'Inicia sesion!', text: 'Para poder agregar productos al carro o comprar, tenes que iniciar sesion !!',})
+            return
+        }
+     
       
         //Con esta condicion si el user no esta logueado lo mando a iniciar sesion.
         /*if (!loggedUserInfo.login) return redirectToLogin(event)

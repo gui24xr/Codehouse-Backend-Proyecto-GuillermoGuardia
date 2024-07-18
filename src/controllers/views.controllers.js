@@ -2,8 +2,8 @@ import { UsersService } from "../services/users.service.js";
 import { ProductsService } from "../services/products.service.js";
 import { ProductsRepository } from "../repositories/products-repositories.js";
 import { CartsService } from "../services/carts.service.js";
-import { TicketsRepositories } from "../repositories/ticket.repositories.js";
-import { CheckoutService } from "../services/checkout/checkout-service.js";
+import { TicketsRepositories } from "../repositories/ticket-repositories.js";
+import { CheckoutService } from "../services/checkouts.service.js";
 
 
 
@@ -14,7 +14,7 @@ import {
   CartsServiceError,
   ProductsServiceError,
   TicketsServiceError,
-  CheckoutServiceError,
+  CheckoutsServiceError,
   InternalServerError,
   UserDTOERROR
 
@@ -120,24 +120,35 @@ export class ViewsController {
 
 
   viewRealTimeProducts(req, res) {
-    res.render("realTimeProducts");
+    //Envio el req.user
+    
+    res.render("realTimeProducts",{
+      currentUser: req.currentUser,
+    })
   }
 
  
   viewLoginGet(req, res,next) {
-    console.log('Entro a viewloginget')
-    res.render("login",{currentUser: req.currentUser});
+    res.render("login",{
+      currentUser: req.currentUser
+    })
   }
 
   viewRegisterGet(req, res,next) {
-    res.render("register");
+
+    res.render("register",{
+      currentUser: req.currentUser,
+    })
   }
 
   viewChat(req, res,next) {
     //SI estamos sin token pedira el email para corroborar que no sea admin ya que los mismos no puden ingresar al chat
     const { email } = req.query;
     //Le mandamos el mail/nombre de usuario
-    res.render("chat/chat", { activeUser: email });
+    res.render("chat/chat", { 
+      currentUser: req.currentUser,
+      activeUser: email 
+    })
   }
 
   async viewProfile(req, res,next) {

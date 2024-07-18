@@ -8,7 +8,7 @@ import cors from 'cors'
 //Importacion de configuraciones
 import { configHandlebars } from "./config/handlebars-config.js"
 import { initDataBaseConnection } from "./config/database.js"
-import { configSessionMongo } from "./config/sessions-config.js"; //En desuso, se adopto totalmente JWT
+//import { configSessionMongo } from "./config/sessions-config.js"; //En desuso, se adopto totalmente JWT
 import { initializePassport } from "./config/passport.config.js"
 
 // Importacion de middlewares.
@@ -21,8 +21,8 @@ import {router as routerProducts} from './routes/products.router.js'
 import {router as routerSessions} from './routes/sessions.router.js'
 import {router as routerUsers} from './routes/users.router.js'
 import {router as routerTesting} from './routes/testing.router.js'
+import { router as routerCheckouts} from './routes/checkouts.router.js'
 import {router as routerPruebas} from './routes/pruebas.router.js' //Interno para pruebas
-import { routerPurchases } from './routes/purchase.router.js';
 
 import { SocketManager } from "./socket/socketmanager.js";
 import { handlerErrorsMiddleware } from './middlewares/handler-errors-middleware.js';
@@ -57,7 +57,7 @@ app.use('/api',routerCarts)
 app.use('/api',routerProducts)
 app.use('/api',routerSessions)
 app.use('/api', routerUsers)
-app.use('/api', routerPurchases)
+app.use('/api', routerCheckouts)
 app.use('/',routerTesting) //Rutas testing consignas.
 app.use('/pruebas', routerPruebas) //Rutas testing personal.
 

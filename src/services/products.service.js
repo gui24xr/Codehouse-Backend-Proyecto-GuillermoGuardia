@@ -32,7 +32,7 @@ export class ProductsService{
                 purchasesCountMax
             })
 
-            //Obtenemos el objeto con toda la consulta y devolvemos al cliente
+            //Obtenemos el objeto con toda la consulta y devolvemos 
             return searchResult
         }catch(error){
             if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
@@ -247,6 +247,7 @@ export class ProductsService{
             
                 //console.log('UpdateInfo: ',updateInfo)
                 //Finalmente le mandamos al repositorio los datos para procesar en la BD.
+
                 const updatedProduct = await productsRepository.editProducts([{...updateInfo}])
                 //console.log(searchedProduct)
                 return updatedProduct
@@ -265,6 +266,34 @@ export class ProductsService{
         }catch(error){
             if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
             else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsService.getProductsCategories|','Error interno del servidor...')
+        }
+    }
+
+
+    
+    async getProductById(productId){
+        //Devuelvo el producto unico y si no existe devuelvo null
+        try{
+            //Como solo obtendre un producto y para que sea mas eficiente le pido al repo con limit=1
+            const searchResult = await productsRepository.findProducts({limit:1,productId})
+            //Si existe el producto estara su dto en el array producctQueryList y sera el primero
+            if (searchResult.totalProducts>0) return searchResult.productsQueryList[0]
+            else return null
+        }catch(error){
+            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+            else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsService.getProductById|','Error interno del servidor...')
+        }
+    }
+
+
+
+    async updateProductStock(productId,newStock){
+        //Updatea el productID en la cantidad newStock.
+        try{
+           await this.editProduct({productID:productId,stock:newStock})
+        }catch(error){
+            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+            else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsService.updateProductById|','Error interno del servidor...')
         }
     }
 

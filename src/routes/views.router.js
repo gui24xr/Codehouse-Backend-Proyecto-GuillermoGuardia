@@ -19,7 +19,7 @@ router.get('/views/login', onlyWithoutAuthToken,viewsController.viewLoginGet)
 
 
 //Vistas que necesitan tenter autorizacion del token para ingresar.
-router.get('/views/products/:pid', onlyAuthUsers,viewsController.viewProductDetail)
+router.get('/views/products/:pid', viewsController.viewProductDetail)
 router.get('/views/realtimeproducts', onlyAuthUsers,blockRoleAccessMiddleware('user'),viewsController.viewRealTimeProducts)
 router.get('/views/chat',onlyAuthUsers,blockRoleAccessMiddleware('admin'),viewsController.viewChat)
 router.get('/views/profile', onlyAuthUsers,viewsController.viewProfile)

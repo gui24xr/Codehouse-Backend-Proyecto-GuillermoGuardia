@@ -1,5 +1,5 @@
-import { CheckoutService } from "../services/checkout/checkout-service.js"
-import { CheckoutServiceError,CartsServiceError,InternalServerError, ProductsServiceError, TicketsServiceError } from "../services/errors.service.js"
+import { CheckoutService } from "../services/checkouts.service.js"
+import { CheckoutsServiceError,CartsServiceError,InternalServerError, ProductsServiceError, TicketsServiceError } from "../services/errors.service.js"
 import { CartsService } from "../services/carts.service.js"
 import { InputValidationService } from "../services/validation.service.js"
 import { InputValidationServiceError } from "../services/errors.service.js"
@@ -162,7 +162,7 @@ export class CartsController{
         }catch(error){
             if (
                 error instanceof CartsServiceError ||
-                error instanceof CheckoutServiceError ||
+                error instanceof CheckoutsServiceError ||
                 error instanceof ProductsServiceError ||
                 error instanceof TicketsServiceError ||
                 error instanceof InputValidationServiceError

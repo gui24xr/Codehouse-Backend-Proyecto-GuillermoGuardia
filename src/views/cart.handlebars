@@ -47,7 +47,7 @@
                 </th>
                 -->
                 <td class="px-4 py-1">
-                    {{this.product.title}}
+                    {{this.product.title}}({{this.product.productId}})
                 </td>
                 <td class="px-4 py-1">
                     <div class="flex-shrink-0">
@@ -59,7 +59,7 @@
                     {{this.product.price}}
                 </td>
                 <td class="px-4 py-1">
-                    {{this.quantity}}
+                    {{this.quantity}}//{{this.product.stock}}
                 </td>
                 <td class="px-4 py-1">
                     {{this.subtotal}}
@@ -82,7 +82,7 @@
 
         <!-- Botón Checkout -->
         <div class="flex justify-center mt-4">
-            <button onclick="checkoutCartFromClient('{{cartId}}')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
+            <button onclick="checkoutCartFromClient('{{currentUser.cartId}}')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
                 Confirmar compra 
             </button>
               
@@ -94,9 +94,9 @@
     
 
     <script>
-        function checkoutCartFromClient(cartId){
+        function checkoutCartFromClient(currentUserCartId){
             //Hacemos el fetch correspondiente y de acuerdo a su respuestan accionamos.
-            fetch(`/api/${cartId}/purchase`,{method: 'POST'})
+            fetch(`/api/carts/checkout/${currentUserCartId}`,{method: 'POST'})
             .then( response => {
                 if (response.ok){
                     //Tomo los datos para dar un mensaje y redirigir 
@@ -114,7 +114,8 @@
                 })
                 .then((swalResult)=>{
                     //Se redirige a la vista del ticket con el correspodiente codigo.
-                    window.location.href = `/views/${data.checkoutResult.ticket.code}/purchase`
+                   // window.location.href = `/views/${data.checkoutResult.ticket.code}/purchase`
+                   alert('ok')
                 })
 
                     })

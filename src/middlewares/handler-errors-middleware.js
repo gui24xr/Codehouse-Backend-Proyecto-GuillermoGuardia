@@ -8,13 +8,14 @@ import {
         InputValidationServiceError,
         ProductsServiceError,
         InternalServerError,
-        UnauthorizedError
+        UnauthorizedError,
+        CheckoutsServiceError
 
  } from "../services/errors.service.js";
 
 
 export const handlerErrorsMiddleware = (error, req, res, next) => {
-    //console.log('LLego al middleware Manejando erroressss')
+    console.log('LLego al middleware Manejando erroressss',error)
     if (error instanceof InputValidationServiceError){
        // logger.error(`Type:${error.name} in ${req.method} - ${req.originalUrl} from ${req.ip}`)
         res.status(500).json({message: error.message})
@@ -52,8 +53,6 @@ export const handlerErrorsMiddleware = (error, req, res, next) => {
     if (error instanceof CartsServiceError){
         console.log('LLego al middleware Manejando erroressss')
         logger.error(`Type:${error.name} in ${req.method} - ${req.originalUrl} from ${req.ip}`)
-
-
         
         if (error.code == CartsServiceError.BLOCKED_TO_PREMIUM_USERS) 
             res.status(403).json({
@@ -85,10 +84,23 @@ export const handlerErrorsMiddleware = (error, req, res, next) => {
 
         if (error.code == UnauthorizedError.USER_LOGGED_EXIST) 
             res.status(403).json({
-                message: `Es necesario cerrar sesion para iniciar una nueva sesion...`,
+                message: `Es necesario cerrar sesion para iniciar una nueva sesion o registrar un nuevo usuario...`,
+                url: req.originalUrl
+        }) 
+        
+    } 
+
+
+    if (error instanceof CheckoutsServiceError){
+        
+        logger.error(`Type:${error.name} in ${req.method} - ${req.originalUrl} from ${req.ip}`)
+        
+        if (error.code == CheckoutsServiceError.CART_WITHOUT_PRODUCTS) 
+            res.status(403).json({
+                message: `No se puede hacer un checkout sobre un carro vacio`,
                 url: req.originalUrl
         })
-        
+
     } 
 /*
     if (error instanceof TokenVerificationError){

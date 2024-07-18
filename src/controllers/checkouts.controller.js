@@ -1,33 +1,38 @@
 
-import { CheckoutService } from "../services/checkout/checkout-service.js";
-import { TicketsRepositories } from "../repositories/ticket.repositories.js";
-import { CheckoutServiceError,CartsServiceError,InternalServerError, ProductsServiceError, TicketsServiceError } from "../services/errors.service.js"
+import { CheckoutService } from "../services/checkouts.service.js";
+import { TicketsRepositories } from "../repositories/ticket-repositories.js";
+import { CheckoutsServiceError,CartsServiceError,InternalServerError, ProductsServiceError, TicketsServiceError } from "../services/errors.service.js"
 
 
 const checkoutService = new CheckoutService()
 const ticketRepositories = new TicketsRepositories()
 
-export class PurchasesController{
+export class CheckoutsController{
    
     async cartCheckout(req,res,next){
-        const {cid:cartId} = req.params
+        const {cid:cartId}=req.params
         try{
-            const checkoutResult = await checkoutService.checkOutCart(cartId)
+            const checkoutResult = await checkoutService.cartCheckout({
+                userEmail: req.currentUser.email,
+                cartId:cartId
+            })
             res.status(200).json({
                 status: "success", 
                 message: `Checkout Carrito ID ${cartId} generado correctamente...`,
                 checkoutResult: checkoutResult
                 })   
         }catch(error){
+
             if (
                 error instanceof CartsServiceError ||
-                error instanceof CheckoutServiceError ||
+                error instanceof CheckoutsServiceError ||
                 error instanceof ProductsServiceError ||
                 error instanceof TicketsServiceError
             ) {
-                
+               
                 next(error)
             } else {
+                
                 next(new InternalServerError(InternalServerError.GENERIC_ERROR, 'Error in ||checkoutController.cartCheckout||...'));
             }
         }
@@ -47,12 +52,14 @@ export class PurchasesController{
         }catch(error){
             if (
                 error instanceof CartsServiceError ||
-                error instanceof CheckoutServiceError ||
+                error instanceof CheckoutsServiceError ||
                 error instanceof ProductsServiceError ||
                 error instanceof TicketsServiceError
             ) {
+       
                 next(error)
             } else {
+                
                 next(new InternalServerError(InternalServerError.GENERIC_ERROR, 'Error in ||checkoutController.singlePurchase||...'));
             }
         }

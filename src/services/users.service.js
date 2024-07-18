@@ -53,7 +53,7 @@ export class UsersService{
             const searchedUser = await usersRepository.getUserByEmail(email)
             //Repository me devuelve dto y miro que coincida la contraseña.
             if (searchedUser) {     
-                console.log('Searcheduser: ',searchedUser)
+                //console.log('Searcheduser: ',searchedUser)
                 if (isValidPassword(password,searchedUser.password)) {
                     //Se crea el jsonwebtockn que se retornara a la capa controllers
                     const updatedUser = await usersRepository.setLastConnection(email,new Date())
@@ -105,7 +105,7 @@ export class UsersService{
             //Busco el email de este userID
             const searchedUser = await usersRepository.getUserById(userId)
             const updatedUser = await usersRepository.setLastConnection(searchedUser.email,new Date())
-            console.log('En service: ',updatedUser)
+            //console.log('En service: ',updatedUser)
             return updatedUser
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
@@ -263,9 +263,9 @@ export class UsersService{
 
 
             const searcheduser = await usersRepository.getUserByEmail(userEmail)
-            console.log(searcheduser)
-            pepita(searcheduser)
-            console.log('La hora ahora es: ', new Date())
+            //console.log(searcheduser)
+            //pepita(searcheduser)
+            //console.log('La hora ahora es: ', new Date())
 
 
             //Tenemos el dto con la informacion del usuario.

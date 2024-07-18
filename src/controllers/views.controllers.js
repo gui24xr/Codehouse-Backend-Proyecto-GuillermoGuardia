@@ -287,7 +287,7 @@ async viewUsersList(req,res,next){
       createdAt: formatearFecha(item.createdAt)
     }))
     res.status(200).render("userslist",{
-      usersList:mappedUsersList
+      usersList:mappedUsersList,
       currentUser: req.currentUser,
     })
     

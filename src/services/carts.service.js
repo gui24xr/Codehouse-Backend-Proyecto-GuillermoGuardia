@@ -77,12 +77,12 @@ export class CartsService {
         /*Esta funcion va a pedir al servicio de productos el owner del producto.
           Si owner producto igual user enonces lanza error y no se lleva  a cabo la agregacion.
         */
-        console.log('check: ', user,productId)
+        //console.log('check: ', user,productId)
         try{
             const productsService =  new ProductsService()
             const searchResultObject = await productsService.findProducts({productId:productId,owner:user})
             if (searchResultObject.totalProducts > 0){
-             console.log('Habria que lanzar error para no permitir el agregado.')
+            // console.log('Habria que lanzar error para no permitir el agregado.')
              throw new CartsServiceError(CartsServiceError.BLOCKED_TO_PREMIUM_USERS,'CartsService.checkProductOwner','Los usuarios no premium no pueden agregar sus propios productos al carrito.')
             }   
         }catch(error){
@@ -121,7 +121,7 @@ export class CartsService {
           }
 
         } catch (error) {
-            console.log('error en cartser: ', error)
+            //console.log('error en cartser: ', error)
             if (error instanceof CartsServiceError || error instanceof CartDTOERROR || error instanceof ProductsService||error instanceof ProductDTOERROR) throw error
             else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsService.addProductInCart|')
         }

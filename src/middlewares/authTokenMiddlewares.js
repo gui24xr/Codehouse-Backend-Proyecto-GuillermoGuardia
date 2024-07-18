@@ -14,7 +14,7 @@ import { UnauthorizedError, TokenVerificationError } from "../services/errors.se
 
  //Simplemente mira si hay un token, si hay lo mete a propiedad req.currentUser.
 function getUserFromTokenMiddleware(req,res,next){
-  console.log('Middleware: ','getUserFromTokenMiddleware')
+  //console.log('Middleware: ','getUserFromTokenMiddleware')
 passport.authenticate('jwt', { session: false }, async (err, user, info) => {
     if (err) {
      return next(new TokenVerificationError.GENERIC_ERROR, err.message)  //Si hay un error por parte de passport vamos al manejador de errores.
@@ -25,7 +25,7 @@ passport.authenticate('jwt', { session: false }, async (err, user, info) => {
     else{
       //Si hay un usuario con credenciales validas adjunto al objeto req esos datos en una propiedad currentUser para tener los datos del user logueado.
       //Luego mediente roleMiddleware (que viene luego de este authMiddleware concedo o deniego acceso segun rol)
-     console.log('usuario en token: ', user)
+     //console.log('usuario en token: ', user)
       req.currentUser = user.user 
       next()
   }
@@ -37,7 +37,7 @@ passport.authenticate('jwt', { session: false }, async (err, user, info) => {
 
 
  function onlyAuthUsers(req,res,next){
-  console.log('Middleware: ','onlyAuthUsers')
+  //console.log('Middleware: ','onlyAuthUsers')
   passport.authenticate('jwt', { session: false }, async (err, user, info) => {
     if (err) {
      return next(new TokenVerificationError.GENERIC_ERROR, err.message)  //Si hay un error por parte de passport vamos al manejador de errores.
@@ -89,7 +89,7 @@ function blockRoleAccessMiddleware(blockedRole) {
       } else {
         //ACA SE ABRE EN 2.
         if (user.user.role == blockedRole){
-          console.log('NO SE PUEDE AVANZAR y lanzare error')
+          //console.log('NO SE PUEDE AVANZAR y lanzare error')
           next(new UnauthorizedError(UnauthorizedError.INVALID_ROLE, `Los usuarios con rol ${blockedRole} no tienen acceso a esta funcionalidad...`))
         }
         else next()

@@ -97,7 +97,7 @@ export class ProductsService{
                     return []
                 }
         }catch(error){
-            console.log(error)
+            //console.log(error)
             if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
             else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsService.createProduct|','Error interno del servidor...')
         }

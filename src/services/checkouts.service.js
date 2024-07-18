@@ -62,7 +62,7 @@ export class CheckoutService {
       }
 
    }catch(error){
-    console.log(error)
+    //console.log(error)
     if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR || error instanceof CartsServiceError || error instanceof CartDTOERROR || error instanceof CheckoutsServiceError || TicketDTOERROR) throw error
     else throw new CheckoutsServiceError(CheckoutsServiceError.INTERNAL_SERVER_ERROR,'|CheckoutsService.checkoutCarById|','Error interno del servidor...')
  }
@@ -95,7 +95,7 @@ export class CheckoutService {
       let nuevoStock
     
       for (let item of searchedCart.products) {
-        console.log('iteraciones: ', searchedCart.products.length)
+       // console.log('iteraciones: ', searchedCart.products.length)
         requiredProductQuantity = item.quantity
         currentProductInfo = await productsService.getProductById(item.product.productId)
           if (requiredProductQuantity <= currentProductInfo.stock) {
@@ -137,7 +137,7 @@ export class CheckoutService {
       }
     
    catch(error){
-    console.log(error)
+    //console.log(error)
      if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR || error instanceof CartsServiceError || error instanceof CartDTOERROR || CheckoutsServiceError) throw error
       else throw new CheckoutsServiceError(CheckoutsServiceError.INTERNAL_SERVER_ERROR,'|CheckoutsService.checkoutCarById|','Error interno del servidor...')
    }

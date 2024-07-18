@@ -935,3 +935,5 @@
 ***[LOGGER]*** [error at 24-07-18 18:07:56] Type:CheckoutsServiceError in POST - /api/carts/checkout/66981e6ca1c712805ef2e2e2 from ::ffff:127.0.0.1
 ***[LOGGER]*** [error at 24-07-18 18:07:33] Type:CheckoutsServiceError in POST - /api/carts/checkout/66981e6ca1c712805ef2e2e2 from ::1
 ***[LOGGER]*** [fatal at 24-07-18 18:07:23] Type:TicketsService in POST - /api/carts/checkout/66981e6ca1c712805ef2e2e2 from ::1
+***[LOGGER]*** [error at 24-07-18 19:07:46] Type:UnauthorizedError in GET - /views/users from ::1
+***[LOGGER]*** [error at 24-07-18 19:07:27] Type:UnauthorizedError in GET - /views/realtimeproducts from ::1

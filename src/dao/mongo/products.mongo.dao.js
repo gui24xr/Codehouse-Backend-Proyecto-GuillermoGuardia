@@ -114,7 +114,7 @@ export default class ProductsMongoDAO{
 
     
     async get({productId,owner,status,code,brand,category,createdAtRange,priceRange,purchasesCountRange}){
-       //Devuelve un array con productDTO que coincida la busqueda.
+       //Devuelve un array con productDTO que coincida la busqueda. SI no hay coincidencias deuelve []
        //Se puede combinar los parametros para hacer el get.
        //Si no se pasa ninguna propiedad, o sea {} devuelve todos los productos.
        //Todas las propiedades se comparan por igualdad excepto createdAT que se devuelve los anterior igual a la fecha ingresada.
@@ -122,10 +122,15 @@ export default class ProductsMongoDAO{
        //Si en el objetoi no se incluye max hay que dar error. Se puede obviar el minimo, si, no, sera cero pero no el maximo
        try{
           const query = this.makeQueryFromObject({productId,owner,status,code,brand,category,createdAtRange,priceRange,purchasesCountRange})
-          const searchResult = await ProductModel.find(query)
-          const productsDTOList = searchResult.map(item => ( this.getProductDTO(item)))
-          return productsDTOList            
+          let result = await ProductModel.find(query)
+          if (result.length > 0){
+            const productsDTOList = result.map(item => ( this.getProductDTO(item)))
+            return productsDTOList 
+          }
+          else return []
+                     
        }catch(error){
+       
         if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
         else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|MongoProductsDAO.get|','Error interno del servidor...')
        }
@@ -190,6 +195,10 @@ export default class ProductsMongoDAO{
             //Aca iria una validacion de limit,page que sean numeros, orderField que sea -1/1 y orderField un campo permitido.
             const query = this.makeQueryFromObject({productId,owner,status,code,brand,category,createdAtRange,priceRange,purchasesCountRange})
             const paginateOptions = this.makePaginationValuesObject({limit,page,orderBy,orderField})
+
+            /*IMPORTANTE: si query {} entonces paginate va a devolver las primeras cantidad de limit encontradas
+                por lo tanto, para que eso no suceda y que develva un array vacio
+            */
             //Procedemos a la busqueda y paginacion.
             let searchResult = await ProductModel.paginate(query,paginateOptions)
             //Saliendo todo OK esto deberia construir el objeto propuesto.
@@ -290,7 +299,6 @@ export default class ProductsMongoDAO{
             //Los resultados de cada promesa, o sea actualizacion quedan en cada posicion de updateResult
             const updateResults = await Promise.all(operationsList)
             const updatedProductsDTOList = updateResults.map(item => (this.getProductDTO(item)))
-            //console.log('Operations: ', updatedProductsDTOList)
             return updatedProductsDTOList
         }catch(error){
             if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error

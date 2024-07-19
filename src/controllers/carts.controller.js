@@ -113,7 +113,7 @@ export class CartsController{
             const deleteResult = await cartsService.deleteProductFromCart(cid,pid)
             res.status(201).json({
                 status: "success", 
-                message: `Producto eliminados satisfactoriametente en carrito ID${deleteResult.id}`,
+                message: `Producto eliminados satisfactoriametente en carrito ID${deleteResult.cartId}`,
                 cart:deleteResult
                 })  
             } 
@@ -134,7 +134,7 @@ export class CartsController{
             const clearedCart = await cartsService.clearCart(cartId)
             res.status(200).json({
                 status: "success", 
-                message: `Carrito ID ${clearedCart.id} ah sido vaciado correctamente !`,
+                message: `Carrito ID ${clearedCart.cartId} ah sido vaciado correctamente !`,
                 cart:clearedCart
                 })   
         }  catch (error) {

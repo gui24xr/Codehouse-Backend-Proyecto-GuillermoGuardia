@@ -6,10 +6,46 @@ const productsDAO = new ProductsDAO()
 
 export class ProductsRepository{
    
+    
+    async getProducts({productId,owner,status,code,brand,category,createdBefore,createdAfter,priceMin,priceMax,purchasesCountMin,purchasesCountMax}){
+        try {
+            const products = await productsDAO.get({
+                productId: productId,
+                owner: owner,
+                status: status,
+                code:code,
+                brand: brand,
+                category: category,
+                createdAtRange:{
+                    min: createdAfter,
+                    max: createdBefore
+                },
+                priceRange:{
+                    min:priceMin,
+                    max:priceMax
+                },
+                purchasesCountRange:{
+                    min: purchasesCountMin,
+                    max: purchasesCountMax
+                }
+                    
+            })
+            //En este caso si no hay coincidencia devuelve array, y si no, devuelve productDTO por eso vamos a devolver null si [vacio]
+            if (products.length > 0) return products
+            else return null
+        } catch (error) {
+            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+            else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.getProducts|','Error interno del servidor...')
+        }
+   }
 
     async findProducts({limit,page,orderBy,orderField,productId,owner,status,code,brand,category,createdBefore,createdAfter,priceMin,priceMax,purchasesCountMin,purchasesCountMax}){
           //Arma la consulta de busqueda de productos segun reglas DAO.
-        try{
+          /*IMPORTANTE: paginate te mongo siempre devuelve coincidencias a menos que no haya registros en la BD
+            Por lo cual, es ideal usar get para obtener registros, y findProductse exclusivamente para busquedas*/
+        
+        
+          try{
             //console.log('Entro a repo: ',{limit,page,orderBy,orderField,productId,owner,status,code,brand,category,createdBefore,createdAfter,priceMin,priceMax,purchasesCountMin,purchasesCountMax})
             const searchResultObject = await productsDAO.search({
                 limit:limit,
@@ -36,6 +72,7 @@ export class ProductsRepository{
                 }
                     
             })
+           
             //Obtenemos el objeto del resultado de search y lo devolvemos
             return searchResultObject
 
@@ -100,6 +137,7 @@ export class ProductsRepository{
 
 
     async editProducts(productsListForUpdate){
+        //console.log('Lista recibida en repo: ', productsListForUpdate)
         /* {//Recibe lista de objetos
             productId:'grerd'
                 code: 'DEF45A6NUE',
@@ -153,16 +191,6 @@ export class ProductsRepository{
         }
     }
 
-
-    async getProducts(){
-        try {
-            const products = await productsDAO.get({})
-            return products
-        } catch (error) {
-            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
-            else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.getProducts|','Error interno del servidor...')
-        }
-   }
 
 
     

@@ -73,18 +73,16 @@ export class CartsService {
 
 
 
-    async checkProductOwner({user,productId}){
+    async checkProductOwner({userEmail,productId}){
         /*Esta funcion va a pedir al servicio de productos el owner del producto.
           Si owner producto igual user enonces lanza error y no se lleva  a cabo la agregacion.
         */
         //console.log('check: ', user,productId)
         try{
             const productsService =  new ProductsService()
-            const searchResultObject = await productsService.findProducts({productId:productId,owner:user})
-            if (searchResultObject.totalProducts > 0){
-            // console.log('Habria que lanzar error para no permitir el agregado.')
-             throw new CartsServiceError(CartsServiceError.BLOCKED_TO_PREMIUM_USERS,'CartsService.checkProductOwner','Los usuarios no premium no pueden agregar sus propios productos al carrito.')
-            }   
+            const searchedProduct = await productsService.getProductById(productId)
+            if (searchedProduct.owner == userEmail)  throw new CartsServiceError(CartsServiceError.BLOCKED_TO_PREMIUM_USERS,'CartsService.checkProductOwner','Los usuarios no premium no pueden agregar sus propios productos al carrito.')
+              
         }catch(error){
       
             if (error instanceof CartsServiceError || error instanceof CartDTOERROR || error instanceof ProductsService||error instanceof ProductDTOERROR) throw error
@@ -107,7 +105,7 @@ export class CartsService {
             */
 
            //Si el rol es premium chequeamos que no coincidan productId y owner
-          if (role == 'premium') await this.checkProductOwner({user:user,productId:productId})
+          if (role == 'premium') await this.checkProductOwner({userEmail:user,productId:productId})
          
           const productQuantityInCart = await this.getProductQuantityInCart(cartId,productId)
           if (productQuantityInCart < 1){

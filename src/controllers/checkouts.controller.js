@@ -40,14 +40,21 @@ export class CheckoutsController{
 
 
     async singlePurchase(req,res,next){
-        const {productId,quantity,userId} = req.body
-      
+        const {pid:productId} = req.params
+        const {quantity} = req.query
+
         try{
-            const generatedTicket = await checkoutService.checkoutProductBuy(productId,quantity,userId)
+            const checkoutResult = await checkoutService.checkoutSingleProduct({
+                productId: productId,
+                quantity:quantity,
+                userEmail:req.currentUser.email
+        })
+
+
             res.status(200).json({
                 status: "success", 
-                message: `Compra realizada con exito. Se genero el ticket ${generatedTicket.code}}.`,
-                ticket: generatedTicket
+                message: `Compra realizada con exito. Se genero el ticket ${checkoutResult.ticket.code}}.`,
+                ticket: checkoutResult.ticket
                 })   
         }catch(error){
             if (

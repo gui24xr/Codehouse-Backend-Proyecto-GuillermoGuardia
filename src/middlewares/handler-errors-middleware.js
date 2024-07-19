@@ -101,6 +101,24 @@ export const handlerErrorsMiddleware = (error, req, res, next) => {
                 url: req.originalUrl
         })
 
+        if (error.code == CheckoutsServiceError.PRODUCT_NO_EXIST) 
+            res.status(403).json({
+                message: `El producto no existe`,
+                url: req.originalUrl
+        })
+
+        if (error.code == CheckoutsServiceError.PRODUCT_WITHOUT_STOCK) 
+            res.status(403).json({
+                message: `En este momento el producto no tiene la cantidad suficiente en stock para realizar esta compra...`,
+                url: req.originalUrl
+        })
+
+        if (error.code == CheckoutsServiceError.OWNER_PRODUCT_USER) 
+            res.status(403).json({
+                message: `El producto no puede ser comprado ya que el usuario registrado es su owner...`,
+                url: req.originalUrl
+        })
+
     } 
 /*
     if (error instanceof TokenVerificationError){

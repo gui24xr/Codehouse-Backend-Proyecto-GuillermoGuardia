@@ -174,55 +174,38 @@
             return
         }
      
-      
-        //Con esta condicion si el user no esta logueado lo mando a iniciar sesion.
-        /*if (!loggedUserInfo.login) return redirectToLogin(event)
-          //sabemos que el boton tiene el nombre boton+'-'iddelproducto' del producto x lo tanto tenemos el id del producto a agregar
-        const pressedButtonId = event.target.id //Hay que recortarlo a partir del '-'
-        const separatorPosition = pressedButtonId.indexOf('-')
-        const productId = pressedButtonId.substring(separatorPosition+1)
-        console.log(productId,'user: ', actualUserId)
-         //sabemos que el input de cantidad se llama counter input y tiene el ID del producto. Tomamos su valor o sea la cantidad.
-        const selectedQuantity = document.getElementById(`counter-input-${productId}`).value
-        //Tenemos la cantidad seleccionada, el productID y el cart donde agregar, usamos fetch para llevar a cabo la operacacion haciendo solicitud.
-        //Y de acuerdo a lo que envia el server mando una notiicacion de tostify
-        //console.log(productId,selectedQuantity)
-        //window.location.href = `/views/${productId}/singlepurchase/${selectedQuantity}/${actualUserId}`
-        //Hago fetching...
-        fetch(`/api/purchases/singlepurchase`,{
-            method: 'POST',
-             headers: {'Content-Type': 'application/json'},
-             body: JSON.stringify({ productId: productId,quantity: Number(selectedQuantity),userId: actualUserId })
-        })
-        .then(response => {
-            if (response.ok){
-                //Tomo los datos para dar un mensaje y redirigir 
-                response.json()
-                .then(data => {
-                    console.log(data)
-                    Swal.fire({
-                        title: 'Compra exitosa !',
-                        text: `Tu compra se realizo con exito. Se enviaran los detalles a tu email. Se genero el ticket ${data.ticket.code}.`,
-                        icon: 'success',
-                        confirmButtonText: 'Continuar',
-                        allowOutsideClick: false, // No permitir cerrar al hacer clic fuera del diálogo
-                        allowEscapeKey: false     // No permitir cerrar con la tecla Escape
-                    })
-                    .then((swalResult)=>{
-                    //Se redirige a la vista del ticket con el correspodiente codigo.
-                    window.location.href = `/views/${data.ticket.code}/purchase`
-                })
+      //Procedo a agregar al carro del currentUser el ProductId en la cantidad indicada.
+         fetch(`/api/checkouts/product/${productId}?quantity=${Number(selectedQuantity)}`,
+            {    method:'POST', 
+                headers: {'Content-Type': 'application/json'},
+               })
+                .then(response => {
+                   //Segun la respuesta mostramos un alert o finalmente actualizamos el carro en el dom en la barra
+                    if (!response.ok){
+                        response.json()
+                        .then(data =>{
+                             Swal.fire({icon: 'error',title: 'Error al intentar comprar...',text: data.message})
+                        })
+                    }
+                    else{
+                        response.json()
+                        .then(data => {
+                              Swal.fire({
+                                title: 'Compra exitosa !',
+                                text: `Tu compra se realizo con exito. Se enviaran los detalles a tu email. Se genero el ticket ${data.ticket.code}.`,
+                                icon: 'success',
+                                confirmButtonText: 'Continuar',
+                                allowOutsideClick: false, // No permitir cerrar al hacer clic fuera del diálogo
+                                allowEscapeKey: false     // No permitir cerrar con la tecla Escape
+                            })
+                            .then(swaltResult => {
+                                alert('Aca iremos al pago...')
+                            })
+                        })
+                         
+                    }
 
-                    })
-                }
-            else{
-                 response.json()
-                    .then(data => {
-                        Swal.fire({icon: 'error',title: 'Error en compra',text: data.message})
-                    })
-            }
-        })
-        */
+                })
         }
 </script>
 

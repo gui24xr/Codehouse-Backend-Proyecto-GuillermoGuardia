@@ -3,7 +3,7 @@
 <!--CONTAINER PAGE -->
 <div>
      <!--BANNER SUPERIOR -->
-    <div class="w-full flex items-center pl-10 bg-blue-600 text-white object-fill py-4">
+    <div class="w-full flex items-center pl-10 bg-cyan-600 text-white object-fill py-4">
       <p class="text-2xl leading-none">/carrito de compras</p>
     </div>
 
@@ -16,13 +16,20 @@
 
             <thead class="text-xs text-white uppercase bg-blue-600 border-b border-blue-400 dark:text-white">
             <tr>
-                <!--
+                
                 <th scope="col" class="px-4 py-1 bg-blue-500">
-                    Id
+                    Producto
                 </th>
-                -->
                 <th scope="col" class="px-4 py-1 bg-blue-500">
+                    Vendedor
+                 <th scope="col" class="px-4 py-1 bg-blue-500">
+                    Fecha de creacion
+                </th>
+                 <th scope="col" class="px-4 py-1 bg-blue-500">
                     Titulo
+                </th>
+                <th scope="col" class="px-4 py-1 bg-blue-500">
+                    Categoria
                 </th>
                 <th scope="col" class="px-4 py-1 bg-blue-500">
                     Imagen
@@ -31,10 +38,13 @@
                     Precio
                 </th>
                 <th scope="col" class="px-4 py-1 bg-blue-500">
-                    Cantidad
+                    Stock
                 </th>
                 <th scope="col" class="px-4 py-1 bg-blue-500">
-                    Sub total
+                    Status
+                </th>
+                 <th scope="col" class="px-4 py-1 bg-blue-500">
+                   Codigo
                 </th>
                 <th scope="col" class="px-4 py-1 bg-blue-500">
                     Acciones
@@ -44,28 +54,38 @@
             <tbody>
             {{#each productsList}}
             <tr class="bg-white text-blue-500">
-                <!--
-                <th class="px-4 py-1">
-                    {{this.id}}
-                </th>
-                -->
                 <td class="px-4 py-1">
-                    {{this.product.title}}({{this.product.productId}})
+                    {{this.productId}}
+                </td>
+                <td class="px-4 py-1">
+                    {{this.owner}}
+                </td>
+                <td class="px-4 py-1">
+                    {{this.createdAt}}
+                </td>
+                <td class="px-4 py-1">
+                    {{this.title}}
+                </td>
+                <td class="px-4 py-1">
+                    {{this.category}}
                 </td>
                 <td class="px-4 py-1">
                     <div class="flex-shrink-0">
-                        <img class="w-6 h-6 rounded-full" src={{this.product.img}}>
+                        <img class="w-6 h-6 rounded-full" src={{this.img}}>
                         <!-- Ajusté el tamaño de la imagen con w-6 y h-6 -->
                     </div>
                 </td>
                 <td class="px-4 py-1">
-                    {{this.product.price}}
+                    {{this.price}}
                 </td>
                 <td class="px-4 py-1">
-                    {{this.quantity}}//{{this.product.stock}}
+                    {{this.stock}}
                 </td>
                 <td class="px-4 py-1">
-                    {{this.subtotal}}
+                    {{this.status}}
+                </td>
+                   <td class="px-4 py-1">
+                    {{this.code}}
                 </td>
                   <td class="px-4 py-1">
                     <button onclick="deleteProductFromCart('{{../currentUser.cartId}}','{{this.product.productId}}')">Eliminar del carrito</button>
@@ -79,26 +99,7 @@
    
     </div>
 
-  <!-- Total del carrito -->
-        <div class="flex justify-center mt-4">
-            <div class="font-semibold text-gray-900 dark:text-white">
-                TOTAL PRECIO CARRITO: ${{cartAmount}}
-            </div>
-        </div>
 
-        <!-- Botón Checkout -->
-        <div class="flex justify-center mt-4">
-            <button onclick="checkoutCartFromClient('{{currentUser.cartId}}')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
-                Confirmar compra 
-            </button>
-              
-        </div>
-         <div class="flex justify-center mt-4">
-            <button onclick="clearThisCart('{{currentUser.cartId}}')" class="bg-lime-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
-                Vaciar carrito 
-            </button>
-              
-        </div>
 
 
         

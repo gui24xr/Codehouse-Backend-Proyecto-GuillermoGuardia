@@ -70,8 +70,9 @@ export class ProductsService{
                 //console.log(searchedUser)
             */
             //Busco que para el owner no exista un producto con el mismo codigo. Si existe, lanzo excepcion.
-            const searchResultObject = await productsRepository.findProducts({owner:productOwner,code:code})
-            if (searchResultObject.totalProducts>0) throw new ProductsServiceError(ProductsServiceError.CREATE_ERROR,'|ProductsService.createProduct|',`Ya existe un producto con el codigo ${code} para el usuario ${productOwner}...`)
+            const productsList = await productsRepository.getProducts({owner:productOwner,code:code})
+            //COmo get products devuelve null si no hay coincidencias
+            if (productsList.length>0) throw new ProductsServiceError(ProductsServiceError.CREATE_ERROR,'|ProductsService.createProduct|',`Ya existe un producto con el codigo ${code} para el usuario ${productOwner}...`)
             
          
             //Si todo salio OK se procede a crear el producto.
@@ -97,7 +98,6 @@ export class ProductsService{
                     return []
                 }
         }catch(error){
-            //console.log(error)
             if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
             else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsService.createProduct|','Error interno del servidor...')
         }
@@ -176,9 +176,9 @@ export class ProductsService{
                 //Pasamos por la capa de validacion.
 
                 //1- Existe el producto? Obtengo el objeto
-                const searchedProductObject = await productsRepository.findProducts({productId:productId})
-                if (searchedProductObject.totalProducts<1) throw new ProductsServiceError(ProductsServiceError.PRODUCT_NO_EXIST,'ProductsService.editProduct',`No se puede actualizar el producto productId ${productId} ya que el mismo no existe.`)
-                const searchedProduct = searchedProductObject.productsQueryList[0]
+                const productsList = await productsRepository.getProducts({productId:productId})
+                if (!productsList) throw new ProductsServiceError(ProductsServiceError.PRODUCT_NO_EXIST,'ProductsService.editProduct',`No se puede actualizar el producto productId ${productId} ya que el mismo no existe.`)
+                const searchedProduct = productsList[0]
                 
                 updateInfo.productId=searchedProduct.productId
                 //Miro campo por campo que voy a actualizar.
@@ -200,7 +200,13 @@ export class ProductsService{
                 if(description && (searchedProduct.description != description) && (description != '') && (typeof(description)=='string')) updateInfo.description = description;
 
                 //El campo imagen lo mismo que los string, pero si es un string vacio ponemos el string de producto x defaul
-                if(img && (searchedProduct.img != img) && (img != '') && (typeof(img)=='string')){} updateInfo.img = '/img/products/defaultproduct.png'
+                
+                //OJO ESTA LINEA ESTA BORRANDO IMAGENES
+                //if(img && (searchedProduct.img != img) && (img != '') && (typeof(img)=='string')){} updateInfo.img = '/img/products/defaultproduct.png'
+                
+                
+                
+                
                 //Thumbnails comprobamos que sea array, que sean 4 a lo sumoy comparo con el array original
                 const arraysAreEqual = (arr1, arr2) => {
                     if (arr1.length !== arr2.length) return false  // Primero, comprobamos si tienen la misma longitud
@@ -270,14 +276,14 @@ export class ProductsService{
     }
 
 
-    
+
     async getProductById(productId){
         //Devuelvo el producto unico y si no existe devuelvo null
         try{
             //Como solo obtendre un producto y para que sea mas eficiente le pido al repo con limit=1
-            const searchResult = await productsRepository.findProducts({limit:1,productId})
+            const searchedProduct = await productsRepository.getProducts({productId})
             //Si existe el producto estara su dto en el array producctQueryList y sera el primero
-            if (searchResult.totalProducts>0) return searchResult.productsQueryList[0]
+            if (searchedProduct.length > 0) return searchedProduct[0] 
             else return null
         }catch(error){
             if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
@@ -290,7 +296,7 @@ export class ProductsService{
     async updateProductStock(productId,newStock){
         //Updatea el productID en la cantidad newStock.
         try{
-           await this.editProduct({productID:productId,stock:newStock})
+           await this.editProduct({productId:productId,stock:newStock})
         }catch(error){
             if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
             else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsService.updateProductById|','Error interno del servidor...')

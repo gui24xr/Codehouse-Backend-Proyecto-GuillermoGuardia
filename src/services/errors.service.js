@@ -238,7 +238,9 @@ export class CheckoutsServiceError extends Error{
     static CREATE_TICKET_ERROR = 3;
     static GET_TICKET_ERROR = 4;
     static UPDATE_TICKET_ERROR = 5;
-    
+    static PRODUCT_WITHOUT_STOCK= 6;
+    static PRODUCT_NO_EXIST= 7;
+    static OWNER_PRODUCT_USER = 8;
 
  
     constructor(errorCode,operationName,message){

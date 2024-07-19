@@ -62,7 +62,6 @@ export class CheckoutService {
       }
 
    }catch(error){
-    //console.log(error)
     if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR || error instanceof CartsServiceError || error instanceof CartDTOERROR || error instanceof CheckoutsServiceError || TicketDTOERROR) throw error
     else throw new CheckoutsServiceError(CheckoutsServiceError.INTERNAL_SERVER_ERROR,'|CheckoutsService.checkoutCarById|','Error interno del servidor...')
  }
@@ -149,45 +148,60 @@ export class CheckoutService {
 
 
   //Compra una o mas unidades de un producto en particular sin pasar por el carro.
-  async checkoutProductBuy(productId, requiredQuantity, userId) {
-    
-    /*
-    try {
-      //revisa que haya stock, si hay sigue, si no , sale...
-      //si compra entonces actualiza stock
-      //genera y devuelve un ticket
-      const searchedProduct = await productsRepository.getProductById(productId)
-      //No hay stock salgo
-      if (!searchedProduct.stock >= requiredQuantity) throw new CheckoutsServiceError(CheckoutService.NO_STOCK,'En este momento no tenemos stock del producto...')
-      //De haber stock, continuamos...
-      //Actualizo stock restandole requiredQuantity
-       await productsRepository.updateProductStock(productId,searchedProduct.stock,requiredQuantity)
-      //Genero el ticket.
-      const generatedTicket = await ticketsRepository.createTicket(
-            userId,[{
-            productTitle: searchedProduct.title,
-            requiredQuantity: requiredQuantity,
-            img: searchedProduct.img,
-            unitPrice: searchedProduct.price
-           }]
-        )
-        //Se envia el email de confirmacion
-      await this.sendTicketMail(generatedTicket._id)
-         
-      return  generatedTicket
+  async checkoutSingleProduct({productId, quantity, userEmail}) {
+    try{
+      //1- Corroboro que el user no sea owner del producto, de serlo, sale error.
+      //2. Corroboro stock, si hay stock, lo descuento y  voy para adelante, si no, lanzo error.
+      //3- genero ticket y pago, envio la respuesta.
+      console.log('PRODUCTO QUE LLEGO A SINGLE: ',productId)
+      const searchedProduct = await productsService.getProductById(productId)
+      console.log(searchedProduct)
+      if (!searchedProduct) throw new CheckoutsServiceError(CheckoutsServiceError.PRODUCT_NO_EXIST,'|CheckoutsService.checkoutSingleProduct|','Se intenta comprar un producto que no existe....')
+      if (searchedProduct.owner == userEmail) throw new CheckoutsServiceError(CheckoutsServiceError.OWNER_PRODUCT_USER,'|CheckoutsService.checkoutSingleProduct|','No se puede comprar productos propios...')
+      if (searchedProduct.stock < Number(quantity)) throw new CheckoutsServiceError(CheckoutsServiceError.PRODUCT_WITHOUT_STOCK,'|CheckoutsService.checkoutSingleProduct|','En este momento no se cuenta con el stock para la compra...')
+
+      //Se pasaron todas las validaciones, descontamos stock y generamos el ticket
+      await productsService.updateProductStock(productId,Number(searchedProduct.stock)- Number(quantity))
+
+
       
-    }
-    catch(error){
-      if (error instanceof (CheckoutsServiceError ||ProductsServiceError ||TicketsServiceError )) throw error
-      else {
-         throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||CheckoutService.checkoutProductBuy||...')
+      //ACA VENDRIA EL PROCESO DE PAGO Y OBTENCION DEL LINCK DE PAGO
+  
+
+      //ARMO CON TODA LA DATA EL TICKET
+      const createdTicket = await ticketsRepository.createTicket({
+        purchaser:userEmail,
+        detailsList: [{
+          productTitle: searchedProduct.title,
+          requiredQuantity: quantity,
+          img: searchedProduct.img,
+          unitPrice: searchedProduct.price,
+          subtotalPrice: Number(searchedProduct.price * quantity)
+        }]
+      })
+      
+
+      //Hago el envio de email:
+      MailingService.sendMail(JSON.stringify(createdTicket),userEmail,'Aca estan los datos de tu compra !!')
+      
+
+      //Aca hay que devolver el ticket.
+      return {
+        message: `Se genero el ticket ${createdTicket.code} para su compra. Ya esta en condiciones de pagarla. ENviamos un mail a tu casilla de correo !`,
+        ticket: createdTicket,
       }
-    }
+
+   }catch(error){
+    console.log(error)
+    if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR || error instanceof CartsServiceError || error instanceof CartDTOERROR || error instanceof CheckoutsServiceError || TicketDTOERROR) throw error
+    else throw new CheckoutsServiceError(CheckoutsServiceError.INTERNAL_SERVER_ERROR,'|CheckoutsService.checkoutSingleProduct|','Error interno del servidor...')
+ }
+    
   }
 
 
   //Genera el texto html a partir de la lista del ticket
-
+/*
   async sendTicketMail(ticketId){
     //Recibe como parametro un ticketId y busca el ticket para generar el template con sus datos
     //Va a generar usando hbs la plantilla que sera enviada al salir ok la compra.
@@ -219,28 +233,10 @@ export class CheckoutService {
       throw new Error('Error intentando enviar mail con ticket desde checkout service...')
     }
 
-   */ 
+  
   }
 
-
-  async getTicketInfoByCode(ticketCode){
-    /*
-        
-    try{
-      const matchesList = await ticketsRepository.getTickets({code:ticketCode})
-      //No existe ticket o sea no hay coincidencias salgo y envio error.
-      if (matchesList.length < 1) throw new CheckoutService(CheckoutsServiceError.NO_TICKET,`No existe un ticket con ${ticketCode}...`)
-      //console.log('TicketByCode: ',matchesList[0])
-      //Dado que el ticket es unico cada codigo y tengo un array entonces devuelvo posicion cero.
-      return matchesList[0]
-    }catch(error){
-      if (error instanceof (CheckoutsServiceError ||ProductsServiceError ||TicketsServiceError )) throw error
-      else {
-         throw new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||CheckoutService.getTicketInfoByCodey||...')
-      }
-    }
-      */
-  }
+*/
 
  
 }

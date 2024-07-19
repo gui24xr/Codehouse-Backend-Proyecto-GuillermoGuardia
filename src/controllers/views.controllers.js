@@ -304,6 +304,57 @@ async viewUsersList(req,res,next){
   }
 
 
+
+  
+async viewProductsPanel(req,res,next){
+
+  function formatearFecha(dateString){
+    //Formatea una fecha que viene en formato horrible y retorna el string.
+    const dateObj = new Date(dateString)
+    // Obtener componentes de la fecha
+  const year = dateObj.getFullYear();
+  const month = ('0' + (dateObj.getMonth() + 1)).slice(-2); // Sumar 1 al mes porque en JavaScript los meses van de 0 a 11
+  const day = ('0' + dateObj.getDate()).slice(-2);
+  const hours = ('0' + dateObj.getHours()).slice(-2);
+  const minutes = ('0' + dateObj.getMinutes()).slice(-2);
+
+  // Construir la cadena en el formato deseado
+    return `${year}-${month}-${day}  ${hours}:${minutes}`;
+  }
+
+  try{
+    //Me traigo todos los usuarios. Obtengo una lista de usersDTO
+    const usersList = await usersService.getAllUsers()
+    //Mapeo para que la hora se vea linda y el enabled se vea como activo o inactivo.
+    
+    const mappedUsersList = usersList.map(item => ({
+      email : item.email,
+      enabled:  item.enabled ? 'Activo' : 'Inactivo',
+      role: item.role,
+      firstName: item.firstName,
+      lastName: item.lastName,
+      avatar: item.avatar,
+      createdAt: formatearFecha(item.createdAt)
+    }))
+    res.status(200).render("productspanel",{
+      usersList:mappedUsersList,
+      currentUser: req.currentUser,
+    })
+    
+  }catch(error){
+   
+    if (error instanceof UsersServiceError || error instanceof UserDTOERROR ){
+      res.status(400).render("messagepage", { message: error.message })
+    }  
+      else {
+          next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||viewsController.viewTickets||...'))
+      }
+  }
+
+  }
+
+
+
 }
 
 

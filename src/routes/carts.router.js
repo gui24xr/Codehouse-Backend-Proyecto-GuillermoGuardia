@@ -18,6 +18,7 @@ router.post('/carts/:cid/products/:pid',onlyAuthUsers,cartsController.addProduct
 router.delete('/carts/:cid/products/:pid',onlyAuthUsers,cartsController.deleteProductFromCart)
 router.delete('/carts/:cid',onlyAuthUsers,cartsController.clearCart)
 router.put('/carts/:cid',onlyAuthUsers,cartsController.addProductListInCart)
+router.put('/carts/:cid/products/:pid',onlyAuthUsers,cartsController.updateProductQuantityInCart)
 
 //purchaseRoutes.
 router.post('/:cid/purchase',onlyAuthUsers, cartsController.cartCheckout)

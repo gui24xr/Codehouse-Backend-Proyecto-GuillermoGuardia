@@ -17,7 +17,6 @@ import { ProductsService } from "./products.service.js";
 
 const productsService = new ProductsService()
 const cartsService = new CartsService()
-const usersService = new UsersService()
 const ticketsRepository = new TicketsRepositories()
 
 
@@ -43,7 +42,8 @@ export class CheckoutService {
       
       //ACA VENDRIA EL PROCESO DE PAGO Y OBTENCION DEL LINCK DE PAGO
 
-      //ARMO CON TODA LA DATA EL TICKET
+      //ARMO CON TODA LA DATA EL TICKET. Pero si Si la lista de productos en stock esta vacia entonces no vamos a generar compra ni ticket.
+      if (checkoutCartInfo.productsInStock.length < 1) throw new CheckoutsServiceError(CheckoutsServiceError.PRODUCT_WITHOUT_STOCK,'CheckoutsService.cartCheckOut', 'NO hay productos en stock para comprar...')
       const createdTicket = await ticketsRepository.createTicket({
         purchaser:userEmail,
         detailsList: checkoutCartInfo.productsInStock
@@ -75,7 +75,7 @@ export class CheckoutService {
     /*Devuelve un objeto: {
               productsInStock:[{productTitle,requiredQuantity,img,unitPrice,subTotalPrice}],
               productOutOfStock:[{productTitle,requiredQuantity,img,unitPrice,subTotalPrice}],
-              cart: cartVacio
+              cart: cartConProductosYaBorrados
     }}
         Todo esto se usara para la respuesta y armar el ticket          
     
@@ -88,49 +88,53 @@ export class CheckoutService {
       const productsInStock = []
       const productsOutOfStock = []
       
-      //Recorremos los productos del carro y aprovecho que sus dto traen su cantindad de stock actual
-      let requiredProductQuantity
+      //Recorremos los productos del carro y aprovecho que sus dto traen su cantidad de stock actual y discrimino lo que hay en stock de lo que no hay.
+      //Agrupo los productos del carro en 2 listas. Una para los que hay stock y otra para los que no.
       let currentProductInfo
-      let nuevoStock
-    
-      for (let item of searchedCart.products) {
-       // console.log('iteraciones: ', searchedCart.products.length)
-        requiredProductQuantity = item.quantity
-        currentProductInfo = await productsService.getProductById(item.product.productId)
-          if (requiredProductQuantity <= currentProductInfo.stock) {
-          //Agrego el producto a la lista para generar el ticket.
-          productsInStock.push({
-            productTitle: item.product.title,
-            requiredQuantity: requiredProductQuantity,
-            img: item.product.img,
-            unitPrice: item.product.price,
-            subtotalPrice: item.subtotal
-          })
-          //Descuento el stock
-          nuevoStock = currentProductInfo.stock - requiredProductQuantity
-          //console.log('Nuevo stock',currentProductInfo.productId,'dddff',currentProductInfo.stock, '=> ',nuevoStock)
-          await productsService.updateProductStock(currentProductInfo.productId,nuevoStock)
-        }
-        
-        else{
-            //Agrego el producto a la lista de productos sin stock para modo informativo..
-          productsOutOfStock.push({
-            productTitle: item.product.title,
-            requiredQuantity: requiredProductQuantity,
-            img: item.product.img,
-            unitPrice: item.product.price,
-            subtotalPrice: item.subtotal
-          })
-            
-        }
+     
+      for (let productInCart of searchedCart.products) {
+        currentProductInfo = await productsService.getProductById(productInCart.product.productId)
+          if (currentProductInfo.stock >= productInCart.quantity) {
+            productsInStock.push(productInCart) //Agrego el producto a la lista para de stock de la cual luego extraere info para el ticketDetailInfo
+            console.log('Nueva cantidad en stock debe ser: ', currentProductInfo.stock - productInCart.quantity)
+            await productsService.updateProductStock(currentProductInfo.productId,currentProductInfo.stock - productInCart.quantity) //Descuento el stock
+          }
+          else{
+            productsOutOfStock.push(productInCart) //Agrego el producto a la lista de productos sin stock para modo informativo..  
+          }
       }
 
-        const clearedCart = await cartsService.clearCart(cartId)
+        //De la lista de productos en stock solo envio para el ticket la info que me interesa y la mapeo. 
+        const ticketDetailInfo = productsInStock.map( item => ({
+          //productId: item.product.productId, //En este caso me interesa el productID para mandar a quitar del carro
+          productTitle: item.product.title,
+          requiredQuantity: item.quantity,
+          img: item.product.img,
+          unitPrice: item.product.price,
+          subtotalPrice: item.subtotal
+        }))
+
+        //De la lista de productos sin stock solo envio para el ticket la info que me interesa y la mapeo. 
+        const listOfOutStockInfo = productsOutOfStock.map( item => ({
+          productTitle: item.product.title,
+          requiredQuantity: item.quantity,
+          img: item.product.img,
+          unitPrice: item.product.price,
+          subtotalPrice: item.subtotal
+        }))
+
+        //Ahora quito del carro los productos comprados piiendoselo al servicio de carts. Armo la lista y envio a quitar los productos del carro.
+        const listForDeleteFromCart = productsInStock.map( item => ({productId: item.product.productId, quantity: item.quantity}))
+        //console.log('Lista para quitar del carro: ',listForDeleteFromCart)
+
+        //for (let product of listForDeleteFromCart) await cartsService.deleteProductFromCart(cartId,product.productId)
+        const updatedCart = await cartsService.deleteProductListFromCart(cartId,listForDeleteFromCart)
+
 
         return {
-          productsInStock: productsInStock,
-          productsOutOfStock: productsOutOfStock,
-          cart: clearedCart
+          productsInStock: ticketDetailInfo,
+          productsOutOfStock: listOfOutStockInfo,
+          cart: updatedCart
         }
 
       }
@@ -153,9 +157,8 @@ export class CheckoutService {
       //1- Corroboro que el user no sea owner del producto, de serlo, sale error.
       //2. Corroboro stock, si hay stock, lo descuento y  voy para adelante, si no, lanzo error.
       //3- genero ticket y pago, envio la respuesta.
-      console.log('PRODUCTO QUE LLEGO A SINGLE: ',productId)
+     
       const searchedProduct = await productsService.getProductById(productId)
-      console.log(searchedProduct)
       if (!searchedProduct) throw new CheckoutsServiceError(CheckoutsServiceError.PRODUCT_NO_EXIST,'|CheckoutsService.checkoutSingleProduct|','Se intenta comprar un producto que no existe....')
       if (searchedProduct.owner == userEmail) throw new CheckoutsServiceError(CheckoutsServiceError.OWNER_PRODUCT_USER,'|CheckoutsService.checkoutSingleProduct|','No se puede comprar productos propios...')
       if (searchedProduct.stock < Number(quantity)) throw new CheckoutsServiceError(CheckoutsServiceError.PRODUCT_WITHOUT_STOCK,'|CheckoutsService.checkoutSingleProduct|','En este momento no se cuenta con el stock para la compra...')
@@ -183,16 +186,12 @@ export class CheckoutService {
 
       //Hago el envio de email:
       MailingService.sendMail(JSON.stringify(createdTicket),userEmail,'Aca estan los datos de tu compra !!')
-      
-
       //Aca hay que devolver el ticket.
       return {
         message: `Se genero el ticket ${createdTicket.code} para su compra. Ya esta en condiciones de pagarla. ENviamos un mail a tu casilla de correo !`,
         ticket: createdTicket,
       }
-
    }catch(error){
-    console.log(error)
     if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR || error instanceof CartsServiceError || error instanceof CartDTOERROR || error instanceof CheckoutsServiceError || TicketDTOERROR) throw error
     else throw new CheckoutsServiceError(CheckoutsServiceError.INTERNAL_SERVER_ERROR,'|CheckoutsService.checkoutSingleProduct|','Error interno del servidor...')
  }

@@ -57,6 +57,7 @@ export class UsersServiceError extends Error{
     static WRONG_PASSWORD = 7;
     static GET_ERROR = 8;
     static BLOCKED_TO_PREMIUM_USERS = 9;
+    static INCOMPLETE_REQUIREMENTS_FOR_CHANGE_ROL = 10;
     
     constructor(errorCode,operationName,message){
         super(message);

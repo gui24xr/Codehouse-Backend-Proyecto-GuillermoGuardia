@@ -192,6 +192,35 @@ export class ProductsRepository{
     }
 
 
+    //Activa todos los productos del owner //A futurom hay que arreglr para que no se activen los sin stock
+    async setEnabledOwnerProducts({owner}){
+        //Devuelve todas las diferentes categorias del catalogo de productos.
+        try{
+            const conditionsForUpdate = {owner:owner}
+            const updatedList = await productsDAO.updateByQuery(conditionsForUpdate,{newStatus: true})
+            return updatedList
+        }catch(error){
+            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+            else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.setEnabledOwnerProducts|','Error interno del servidor...')
+        }
+    }
+
+    async setDisabledOwnerProducts({owner}){
+        //Devuelve todas las diferentes categorias del catalogo de productos.
+        try{
+            const conditionsForUpdate = {owner:owner}
+            const updatedList = await productsDAO.updateByQuery(conditionsForUpdate,{newStatus: false})
+            return updatedList
+        }catch(error){
+            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+            else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsRepository.setDisabledOwner|','Error interno del servidor...')
+        }
+    }
+
+
+
+
+
 
     
    //-----------------------------------------------

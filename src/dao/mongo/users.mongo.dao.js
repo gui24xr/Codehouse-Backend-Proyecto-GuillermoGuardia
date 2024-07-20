@@ -108,7 +108,7 @@ export default class UsersMongoDao{
 
 
     
-    async update({userEmail,updateObject}){
+    async update({userId,userEmail,updateObject}){
         /*
           1- Recibe un objetos con la informacion de lo que hay que actualizar.
           { userEmail: emailDelUserActualizar
@@ -126,13 +126,23 @@ export default class UsersMongoDao{
             const allowUpdateProps = new Set(['email','password','firstName','lastName','age','role','cartId','enabled','recoveryPasswordCode','recoveryPasswordExpiration','lastConnection','documents']) 
             const arrayOfNotAllowPropsInUpdateObject = Object.keys(updateObject).filter(prop => !allowUpdateProps.has(prop))
             //Si la lista de propiedades no permitidas tiene elementos lanzo error
-            if (arrayOfNotAllowPropsInUpdateObject.length > 0) throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersMongoDAO.update|',`Hay propiedades no permitidas en el updateObject => O_O ${arrayOfNotAllowPropsInUpdateObject}. O_O!`)
+            if (arrayOfNotAllowPropsInUpdateObject.length > 0) throw new UsersServiceError(UsersServiceError.UPDATING_ERROR,'|UsersMongoDAO.update|',`Hay propiedades no permitidas en el updateObject => O_O ${arrayOfNotAllowPropsInUpdateObject}. O_O!`)
             //Serianecesario hacer una validacion opcional para que venga en cada campo el tipo de dato esperado segun la BD usada.
 
             //Ahora que estoy seguro que tengo los campos correctos para actualizar mis datos en BD
-         
+            
+            //Evito la query ambigua para que la busqueda sea por userId o email
+            if ((userId && userEmail)|| (!userId && !userEmail)) throw new UsersServiceError(UsersServiceError.UPDATING_ERROR,'|UsersMongoDAO.update|',`No se ingreso userId o userEmail o se ingresaron ambos... ingresar un criterio de busqueda valido para hacer el update..`)
+              
+                
+
+            const query = {}//{ email: userEmail  }
+            userEmail && (query.email = userEmail)
+            userId && (query._id = userId)
+            console.log('query: ', query)
+            
             const updatedUser = await UserModel.findOneAndUpdate(
-                { email: userEmail }, // Criterios de búsqueda
+                query, // Criterios de búsqueda
                 {...updateObject},
                 { new: true } // Opciones: Devolver el documento actualizado
                 )
@@ -146,6 +156,7 @@ export default class UsersMongoDao{
            return this.getUserDTO(updatedUser)
             
         }catch(error){
+            console.log(error)
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersMongoDAO.update|')
         }

@@ -979,3 +979,125 @@
 ***[LOGGER]*** [error at 24-07-19 19:07:82] Type:CartsServiceError in POST - /api/carts/669addd18b6874b2e293621c/products/669add9ce3a466f518890e22 from ::1
 ***[LOGGER]*** [error at 24-07-19 19:07:11] Type:UnauthorizedError in GET - /views/productspanel from ::1
 ***[LOGGER]*** [error at 24-07-19 19:07:06] Type:UnauthorizedError in GET - /views/productspanel from ::1
+***[LOGGER]*** [fatal at 24-07-20 12:07:65] Type:TicketsService in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 13:07:36] Type:CartsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 13:07:92] Type:CartsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 13:07:30] Type:CartsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 13:07:29] Type:CartsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 13:07:96] Type:CartsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::ffff:127.0.0.1
+***[LOGGER]*** [error at 24-07-20 13:07:21] Type:CartsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::ffff:127.0.0.1
+***[LOGGER]*** [error at 24-07-20 13:07:82] Type:UnauthorizedError in GET - /views/carts/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 13:07:60] Type:CartsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 13:07:53] Type:CartsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 13:07:94] Type:CheckoutsServiceError in POST - /api/checkouts/product/669aed70e3a466f5188910a4?quantity=2 from ::1
+***[LOGGER]*** [fatal at 24-07-20 13:07:53] Type:TicketsService in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [fatal at 24-07-20 13:07:49] Type:TicketsService in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [fatal at 24-07-20 13:07:35] Type:TicketsService in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 13:07:55] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 13:07:87] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 13:07:57] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 13:07:53] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 13:07:46] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 14:07:10] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 14:07:20] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 14:07:30] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 14:07:39] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 14:07:72] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::ffff:127.0.0.1
+***[LOGGER]*** [error at 24-07-20 14:07:05] Type:object 
+***[LOGGER]*** [error at 24-07-20 14:07:06] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::ffff:127.0.0.1
+***[LOGGER]*** [error at 24-07-20 14:07:19] Type:object 
+***[LOGGER]*** [error at 24-07-20 14:07:19] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 14:07:32] Type:object 
+***[LOGGER]*** [error at 24-07-20 14:07:32] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 14:07:16] Type:object 
+***[LOGGER]*** [error at 24-07-20 14:07:16] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 14:07:05] Type:object 
+***[LOGGER]*** [error at 24-07-20 14:07:05] Type:UnauthorizedError in GET - /views/carts/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:87] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:87] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:70] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:70] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:37] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:37] Type:CheckoutsServiceError in POST - /api/checkouts/product/669aed70e3a466f5188910a8?quantity=69 from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:75] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:75] Type:UsersServiceError in PUT - /api/users/rol from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:29] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:30] Type:UsersServiceError in PUT - /api/users/rol from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:24] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:24] Type:UsersServiceError in PUT - /api/users/rol from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:97] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:97] Type:UsersServiceError in PUT - /api/users/rol from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:03] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:03] Type:UsersServiceError in PUT - /api/users/rol from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:46] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:46] Type:UsersServiceError in PUT - /api/users/rol from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:70] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:70] Type:UsersServiceError in PUT - /api/users/rol from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:91] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:91] Type:UsersServiceError in PUT - /api/users/rol from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:58] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:58] Type:UsersServiceError in PUT - /api/users/rol from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:62] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:62] Type:UsersServiceError in PUT - /api/users/rol from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:96] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:96] Type:UsersServiceError in PUT - /api/users/rol from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:07] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:07] Type:UsersServiceError in PUT - /api/users/rol from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:27] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:27] Type:UsersServiceError in PUT - /api/users/rol from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:02] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:02] Type:UsersServiceError in PUT - /api/users/rol from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:33] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:33] Type:UsersServiceError in PUT - /api/users/rol from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:75] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:76] Type:UnauthorizedError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:99] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:99] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:87] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:87] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 15:07:21] Type:object 
+***[LOGGER]*** [error at 24-07-20 15:07:21] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 16:07:81] Type:object 
+***[LOGGER]*** [error at 24-07-20 16:07:81] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 16:07:70] Type:object 
+***[LOGGER]*** [error at 24-07-20 16:07:70] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 16:07:37] Type:object 
+***[LOGGER]*** [error at 24-07-20 16:07:37] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 16:07:65] Type:object 
+***[LOGGER]*** [error at 24-07-20 16:07:66] Type:UnauthorizedError in GET - /views/users from ::1
+***[LOGGER]*** [error at 24-07-20 16:07:45] Type:object 
+***[LOGGER]*** [error at 24-07-20 16:07:45] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 16:07:22] Type:object 
+***[LOGGER]*** [error at 24-07-20 16:07:23] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 16:07:39] Type:object 
+***[LOGGER]*** [error at 24-07-20 16:07:39] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 16:07:81] Type:object 
+***[LOGGER]*** [error at 24-07-20 16:07:81] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 16:07:62] Type:object 
+***[LOGGER]*** [error at 24-07-20 16:07:62] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 16:07:61] Type:object 
+***[LOGGER]*** [error at 24-07-20 16:07:62] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 16:07:74] Type:object 
+***[LOGGER]*** [error at 24-07-20 16:07:74] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 16:07:68] Type:object 
+***[LOGGER]*** [error at 24-07-20 16:07:68] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 16:07:75] Type:object 
+***[LOGGER]*** [error at 24-07-20 16:07:75] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 16:07:11] Type:object 
+***[LOGGER]*** [error at 24-07-20 16:07:11] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 16:07:15] Type:object 
+***[LOGGER]*** [error at 24-07-20 16:07:15] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 16:07:94] Type:object 
+***[LOGGER]*** [error at 24-07-20 16:07:94] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 17:07:10] Type:object 
+***[LOGGER]*** [error at 24-07-20 17:07:11] Type:UnauthorizedError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 17:07:19] Type:object 
+***[LOGGER]*** [error at 24-07-20 17:07:19] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 17:07:71] Type:object 
+***[LOGGER]*** [error at 24-07-20 17:07:71] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-20 17:07:45] Type:object 
+***[LOGGER]*** [error at 24-07-20 17:07:45] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995eea from ::1
+***[LOGGER]*** [error at 24-07-20 18:07:36] Type:object 
+***[LOGGER]*** [error at 24-07-20 18:07:37] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
+***[LOGGER]*** [error at 24-07-20 19:07:20] Type:object 
+***[LOGGER]*** [error at 24-07-20 19:07:20] Type:UnauthorizedError in PUT - /api/carts/669aedb08a50a9e242995ec4/products/669aed70e3a466f5188910a6 from ::1

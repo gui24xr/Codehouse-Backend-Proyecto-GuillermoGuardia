@@ -58,6 +58,19 @@ export class UsersRepository{
         }
     }
 
+    async getUserById(userId){
+        /*Busca en la BD un usuario por su email y lo devuelve, si no existe, devuelve el error de usuario no existe.*/
+        try{
+            const searchResult = await usersDAO.get({userId:userId})
+            /*Como se que devuelve arrays pero me devuelve 1 elemento deveulvo ese dto obtenido en posicion cero, y si el usuario no existe lanzo error...*/
+            if (searchResult.length > 0) return searchResult[0]
+            else throw new UsersServiceError(UsersServiceError.USER_NO_EXIST,'|UsersRepository.getUserById|',`El usuario user ${userId} no existe en la base de datos...`)
+        }catch(error){
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersRepository.getUserById|','Error interno del servidor...')
+        }
+    }
+
 
     async getUserByCart(cartId){
        /*Busca en la BD por suun usuario por su cartId y lo devuelve, si no existe, devuelve el error de usuario no existe.*/

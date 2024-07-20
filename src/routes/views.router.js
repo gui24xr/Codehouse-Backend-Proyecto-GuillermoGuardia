@@ -27,6 +27,8 @@ router.get('/views/carts/:cid', onlyAuthUsers,viewsController.viewCart)
 router.get('/views/:tcode/purchase', onlyAuthUsers, viewsController.viewPurchase) //Muestra el resultado de una compra ticket
 router.get('/views/tickets/:uid', onlyAuthUsers,viewsController.viewTickets) //Muestra todos los tickets de userId
 router.get('/views/productspanel',onlyAuthUsers,blockRoleAccessMiddleware('user'), viewsController.viewProductsPanel)
+router.get('/views/users',onlyAuthUsers,allowAccessRolesMiddleware(['admin']), viewsController.viewUsersList)
+
 
 
 

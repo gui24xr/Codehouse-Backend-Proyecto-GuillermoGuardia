@@ -98,8 +98,9 @@ export default class CartsMongoDAO{
     
     async get({cartId}){
         //Recibe un objeto con el cartId de la BD
+        //Si no redcibe cartId devuelve toda la coleccion entera
         try{
-            const cartsArray = await CartModel.find({_id:cartId}).populate('products.product')
+            const cartsArray = await CartModel.find(cartId ? {_id:cartId} : {}).populate('products.product')
             //Tengo el array con coincidencias, y quiero devolver lista de DTO
             const cartsDTOArray = cartsArray.map( cartItem => (this.getCartDTO(cartItem)))
             return cartsDTOArray
@@ -109,6 +110,7 @@ export default class CartsMongoDAO{
         }
     }
 
+  
    
     async update({cartId,productsList}){
         //Recibe un objeto con el cartId a actualizar y la nueva lista de productos del carro para ser reemplazada.

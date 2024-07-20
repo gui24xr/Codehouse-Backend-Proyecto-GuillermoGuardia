@@ -317,11 +317,7 @@ export default class ProductsMongoDAO{
         const productsForDelete = await ProductModel.find(query)
         //uso la misma lista para tomar los id de los productos a borrar y preparar la lista de promesas
         await ProductModel.deleteMany(query)
-        /*const deleteOperations = productsForDelete.map(item => (ProductModel.findOneAndDelete({_id: item._id})))
-        const deleteResults = await Promise.all(deleteOperations)
-
-        //console.log('resultado elimiancion', deleteResults)
-        */
+    
         const deletedProductsDTOList = productsForDelete.map(item => this.getProductDTO(item))
         return  deletedProductsDTOList
         }catch(error){
@@ -329,6 +325,41 @@ export default class ProductsMongoDAO{
             else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|MongoProductsDAO.deleteByQuere|','Error interno del servidor...')
         }
     }
+
+    //Primer parametro el objeto de query, el 2do de modificaicon con propierdades newCampo
+    async updateByQuery(
+        {productId,owner,status,code,brand,category,createdAtRange,priceRange,purchasesCountRange},
+        {newOwner,newStatus,newBrand,newCategory}
+    
+    ){
+        //Funciona igual que get y delete pero devuelve el array de los DTO borrados Pero borra una lista de productos.
+        //Se debe ingresar una lista de [{productId,owner,status,code,brand,category}] para construir la query.
+        //con{newOwner,newStatus,newBrand,newCategory} pongo los campos a cambiar
+        try{
+
+        const query = this.makeQueryFromObject({productId,owner,status,code,brand,category,createdAtRange,priceRange,purchasesCountRange})
+        //Con la query construida hago una busqueda de los productos a editarr ya que voy a devolver.
+        const productsForUpdate = await ProductModel.find(query)
+        //uso la misma lista para tomar los id de los productos a borrar y preparar la lista de promesas
+        const updateObject = {}
+        //Al update Object le pongo las propiedades que vienen con newField
+        newOwner && ( updateObject.owner = newOwner)
+        newStatus != undefined && ( updateObject.status = newStatus)
+        newBrand && ( updateObject.brand = newBrand)
+        newCategory && ( updateObject.category = newCategory)
+
+        //console.log('Update objectio: ', updateObject)
+        await ProductModel.updateMany(query,{ $set: updateObject })
+        
+        const updatedProductsDTOList = productsForUpdate.map(item => this.getProductDTO(item))
+        return  updatedProductsDTOList
+        }catch(error){
+            console.log(error)
+            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+            else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|MongoProductsDAO.deleteByQuere|','Error interno del servidor...')
+        }
+    }
+
 
 
 

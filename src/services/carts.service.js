@@ -72,7 +72,16 @@ export class CartsService {
         }
 
 
-
+    async clearProductFromAllCarts(productId){
+        try{
+            //Borra el productId de todos los carros del sistema
+            const listOfCarts = await productRepository.getAllCarts()
+            for (let cart of listOfCarts) await productRepository.deleteProductFromCart(cart.cartId,productId)
+        }catch(error){
+            if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
+            else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsService.clearProductFromAllCart|')
+        }
+    }
     async checkProductOwner({userEmail,productId}){
         /*Esta funcion va a pedir al servicio de productos el owner del producto.
           Si owner producto igual user enonces lanza error y no se lleva  a cabo la agregacion.
@@ -134,6 +143,10 @@ export class CartsService {
             else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsService.deleteProductFromCart|')
         }
     }
+
+
+
+
     
 
    async addProductListToCart(cartId,newProductsList){
@@ -172,8 +185,11 @@ export class CartsService {
 }
 
 
-async deleteProductListToCart(cartId,deleteProductsList){
+async deleteProductListFromCart(cartId,deleteProductsList){
     /* Lo mismo que addProductListToCart pero borramos los productos que vienen en la lista, si es que estan en el carro.
+    La deleteProductList recibidda tiene formato [{productId:'dgdggd', quantity:323}]
+     Quita del productID la cantidad quantity
+
     */
      try{
         //Pedimos el carro para obtener su lista actual y la mapeamos para que ya tenga el formato que pide el repository...
@@ -234,6 +250,17 @@ async cartAmount(cartId){
 }
 
 
+async updateProductQuantityInCart({cartId,productId,quantity}){
+    try {
+        const updatedCart = await cartsRepository.updateProductQuantityInCart(cartId,productId,quantity)
+        return updatedCart
+    } catch (error) {
+        if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
+        else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsService.cartAmount|')
+    }
+}
+
+
 async checkoutCartById(cartId){
     //Ya nos trae un dto de carts que tiene una lista de dto products
     try {
@@ -264,6 +291,12 @@ async checkoutCartById(cartId){
         else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsService.getCartById|')
     }
 }
+
+
+
+
+
+
 
 
 }

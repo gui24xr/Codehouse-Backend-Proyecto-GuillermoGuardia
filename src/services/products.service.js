@@ -1,8 +1,13 @@
 import { ProductsRepository } from "../repositories/products-repositories.js";
-import { ProductsServiceError, ProductDTOERROR} from "./errors.service.js";
+import { UsersRepository } from "../repositories/users-repository.js";
 import { UsersService } from "./users.service.js";
+import { CartsService } from "./carts.service.js";
+import { ProductsServiceError, ProductDTOERROR, UserDTOERROR, UsersServiceError, CartsServiceError} from "./errors.service.js";
+
 
 const productsRepository = new ProductsRepository()
+const usersRepository = new UsersRepository()
+
 
 export class ProductsService{
 
@@ -42,15 +47,42 @@ export class ProductsService{
 
 
         /*IMPORTANTE PEDIRLE AL SERVICIO DE CARROS QUE BORRE DE SUS CARROS EL PRODUCTID BORRADO*/
-    async deleteProduct(productId){
+    async deleteProduct({userEmail,productId}){
         //Le pide al repositorio que haga borrar el productID y devuelve lo borrado al cliente
         try{
+            //Antes de proceder a borrar un producto hay que validar:
+            //- User es owner o es admin¡
+            const searchedProduct = await this.getProductById(productId)
+            const searchedUser = await usersRepository.getUserByEmail(userEmail)
+            //Si no existe el producto o el usuario.
+            if (!searchedProduct) throw new ProductsServiceError(ProductsServiceError.PRODUCT_NO_EXIST,'ProductsService.deleteProduct','No existe el producto....')
+            if (!searchedUser) throw new ProductsServiceError(ProductsServiceError.DELETING_ERROR,'ProductsService.deleteProduct','El usuario no existe o no puede borrar productos.')
+            //Ahora miramos si user es premium
+            if (!(searchedProduct.owner ==  searchedUser.email)) throw new ProductsServiceError(ProductsServiceError.DELETING_ERROR,'ProductsService.deleteProduct',`Solo un user admin o  ${userEmail}(Su owner) puede borrar el producto...`)
+
+            //Borramops el prodocto de todos los carros.
+            
+            //Validamos que quien borra sea owner
             const deleteResult = await productsRepository.deleteProductsList([productId])
             return deleteResult[0] //COmo envie a borrar 1, tomo el primer elemento, si hay un problema se va a catch x implementacion de epositorio..
         }catch(error){
-            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR || error instanceof UserDTOERROR || error instanceof UsersServiceError) throw error
             else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsService.deleteProduct|','Error interno del servidor...')
         }
+    }
+
+
+    /*IMPORTANTE PEDIRLE AL SERVICIO DE CARROS QUE BORRE DE SUS CARROS EL PRODUCTID BORRADO*/
+        async deleteProductsGroup(productsList){
+            //Recibe uyn array de productsID
+        //Le pide al repositorio que haga borrar el productID y devuelve lo borrado al cliente
+            try{
+                const deleteResult = await productsRepository.deleteProductsList(productsList)
+                return deleteResult[0] //COmo envie a borrar 1, tomo el primer elemento, si hay un problema se va a catch x implementacion de epositorio..
+            }catch(error){
+                if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+                else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsService.deleteProductsGroup|','Error interno del servidor...')
+            }
     }
 
 
@@ -171,6 +203,7 @@ export class ProductsService{
 
 
         async editProduct({email,productId,brand,title,description,price,img,code,category,stock,status,thumbnails}){
+            console.log('Nuevo stocks: ', stock)
             try{
                 const updateInfo = {}
                 //Pasamos por la capa de validacion.
@@ -241,15 +274,18 @@ export class ProductsService{
 
                 //Revisar esta logica.
                 if(status && (searchedProduct.status != status)) updateInfo.status = status
-                if(price && (searchedProduct.price != price)){
+                if(price != undefined && (searchedProduct.price != price)){
                     updateInfo.price = price
                     price <= 0 && (updateInfo.status = false) //Si el precio se pone a cero desactivamos el producto obligadamente.
                 }
                 
-                if(stock && (searchedProduct.stock != stock)){
+                console.log('Se metio x aca 1??',searchedProduct.stock,stock)
+                if(stock !=undefined && (searchedProduct.stock != stock)){
+                    console.log('Se metio x aca2??')
                     updateInfo.stock = stock
                     stock <= 0 && (updateInfo.status = false) //Desactivo el prpoductio
                 } 
+
             
                 //console.log('UpdateInfo: ',updateInfo)
                 //Finalmente le mandamos al repositorio los datos para procesar en la BD.
@@ -300,6 +336,19 @@ export class ProductsService{
         }catch(error){
             if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
             else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsService.updateProductById|','Error interno del servidor...')
+        }
+    }
+
+
+    //Le cambia el estado a todos lops productos del owner, si status true los activa , si es false los desactiva
+    async changeProductsStatusToOwner(owner,status){
+      
+        try{
+            if (status) await productsRepository.setEnabledOwnerProducts({owner:owner})
+            else await productsRepository.setDisabledOwnerProducts({owner:owner})
+        }catch(error){
+            if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+            else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsService.ChangeProductStatusToOwner|','Error interno del servidor...')
         }
     }
 

@@ -3,14 +3,16 @@
 import { UsersRepository } from "../repositories/users-repository.js";
 import { generateJWT } from "../utils/jwt.js";
 import { isValidPassword,createHash } from "../utils/hashbcryp.js";
-import { UsersServiceError } from "./errors.service.js";
+import { UsersServiceError, ProductsServiceError, ProductDTOERROR, UserDTOERROR } from "./errors.service.js";
 import { CartsService } from "./carts.service.js";
-import { UserDTOERROR } from "./errors.service.js";
 import { MailingService } from "./mailing.service.js";
 import cryptoRandomString from "crypto-random-string";
 import { calcularMinutosTranscurridos } from "../utils/helpers.js";
+import { ProductsService } from "./products.service.js";
 
 const usersRepository = new UsersRepository()
+const productsService = new ProductsService()
+
 
 export class UsersService{
 
@@ -189,6 +191,58 @@ export class UsersService{
         }catch(error){
             if (error instanceof UsersServiceError || error instanceof UserDTOERROR) throw error
             else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersService.changeUserRole|','Error interno del servidor...')
+        }
+    }
+
+
+    //Esta cumple las reglas de la consiga de alternar entre user-premium 
+    async alternateUserRole({userId}){
+        try{
+        
+        /*  Busco el user por su id Extraigo del userDTO:
+            El email del usuario para usar la funcion del repo que usa el email para setear rol
+            el rol actual para hacer la intercalacion user-premium o premium-user segun corresponda.    
+        */
+           const searchedUser = await usersRepository.getUserById(userId)
+            
+           //Si es admin no permito cambiar rol
+           if (searchedUser.role == 'admin') throw new UsersServiceError(UsersServiceError.UPDATING_ERROR,'|UsersService.alternateUserRole|','No se puede cambiar el rol a un usuario admin...')
+           
+          if (searchedUser.role == 'user'){
+            //Si voy a subir de rango de user a premium, o sea el user actualmente es categoria user
+            //Chequeo que tenga en sus documentos avatar,stateAccount e identification.
+            //Armo un array con condiciones 
+            const conditions = [
+                searchedUser.documents.some(item => item.docName == 'avatar'), //Condicion avatar
+                searchedUser.documents.some(item => item.docName == 'state_account'),
+                searchedUser.documents.some(item => item.docName == 'identification'),
+            ]
+            //Y si todas sonn verdad entonces puedo cambiar el rol
+            if (conditions.every(item => item == true)){
+                //Si todo es verdad puedo subir de rango:
+                const updatedUser = await usersRepository.setRole({userEmail: searchedUser.email, newRole:'premium'})
+                //Ahora activo sus productos...si los tuviese se activarian
+                await productsService.changeProductsStatusToOwner(searchedUser.email,true)
+                return updatedUser
+            }
+            else
+            // si una condicion no se cumple Lanzo error xq faltan condiciones para poder cambiar.
+            throw new UsersServiceError(UsersServiceError.INCOMPLETE_REQUIREMENTS_FOR_CHANGE_ROL,'|UsersService.alternateUserRole|','No se puede pasar a premium. Primero carga la documentacion necesaria...')
+            
+          }
+          else{
+            //SI voy a bajar de rango debo poner el status de sus productos en false.
+            const updatedUser = await usersRepository.setRole({userEmail: searchedUser.email, newRole:'user'})
+            //productsService (desactivarProductosDelOwner)
+            //Ahora activo sus productos...si los tuviese se activarian
+            await productsService.changeProductsStatusToOwner(searchedUser.email,false)
+            return updatedUser
+          }
+
+        }catch(error){
+            console.log(error)
+            if (error instanceof UsersServiceError || error instanceof UserDTOERROR || error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
+            else throw new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,'|UsersService.alternateUserRole|','Error interno del servidor...')
         }
     }
 

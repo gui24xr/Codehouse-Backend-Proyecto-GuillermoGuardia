@@ -46,7 +46,18 @@ export class CartRepository{
     }
     }
 
+    async getAllCarts(){
+        //Devuelve lista de dto de todos los carros de la BD
+    try{
+        const cartsList = await cartsDAO.get({})
+        return cartsList
+    }catch(error){
+        if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error
+        else throw new CartsServiceError(CartsServiceError.INTERNAL_SERVER_ERROR,'|CartsRepository.getAllCarts|')
+    }
+    }
 
+   
  
     async addProductInCart(cartId,productId,quantity){
         //Ya que los update de los DAO necesitan listas de productList pide la lista actual del carro

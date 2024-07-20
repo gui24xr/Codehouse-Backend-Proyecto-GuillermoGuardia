@@ -85,11 +85,11 @@ export class UsersController {
 
 
 
-  async updateUserRole(req,res,next){
+  async updateUserRoleByEmail(req,res,next){
     const {email,new_role} = req.body
     try{
       //Pasamos por la capa de validacion.
-      InputValidationService.checkRequiredField(req.body,['email','new_role'],'UsersController.updateUserRole')
+      InputValidationService.checkRequiredField(req.body,['email','new_role'],'UsersController.updateUserRoleByEmail')
       InputValidationService.isEmail(email)
       InputValidationService.isValidRole(new_role)
     
@@ -108,6 +108,29 @@ export class UsersController {
       }
     }
     }
+
+    //Esta es para cumplir la cosnigna exacta
+    async updateUserRoleById(req,res,next){
+        const {uid:userId} = req.params
+      try{
+        //Pasamos por la capa de validacion. 
+        InputValidationService.checkRequiredField(req.params,['uid'],'UsersController.updateUserRoleById')     
+        //Si todo salio OK le pedimos al servicio updatear el rol de user.
+        const updatedUser = await usersService.alternateUserRole({userId:userId})
+     
+        res.status(201).json({
+          status: "success",
+          message: `Se cambio el rol del user ${updatedUser.email}. Ahora su nuevo rol es: ${updatedUser.role}`,
+          updatedUser: updatedUser
+        })
+      }catch(error){
+        if (error instanceof UsersServiceError || error instanceof InputValidationServiceError) next(error);
+        else {
+          next(new UsersServiceError(UsersServiceError.INTERNAL_SERVER_ERROR,"|UsersControllers.updateUserRole|","Error interno del servidor..."))
+        }
+      }
+      }
+  
 
 
     async createRecoveryCode(req,res,next){

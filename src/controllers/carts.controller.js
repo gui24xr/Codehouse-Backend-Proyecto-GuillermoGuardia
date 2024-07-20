@@ -64,7 +64,36 @@ export class CartsController{
                 })
             res.status(201).json({
                 status: "success", 
-                message: `Productos agregados satisfactoriametente en carrito ID${resultCart.id}`,
+                message: `Productos agregados satisfactoriametente en carrito ID${resultCart.cartId}`,
+                cart:resultCart
+                })   
+        } catch (error) {
+            if (error instanceof CartsServiceError || error instanceof InputValidationServiceError) next(error)
+            else {
+                next(new InternalServerError(InternalServerError.GENERIC_ERROR,'Error in ||cartsController.AddProductInCart||...'))
+            }
+        }
+    }
+
+
+    async updateProductQuantityInCart(req,res,next){
+        const {cid:cartId,pid:productId} = req.params
+        const {quantity} = req.body 
+        try {
+            //Pasamos por la capa de validacion
+            InputValidationService.checkRequiredField(req.params,['cid','pid'],'CartsController.addProductInCart')
+            InputValidationService.checkRequiredField(req.body,['quantity'],'CartsController.addProductInCart')
+            const resultCart = await cartsService.updateProductQuantityInCart(
+                {
+                    cartId:cartId,
+                    productId:productId,
+                    quantity:quantity,
+                    user: req.currentUser.email, 
+                    role: req.currentUser.role,
+                })
+            res.status(201).json({
+                status: "success", 
+                message: `Cantidad de productos actualizada en cart${resultCart.cartId}. `,
                 cart:resultCart
                 })   
         } catch (error) {

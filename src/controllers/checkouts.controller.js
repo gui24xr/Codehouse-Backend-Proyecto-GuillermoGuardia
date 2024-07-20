@@ -50,7 +50,6 @@ export class CheckoutsController{
                 userEmail:req.currentUser.email
         })
 
-
             res.status(200).json({
                 status: "success", 
                 message: `Compra realizada con exito. Se genero el ticket ${checkoutResult.ticket.code}}.`,

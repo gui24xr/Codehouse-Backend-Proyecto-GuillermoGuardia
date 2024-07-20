@@ -1101,3 +1101,13 @@
 ***[LOGGER]*** [error at 24-07-20 18:07:37] Type:CheckoutsServiceError in POST - /api/carts/checkout/669aedb08a50a9e242995ec4 from ::1
 ***[LOGGER]*** [error at 24-07-20 19:07:20] Type:object 
 ***[LOGGER]*** [error at 24-07-20 19:07:20] Type:UnauthorizedError in PUT - /api/carts/669aedb08a50a9e242995ec4/products/669aed70e3a466f5188910a6 from ::1
+***[LOGGER]*** [error at 24-07-20 19:07:56] Type:object 
+***[LOGGER]*** [error at 24-07-20 19:07:72] Type:object 
+***[LOGGER]*** [error at 24-07-20 19:07:81] Type:object 
+***[LOGGER]*** [error at 24-07-20 19:07:61] Type:object 
+***[LOGGER]*** [error at 24-07-20 19:07:74] Type:object 
+***[LOGGER]*** [error at 24-07-20 19:07:07] Type:object 
+***[LOGGER]*** [error at 24-07-20 19:07:90] Type:object 
+***[LOGGER]*** [error at 24-07-20 19:07:43] Type:object 
+***[LOGGER]*** [error at 24-07-20 19:07:30] Type:object 
+***[LOGGER]*** [error at 24-07-20 19:07:67] Type:object 

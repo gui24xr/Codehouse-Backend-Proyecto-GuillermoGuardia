@@ -58,8 +58,8 @@ export class ProductsService{
             if (!searchedProduct) throw new ProductsServiceError(ProductsServiceError.PRODUCT_NO_EXIST,'ProductsService.deleteProduct','No existe el producto....')
             if (!searchedUser) throw new ProductsServiceError(ProductsServiceError.DELETING_ERROR,'ProductsService.deleteProduct','El usuario no existe o no puede borrar productos.')
             //Ahora miramos si user es premium
-            if (!(searchedProduct.owner ==  searchedUser.email)) throw new ProductsServiceError(ProductsServiceError.DELETING_ERROR,'ProductsService.deleteProduct',`Solo un user admin o  ${userEmail}(Su owner) puede borrar el producto...`)
-
+            if (!(searchedUser.role == 'admin' || searchedUser.role == 'premium' )) throw new ProductsServiceError(ProductsServiceError.DELETING_ERROR,'ProductsService.deleteProduct',`Solo un user admin o  ${searchedProduct.owner}(Su owner) puede borrar el producto...`)
+            //    if (!(searchedUser.role == 'premium' || searchedProduct.owner == userEmail )) throw new ProductsServiceError(ProductsServiceError.DELETING_ERROR,'ProductsService.deleteProduct',`Solo un user admin o  ${searchedProduct.owner}(Su owner) puede borrar el producto...`)
             //Borramops el prodocto de todos los carros.
             
             //Validamos que quien borra sea owner

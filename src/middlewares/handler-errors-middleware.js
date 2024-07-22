@@ -26,8 +26,20 @@ export const handlerErrorsMiddleware = (error, req, res, next) => {
     } 
 
     if (error instanceof ProductsServiceError){
-        // logger.error(`Type:${error.name} in ${req.method} - ${req.originalUrl} from ${req.ip}`)
-         res.status(500).json({message: error.message})
+         logger.error(`Type:${error.name} in ${req.method} - ${req.originalUrl} from ${req.ip}`)
+        
+     
+         if (error.code == ProductsServiceError.PRODUCT_NO_EXIST) 
+            res.status(403).json({
+                message: `El producto no existe...${error.message}`,
+                url: req.originalUrl
+        })
+
+        if (error.code == ProductsServiceError.DELETING_ERROR) 
+            res.status(403).json({
+                message: `EL usuario que intenta borrar el producto no existe...`,
+                url: req.originalUrl
+        })
          
      } 
 

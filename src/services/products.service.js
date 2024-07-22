@@ -53,19 +53,23 @@ export class ProductsService{
             //Antes de proceder a borrar un producto hay que validar:
             //- User es owner o es admin¡
             const searchedProduct = await this.getProductById(productId)
-            const searchedUser = await usersRepository.getUserByEmail(userEmail)
-            //Si no existe el producto o el usuario.
-            if (!searchedProduct) throw new ProductsServiceError(ProductsServiceError.PRODUCT_NO_EXIST,'ProductsService.deleteProduct','No existe el producto....')
+             //Si no existe el producto o el usuario.
+             if (!searchedProduct) throw new ProductsServiceError(ProductsServiceError.PRODUCT_NO_EXIST,'ProductsService.deleteProduct','No existe el producto....')
+            
+             const searchedUser = await usersRepository.getUserByEmail(userEmail)
+           
             if (!searchedUser) throw new ProductsServiceError(ProductsServiceError.DELETING_ERROR,'ProductsService.deleteProduct','El usuario no existe o no puede borrar productos.')
-            //Ahora miramos si user es premium
-            if (!(searchedUser.role == 'premium' || searchedProduct.owner == userEmail )) throw new ProductsServiceError(ProductsServiceError.DELETING_ERROR,'ProductsService.deleteProduct',`Solo un user admin o  ${searchedProduct.owner}(Su owner) puede borrar el producto...`)
+            //Ahora miramos si user es premium, si es premium y no es owner lanzamos error y salimos.
+            if (searchedUser.role == 'premium' && searchedProduct.owner != userEmail ) throw new ProductsServiceError(ProductsServiceError.DELETING_ERROR,'ProductsService.deleteProduct',`Solo un user admin o  ${searchedProduct.owner}(Su owner) puede borrar el producto...`)
          
             //Borramops el prodocto de todos los carros.
             
-            //Validamos que quien borra sea owner
+
+            //Le pedimos al repositorio que haga borrar el producto.
             const deleteResult = await productsRepository.deleteProductsList([productId])
             return deleteResult[0] //COmo envie a borrar 1, tomo el primer elemento, si hay un problema se va a catch x implementacion de epositorio..
         }catch(error){
+            console.log(error)
             if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR || error instanceof UserDTOERROR || error instanceof UsersServiceError) throw error
             else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsService.deleteProduct|','Error interno del servidor...')
         }
@@ -319,9 +323,10 @@ export class ProductsService{
             //Como solo obtendre un producto y para que sea mas eficiente le pido al repo con limit=1
             const searchedProduct = await productsRepository.getProducts({productId})
             //Si existe el producto estara su dto en el array producctQueryList y sera el primero
-            if (searchedProduct.length > 0) return searchedProduct[0] 
+            if (searchedProduct) return searchedProduct[0] 
             else return null
         }catch(error){
+         
             if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR) throw error
             else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsService.getProductById|','Error interno del servidor...')
         }

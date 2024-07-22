@@ -1119,3 +1119,46 @@
 ***[LOGGER]*** [error at 24-07-20 19:07:32] Type:object 
 ***[LOGGER]*** [error at 24-07-20 20:07:99] Type:object 
 ***[LOGGER]*** [error at 24-07-20 20:07:35] Type:object 
+***[LOGGER]*** [error at 24-07-22 10:07:73] Type:object 
+***[LOGGER]*** [error at 24-07-22 10:07:33] Type:object 
+***[LOGGER]*** [error at 24-07-22 10:07:61] Type:object 
+***[LOGGER]*** [error at 24-07-22 10:07:95] Type:object 
+***[LOGGER]*** [error at 24-07-22 10:07:100] Type:object 
+***[LOGGER]*** [error at 24-07-22 10:07:85] Type:object 
+***[LOGGER]*** [error at 24-07-22 10:07:33] Type:object 
+***[LOGGER]*** [error at 24-07-22 10:07:34] Type:object 
+***[LOGGER]*** [error at 24-07-22 10:07:55] Type:object 
+***[LOGGER]*** [error at 24-07-22 10:07:91] Type:object 
+***[LOGGER]*** [error at 24-07-22 10:07:34] Type:object 
+***[LOGGER]*** [error at 24-07-22 10:07:49] Type:object 
+***[LOGGER]*** [error at 24-07-22 10:07:43] Type:object 
+***[LOGGER]*** [error at 24-07-22 10:07:94] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:19] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:25] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:19] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:03] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:46] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:62] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:78] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:66] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:67] Type:ProductsServiceError in DELETE - /api/products/669aed70e3a466f5188910a8 from ::1
+***[LOGGER]*** [error at 24-07-22 11:07:54] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:54] Type:ProductsServiceError in DELETE - /api/products/669aed70e3a466f5188910a8 from ::1
+***[LOGGER]*** [error at 24-07-22 11:07:17] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:17] Type:ProductsServiceError in DELETE - /api/products/669aed70e3a466f5188910a8 from ::1
+***[LOGGER]*** [error at 24-07-22 11:07:12] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:12] Type:ProductsServiceError in DELETE - /api/products/669aed70e3a466f5188910a8 from ::1
+***[LOGGER]*** [error at 24-07-22 11:07:93] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:93] Type:ProductsServiceError in DELETE - /api/products/669aed70e3a466f5188910a8 from ::1
+***[LOGGER]*** [error at 24-07-22 11:07:08] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:09] Type:ProductsServiceError in DELETE - /api/products/669aed70e3a466f5188910a8 from ::1
+***[LOGGER]*** [error at 24-07-22 11:07:88] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:89] Type:ProductsServiceError in DELETE - /api/products/669aed70e3a466f5188910a8 from ::1
+***[LOGGER]*** [error at 24-07-22 11:07:41] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:41] Type:ProductsServiceError in DELETE - /api/products/669aed70e3a466f5188910a8 from ::1
+***[LOGGER]*** [error at 24-07-22 11:07:50] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:50] Type:ProductsServiceError in DELETE - /api/products/669aed70e3a466f5188910a8 from ::1
+***[LOGGER]*** [error at 24-07-22 11:07:99] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:99] Type:ProductsServiceError in DELETE - /api/products/669aed70e3a466f5188910a8 from ::1
+***[LOGGER]*** [error at 24-07-22 11:07:03] Type:object 
+***[LOGGER]*** [error at 24-07-22 11:07:04] Type:ProductsServiceError in DELETE - /api/products/669aed70e3a466f5188910a8 from ::1

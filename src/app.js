@@ -1,5 +1,4 @@
 import './config/env-config.js' //Se ejecuta para levantar variables de entorno desde consola.
-
 import express  from "express"
 import cookieParser from "cookie-parser"
 import bodyParser from "body-parser"
@@ -26,6 +25,9 @@ import {router as routerPruebas} from './routes/pruebas.router.js' //Interno par
 
 import { SocketManager } from "./socket/socketmanager.js";
 import { handlerErrorsMiddleware } from './middlewares/handler-errors-middleware.js';
+
+import SwaggerUiExpress from 'swagger-ui-express'
+import { specs } from './config/swagger.js'
 
 
 //crecion de instancia de express.
@@ -58,6 +60,9 @@ app.use('/api',routerProducts)
 app.use('/api',routerSessions)
 app.use('/api', routerUsers)
 app.use('/api', routerCheckouts)
+//Middlewares documentacion.
+app.use('/apidocs/', SwaggerUiExpress.serve,SwaggerUiExpress.setup(specs))
+
 app.use('/',routerTesting) //Rutas testing consignas.
 app.use('/pruebas', routerPruebas) //Rutas testing personal.
 

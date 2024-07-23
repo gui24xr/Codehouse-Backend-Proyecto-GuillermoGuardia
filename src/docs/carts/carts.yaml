@@ -1,0 +1,140 @@
+paths:
+  /api/carts:
+    post:
+      summary: Crea un nuevo carrito vacio.
+      description: Crea un nuevo carrito vacio. 
+      tags:
+        - Carts
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Devuelve un cartDTO con la informacion del carro creado.
+        '500':
+          description: Error interno del servidor.
+  /api/carts/{cid}:
+    get:
+      summary: Devuelve la informacion de un carro.
+      description: Toma por parametro un cid y devuelve el carro correspondiente, si lo encuentra.
+      tags:
+        - Carts
+      security:
+        - bearerAuth: []
+      parameters: 
+      - name: cid
+        in: path
+        required: true
+        description: id del carro.
+        schema:
+          type: string
+          example: 669aedb08a50a9e242995ec0
+      responses:
+        '200':
+          description: Devuelve un cartDTO con la informacion del carro creado.
+        '500':
+          description: Error interno del servidor.
+    delete:
+      summary: Vacia los productos de un carro.
+      description: Toma por parametro un cid borra los productos del carro y devuelve el carro vacio, si lo encuentra.
+      tags:
+        - Carts
+      security:
+        - bearerAuth: []
+      parameters: 
+      - name: cid
+        in: path
+        required: true
+        description: id del carro.
+        schema:
+          type: string
+          example: 669aedb08a50a9e242995ec0
+      responses:
+        '200':
+          description: Devuelve un cartDTO con el carro actual ( O sea datos borrados).
+        '500':
+          description: Error interno del servidor.
+    put:
+      summary: Agrega productos a un carrito. 
+      description: Toma por parametro un cid y le agregar los productos de un productArray[{productId,quantity}].
+      tags:
+        - Carts
+      security:
+        - bearerAuth: [user]
+      parameters: 
+      - name: cid
+        in: path
+        required: true
+        description: id del carro.
+        schema:
+          type: string
+          example: 669aedb08a50a9e242995ec0
+      requestBody:
+        required: true
+        content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  productsArray:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        productId:
+                          type: integer
+                          description: ID del producto.
+                        quantity:
+                          type: integer
+                          description: Cantidad del producto.
+                    example:
+                      - productId: 669aed70e3a466f5188910d1
+                        quantity: 10
+                      - productId: 669aed70e3a466f5188910d2
+                        quantity: 5
+      responses:
+        '200':
+          description: Devuelve un cartDTO con el carro actual ( O sea con los nuevos productos colocados en el).
+        '500':
+          description: Error interno del servidor.
+/api/carts/{cid}/products/{pid}:
+  post:
+    summary: Agrega un producto a al carrito. 
+    description: Toma por parametro un cid y le agregar los el productId pasado por parametro en la cantidad pasada por req.body.
+    tags:
+      - Carts
+    security:
+      - bearerAuth: [user]
+    parameters: 
+    - name: cid
+      in: path
+      required: true
+      description: id del carro.
+      schema:
+        type: string
+        example: 669aedb08a50a9e242995ec0
+    - name: pid
+      in: path
+      required: true
+      description: id del producto a agregar.
+      schema:
+        type: string
+        example: 669aed70e3a466f5188910de
+    requestBody:
+        required: true
+        content:
+           application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: number
+                  description: Cantidad de unidades del producto a agregar en el carro.   
+            example: 
+              quantity: 24
+        responses:
+          '200':
+            description: Devuelve un cartDTO con el carro actual ( O sea con el nuevo producto colocados en el).
+          '500':
+            description: Error interno del servidor.
+    
+     

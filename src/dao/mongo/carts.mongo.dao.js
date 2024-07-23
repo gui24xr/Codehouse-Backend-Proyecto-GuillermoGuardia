@@ -103,6 +103,7 @@ export default class CartsMongoDAO{
             const cartsArray = await CartModel.find(cartId ? {_id:cartId} : {}).populate('products.product')
             //Tengo el array con coincidencias, y quiero devolver lista de DTO
             const cartsDTOArray = cartsArray.map( cartItem => (this.getCartDTO(cartItem)))
+            console.log(cartsArray)
             return cartsDTOArray
         }catch(error){
             if (error instanceof CartDTOERROR) throw error
@@ -128,7 +129,8 @@ export default class CartsMongoDAO{
                 { products: productsList },//Objeto con lo que hay que actualizar
                 { new: true } // Para devolver el documento actualizado
             ).populate('products.product')
-            // Devuelvo el dto de lo actualizado.
+            // Devuelvo el dto de lo actualizado. Si no existe el carro devuelve null por lo cual habria que lanzar excepcion de carro no existe
+            if (!updatedCart) throw new CartsServiceError(CartsServiceError.UPDATING_ERROR,'CartsMongoDAO.update','No se encontro el carro para actualizar...')
             return this.getCartDTO(updatedCart)
         
         }catch(error){

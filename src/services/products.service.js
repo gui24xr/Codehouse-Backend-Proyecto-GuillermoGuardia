@@ -3,11 +3,11 @@ import { UsersRepository } from "../repositories/users-repository.js";
 import { UsersService } from "./users.service.js";
 import { CartsService } from "./carts.service.js";
 import { ProductsServiceError, ProductDTOERROR, UserDTOERROR, UsersServiceError, CartsServiceError} from "./errors.service.js";
-
+import { MailingService } from "./mailing.service.js";
 
 const productsRepository = new ProductsRepository()
 const usersRepository = new UsersRepository()
-
+//const cartsService = new CartService()
 
 export class ProductsService{
 
@@ -63,13 +63,17 @@ export class ProductsService{
             if (searchedUser.role == 'premium' && searchedProduct.owner != userEmail ) throw new ProductsServiceError(ProductsServiceError.DELETING_ERROR,'ProductsService.deleteProduct',`Solo un user admin o  ${searchedProduct.owner}(Su owner) puede borrar el producto...`)
          
             //Borramops el prodocto de todos los carros.
-            
+            //FALTA IMPLEMENTAR (PEDIRLE AL SERVICIO DE CARROS QUE RECORRA TODOS LOS CARROS Y SI ESTA EL PROODUCTO, LO QUITE....)
 
             //Le pedimos al repositorio que haga borrar el producto.
             const deleteResult = await productsRepository.deleteProductsList([productId])
+
+            //Antes de hacer el return enviamos el mail.
+            MailingService.sendMail(`Su producto ${searchedProduct.title} ah sido borrado !`,searchedProduct.owner,'Producto Borrado')
+
             return deleteResult[0] //COmo envie a borrar 1, tomo el primer elemento, si hay un problema se va a catch x implementacion de epositorio..
         }catch(error){
-            console.log(error)
+            //cachear aca que podria llegar a venir un error de mailservice
             if (error instanceof ProductsServiceError || error instanceof ProductDTOERROR || error instanceof UserDTOERROR || error instanceof UsersServiceError) throw error
             else throw new ProductsServiceError(ProductsServiceError.INTERNAL_SERVER_ERROR,'|ProductsService.deleteProduct|','Error interno del servidor...')
         }

@@ -38,7 +38,8 @@ export class CartRepository{
         //Los dao devuelve en forma de array de DTO y en este caso devolveria solo 1.
     try{
         const searchedCart = await cartsDAO.get({cartId:cartId})
-        //return new CartDTO(searchedCart)
+        //Ya que dao devuelve [], si es vacio no hay nada que retornar error si el carro no existe.
+        if (searchedCart.length < 1) throw new CartsServiceError(CartsServiceError.CART_NO_EXIST,'CartRepository.getCartById','No existe un carro con este id...')
         return searchedCart[0]
     }catch(error){
         if (error instanceof CartsServiceError || error instanceof CartDTOERROR) throw error

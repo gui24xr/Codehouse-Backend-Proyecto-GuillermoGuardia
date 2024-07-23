@@ -15,7 +15,9 @@ import {
 
 
 export const handlerErrorsMiddleware = (error, req, res, next) => {
-    //console.log('LLego al middleware Manejando erroressss',error)
+
+    console.log('LLego al middleware Manejando erroressss',error)
+    logger.error('Llego al middleware de errores. ',error)
 
     logger.error(`Type:${typeof(error)} `)
     
@@ -51,9 +53,16 @@ export const handlerErrorsMiddleware = (error, req, res, next) => {
     } 
 
     if (error instanceof UsersServiceError){
-        //console.log('LLego al middleware Manejando erroressss')
+        //console.log(error, error.code)
         logger.error(`Type:${error.name} in ${req.method} - ${req.originalUrl} from ${req.ip}`)
-        res.status(500).json({message: `Error en servicio de usuarios - ${error.message}`})
+      
+        if (error.code == UsersServiceError.DELETING_ERROR ) 
+            res.status(404).json({
+                message: error.message,
+                url: req.originalUrl
+        })
+
+
         
     } 
 
@@ -72,6 +81,12 @@ export const handlerErrorsMiddleware = (error, req, res, next) => {
         if (error.code == CartsServiceError.BLOCKED_TO_PREMIUM_USERS) 
             res.status(403).json({
                 message: `Operacion no permitida para usuarios premium. Se inento agregar un producto prodpio a su carro.`,
+                url: req.originalUrl
+        })
+
+        if (error.code == CartsServiceError.CART_NO_EXIST || error.code == CartsServiceError.UPDATING_ERROR) 
+            res.status(403).json({
+                message: error.message,
                 url: req.originalUrl
         })
 

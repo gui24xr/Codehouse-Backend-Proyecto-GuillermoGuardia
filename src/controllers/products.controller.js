@@ -171,7 +171,12 @@ async deleteProduct(req,res,next){
     //Pasamos x la capa de validacion.
 
     //Si todo va bien procedemos a borrar.
-    const deletedProduct = await productsService.deleteProduct({userEmail:req.currentUser.email,productId:productId})
+    const deletedProduct = await productsService.deleteProduct(
+        {
+        userEmail:req.currentUser.email,
+        productId:productId
+        
+    })
     res.status(200).json({
         status: "success", 
         message: `Se borro el producto productId:${productId}...`,

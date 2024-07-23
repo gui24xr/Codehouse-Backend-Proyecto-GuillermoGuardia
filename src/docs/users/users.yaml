@@ -1,0 +1,160 @@
+paths:
+  /api/users:
+    get:
+      summary: Muestra la informacion de todos los usuarios del sistema.
+      description: Se necesita ser user de rango admin para obtener la informacion.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []  
+      responses:
+        '200':
+          description: Muestra una lista con la informacion de todos los usuarios del sistema.
+        '500':
+          description: Error interno del servidor.
+    delete:
+      summary: Borra un user por su email. Recibe parametros por body.
+      description: Borra un user por su email, es necesario tener credenciales de administrador.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email de usuario que se pretende borrar. 
+            example: 
+              email: tinkiwinky@gmail.com
+      responses:
+      '200':
+        description: Devuelve un userDTO con la informacion de user eliminado o un mensaje de error.
+      '500':
+        description: Error interno del servidor. 
+  /api/users/premium/{uid}:
+    put:
+      summary: Intercambia el rol de un user entre user y premium y viceversa.
+      description: Se necesita ser user de rango admin para ejecutar este endpoint. Si es user pasara a ser premium(Si cumple los requisitos) y si es premium bajara su rango a users poniendo desactivando, si los tuviese, todos los productos que este user tiene en venta.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters: 
+      - name: uid
+        in: path
+        required: true
+        description: id del usuario que se quire cambiar el rol.
+        schema:
+          type: string
+          example: 669aedb08a50a9e242995ee0  
+      responses:
+        '200':
+          description: Devuelve el UserDTo del user al cual se le modifico el rol.
+        '500':
+          description: Error interno del servidor.
+  /api/users/rol:
+    put:
+      summary: Intercambia el rol de un user a un usuario que ingresa por req.body.
+      description: Se necesita tener credenciales de admin para realizar esta funcion. 
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+           application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email de usuario al cual se cambiar el rol.
+                new_role:
+                  type: string
+                  description: Nuevo rol para el usuario. Puede ser 'user','admin','premium'.
+                  enum:
+                  - user
+                  - premium
+            example: 
+              email: user1@gmail.com
+              new_role: 'premium'
+
+      responses:
+        '200':
+          description: Devuelve el UserDTo del user al cual se le modifico el rol y un me nensaje.
+        '500':
+          description: Error interno del servidor.
+  /api/users/recoverypassword:
+    post:
+      summary: Solicita envio de email con codigo para recuperar contraseña de un usuario.
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+           application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email de usuario que necesita recibir un email con codigo para recuperar su contraseña.   
+            example: 
+              email: user1@gmail.com  
+    responses:
+      '200':
+        description: Devuelve un mensaje diciendo que se envio el email con el codigo de recuperacion y cuando vence dicho codigo.
+      '500':
+        description: Error interno del servidor.
+  /api/users/resetpassword:
+    post:
+      summary: Hace la solicitud para cambiar la contraseña del usuario.
+      description: Si el codigo que se ingresa no esta caducado y coincide con el mismo email se procede a poner al usuario la nueva contraseña.
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+           application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email de usuario que pretende cambiar su su contraseña. 
+                recovery_code:
+                  type: string
+                  description: Email de usuario que pretende cambiar su su contraseña.
+                new_password:
+                  type: string
+                  description: Email de usuario que pretende cambiar su su contraseña.
+              example: 
+                email: user1@gmail.com
+                recovery_code: 1234
+                new_password: 567890
+    responses:
+      '200':
+        description: Devuelve un userDTO con la informacion de user actualiazada o un mensaje diciendo que no se cambio el password.
+      '500':
+        description: Error interno del servidor.
+  /api/users/delete/inactive:
+    delete:
+      summary: Borra los usuarios inactivos del sistema desde hace 2 o mas dias. 
+      description: Se necesita ser user de rango admin para obtener la informacion.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []  
+      responses:
+        '200':
+          description: y devuelve una lista con los user borrados.
+        '500':
+          description: Error interno del servidor.
+
+  

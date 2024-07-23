@@ -1162,3 +1162,250 @@
 ***[LOGGER]*** [error at 24-07-22 11:07:99] Type:ProductsServiceError in DELETE - /api/products/669aed70e3a466f5188910a8 from ::1
 ***[LOGGER]*** [error at 24-07-22 11:07:03] Type:object 
 ***[LOGGER]*** [error at 24-07-22 11:07:04] Type:ProductsServiceError in DELETE - /api/products/669aed70e3a466f5188910a8 from ::1
+***[LOGGER]*** [error at 24-07-22 17:07:11] Type:object 
+***[LOGGER]*** [error at 24-07-22 17:07:11] Type:UnauthorizedError in GET - /api/users from ::1
+***[LOGGER]*** [error at 24-07-22 17:07:15] Type:object 
+***[LOGGER]*** [error at 24-07-22 17:07:16] Type:UnauthorizedError in GET - /api/users from ::1
+***[LOGGER]*** [error at 24-07-22 17:07:83] Type:object 
+***[LOGGER]*** [error at 24-07-22 17:07:84] Type:UnauthorizedError in GET - /api/users from ::1
+***[LOGGER]*** [error at 24-07-22 17:07:85] Type:object 
+***[LOGGER]*** [error at 24-07-22 17:07:71] Type:object 
+***[LOGGER]*** [error at 24-07-22 18:07:12] Type:object 
+***[LOGGER]*** [error at 24-07-22 18:07:12] Type:UsersServiceError in POST - /api/sessions/login from ::1
+***[LOGGER]*** [error at 24-07-22 18:07:06] Type:object 
+***[LOGGER]*** [error at 24-07-22 18:07:06] Type:UsersServiceError in POST - /api/sessions/login from ::1
+***[LOGGER]*** [error at 24-07-22 18:07:81] Type:object 
+***[LOGGER]*** [error at 24-07-22 18:07:81] Type:UsersServiceError in POST - /api/sessions/login from ::1
+***[LOGGER]*** [error at 24-07-22 18:07:49] Type:object 
+***[LOGGER]*** [error at 24-07-22 18:07:49] Type:UsersServiceError in POST - /api/sessions/login from ::1
+***[LOGGER]*** [error at 24-07-22 18:07:13] Type:object 
+***[LOGGER]*** [error at 24-07-22 18:07:13] Type:UsersServiceError in POST - /api/sessions/login from ::1
+***[LOGGER]*** [error at 24-07-22 18:07:81] Type:object 
+***[LOGGER]*** [error at 24-07-22 18:07:67] Type:object 
+***[LOGGER]*** [error at 24-07-22 18:07:75] Type:object 
+***[LOGGER]*** [error at 24-07-22 18:07:82] Type:object 
+***[LOGGER]*** [error at 24-07-22 18:07:06] Type:object 
+***[LOGGER]*** [error at 24-07-22 18:07:54] Type:object 
+***[LOGGER]*** [error at 24-07-22 18:07:18] Type:object 
+***[LOGGER]*** [error at 24-07-22 18:07:07] Type:object 
+***[LOGGER]*** [error at 24-07-22 18:07:97] Type:object 
+***[LOGGER]*** [error at 24-07-23 02:07:88] Type:object 
+***[LOGGER]*** [error at 24-07-23 02:07:87] Type:object 
+***[LOGGER]*** [error at 24-07-23 02:07:87] Type:UsersServiceError in POST - /api/sessions/register from ::ffff:127.0.0.1
+***[LOGGER]*** [error at 24-07-23 02:07:74] Type:object 
+***[LOGGER]*** [error at 24-07-23 02:07:74] Type:UsersServiceError in POST - /api/sessions/register from ::1
+***[LOGGER]*** [error at 24-07-23 02:07:73] Llego al middleware de errores.  Error interno del servidor...
+***[LOGGER]*** [error at 24-07-23 02:07:74] Type:object 
+***[LOGGER]*** [error at 24-07-23 02:07:74] Type:UsersServiceError in POST - /api/sessions/register from ::1
+***[LOGGER]*** [error at 24-07-23 02:07:59] Llego al middleware de errores.  Error interno del servidor...
+***[LOGGER]*** [error at 24-07-23 02:07:59] Type:object 
+***[LOGGER]*** [error at 24-07-23 02:07:59] Type:UsersServiceError in POST - /api/sessions/register from ::1
+***[LOGGER]*** [error at 24-07-23 02:07:50] Llego al middleware de errores. 
+***[LOGGER]*** [error at 24-07-23 02:07:50] Type:object 
+***[LOGGER]*** [error at 24-07-23 02:07:50] Type:UnauthorizedError in GET - /views/users from ::ffff:127.0.0.1
+***[LOGGER]*** [error at 24-07-23 02:07:49] Llego al middleware de errores.  Error interno del servidor...
+***[LOGGER]*** [error at 24-07-23 02:07:49] Type:object 
+***[LOGGER]*** [error at 24-07-23 02:07:49] Type:UsersServiceError in POST - /api/sessions/register from ::1
+***[LOGGER]*** [error at 24-07-23 03:07:81] Llego al middleware de errores. 
+***[LOGGER]*** [error at 24-07-23 03:07:81] Type:object 
+***[LOGGER]*** [error at 24-07-23 03:07:81] Type:UnauthorizedError in GET - /api/users from ::ffff:127.0.0.1
+***[LOGGER]*** [error at 24-07-23 05:07:50] Llego al middleware de errores.  Dato/s incompleto/s ! El/los campos ||email,password|| es/son requeridos.
+***[LOGGER]*** [error at 24-07-23 05:07:51] Type:object 
+***[LOGGER]*** [error at 24-07-23 05:07:56] Llego al middleware de errores. 
+***[LOGGER]*** [error at 24-07-23 05:07:56] Type:object 
+***[LOGGER]*** [error at 24-07-23 05:07:56] Type:UnauthorizedError in PUT - /api/users/premium/:uid from ::ffff:127.0.0.1
+***[LOGGER]*** [error at 24-07-23 05:07:77] Llego al middleware de errores. 
+***[LOGGER]*** [error at 24-07-23 05:07:77] Type:object 
+***[LOGGER]*** [error at 24-07-23 05:07:77] Type:UsersServiceError in PUT - /api/users/premium/:uid from ::1
+***[LOGGER]*** [error at 24-07-23 05:07:91] Llego al middleware de errores. 
+***[LOGGER]*** [error at 24-07-23 05:07:92] Type:object 
+***[LOGGER]*** [error at 24-07-23 05:07:92] Type:UsersServiceError in PUT - /api/users/premium/:uid from ::1
+***[LOGGER]*** [error at 24-07-23 05:07:00] Llego al middleware de errores. 
+***[LOGGER]*** [error at 24-07-23 05:07:01] Type:object 
+***[LOGGER]*** [error at 24-07-23 05:07:01] Type:UsersServiceError in PUT - /api/users/premium/:uid from ::1
+***[LOGGER]*** [error at 24-07-23 05:07:62] Llego al middleware de errores. 
+***[LOGGER]*** [error at 24-07-23 05:07:62] Type:object 
+***[LOGGER]*** [error at 24-07-23 05:07:63] Type:UsersServiceError in PUT - /api/users/premium/:uid from ::1
+***[LOGGER]*** [error at 24-07-23 05:07:42] Llego al middleware de errores.  No se puede pasar a premium. Primero carga la documentacion necesaria...
+***[LOGGER]*** [error at 24-07-23 05:07:42] Type:object 
+***[LOGGER]*** [error at 24-07-23 05:07:42] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-23 05:07:53] Llego al middleware de errores.  No se puede pasar a premium. Primero carga la documentacion necesaria...
+***[LOGGER]*** [error at 24-07-23 05:07:53] Type:object 
+***[LOGGER]*** [error at 24-07-23 05:07:53] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-23 05:07:08] Llego al middleware de errores.  No se puede pasar a premium. Primero carga la documentacion necesaria...
+***[LOGGER]*** [error at 24-07-23 05:07:09] Type:object 
+***[LOGGER]*** [error at 24-07-23 05:07:09] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-23 05:07:93] Llego al middleware de errores.  No se puede pasar a premium. Primero carga la documentacion necesaria...
+***[LOGGER]*** [error at 24-07-23 05:07:93] Type:object 
+***[LOGGER]*** [error at 24-07-23 05:07:93] Type:UsersServiceError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-23 15:07:84] Llego al middleware de errores.  Error al intentar la contraseña. El codigo expiro o es incorrecto..
+***[LOGGER]*** [error at 24-07-23 15:07:84] Type:object 
+***[LOGGER]*** [error at 24-07-23 15:07:84] Type:UsersServiceError in POST - /api/users/resetpassword from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:33] Llego al middleware de errores. 
+***[LOGGER]*** [error at 24-07-23 16:07:34] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:34] Type:UnauthorizedError in PUT - /api/users/premium/669aedb08a50a9e242995ee0 from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:77] Llego al middleware de errores. 
+***[LOGGER]*** [error at 24-07-23 16:07:77] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:77] Type:UnauthorizedError in PUT - /api/users/rol from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:76] Llego al middleware de errores.  user2 no es un valor valido para el dato Rol de usuario.
+***[LOGGER]*** [error at 24-07-23 16:07:76] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:43] Llego al middleware de errores.  No existe en la BD un usuario con tinkywinki@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:44] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:44] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:32] Llego al middleware de errores.  No existe en la BD un usuario con tinkywinki@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:32] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:32] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:11] Llego al middleware de errores.  No existe en la BD un usuario con tinkywinki@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:11] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:12] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:72] Llego al middleware de errores.  No existe en la BD un usuario con tinkywinki@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:72] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:73] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:74] Llego al middleware de errores.  No existe en la BD un usuario con tinkywinki@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:74] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:74] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:61] Llego al middleware de errores.  No existe en la BD un usuario con tinkywinki@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:61] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:61] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:13] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:13] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:13] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:14] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:15] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:15] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:81] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:81] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:81] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:45] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:45] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:45] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:53] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:53] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:53] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:26] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:26] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:26] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:86] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:86] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:86] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:70] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:70] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:70] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:06] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:07] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:07] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:100] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:100] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:00] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:89] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:89] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:89] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:99] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:99] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:99] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:10] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:10] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:10] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:85] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:85] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:85] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:96] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:97] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:97] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:39] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:39] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:40] Type:UsersServiceError in DELETE - /api/users from ::ffff:127.0.0.1
+***[LOGGER]*** [error at 24-07-23 16:07:73] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:74] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:74] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:95] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:95] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:95] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:65] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:65] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:66] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:15] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:15] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:15] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:65] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:65] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:65] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:16] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:16] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:16] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:62] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:63] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:63] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:05] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:05] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:05] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 16:07:91] Llego al middleware de errores.  No existe en la BD un usuario con tinkiwinky@gmail.com.
+***[LOGGER]*** [error at 24-07-23 16:07:91] Type:object 
+***[LOGGER]*** [error at 24-07-23 16:07:91] Type:UsersServiceError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:47] Llego al middleware de errores. 
+***[LOGGER]*** [error at 24-07-23 17:07:47] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:48] Type:UnauthorizedError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:77] Llego al middleware de errores. 
+***[LOGGER]*** [error at 24-07-23 17:07:77] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:77] Type:UnauthorizedError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:41] Llego al middleware de errores. 
+***[LOGGER]*** [error at 24-07-23 17:07:41] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:41] Type:UnauthorizedError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:62] Llego al middleware de errores. 
+***[LOGGER]*** [error at 24-07-23 17:07:62] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:62] Type:UnauthorizedError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:10] Llego al middleware de errores. 
+***[LOGGER]*** [error at 24-07-23 17:07:10] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:10] Type:UnauthorizedError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:75] Llego al middleware de errores. 
+***[LOGGER]*** [error at 24-07-23 17:07:75] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:75] Type:UnauthorizedError in DELETE - /api/users from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:78] Llego al middleware de errores.  Cast to ObjectId failed for value "669aedb08a50a9e242995eq2" (type string) at path "_id" for model "carts"
+***[LOGGER]*** [error at 24-07-23 17:07:78] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:78] Type:CartsServiceError in GET - /api/carts/669aedb08a50a9e242995eq2 from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:12] Llego al middleware de errores.  No existe un carro con este id...
+***[LOGGER]*** [error at 24-07-23 17:07:12] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:13] Type:CartsServiceError in GET - /api/carts/669aedb08a50a9e242995ec9 from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:50] Llego al middleware de errores.  No existe un carro con este id...
+***[LOGGER]*** [error at 24-07-23 17:07:50] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:50] Type:CartsServiceError in GET - /api/carts/669aedb08a50a9e242995ec9 from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:12] Llego al middleware de errores.  No existe un carro con este id...
+***[LOGGER]*** [error at 24-07-23 17:07:12] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:12] Type:CartsServiceError in GET - /api/carts/669aedb08a50a9e242995ec9 from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:47] Llego al middleware de errores.  No existe un carro con este id...
+***[LOGGER]*** [error at 24-07-23 17:07:47] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:48] Type:CartsServiceError in GET - /api/carts/669aedb08a50a9e242995ec9 from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:02] Llego al middleware de errores.  Cast to ObjectId failed for value "669aedb08a50a9e242995e" (type string) at path "_id" for model "carts"
+***[LOGGER]*** [error at 24-07-23 17:07:02] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:02] Type:CartsServiceError in GET - /api/carts/669aedb08a50a9e242995e from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:48] Llego al middleware de errores.  Cannot read properties of null (reading '_id')
+***[LOGGER]*** [error at 24-07-23 17:07:48] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:49] Type:CartsServiceError in DELETE - /api/carts/669aedb08a50a9e242995ec9 from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:23] Llego al middleware de errores.  Cannot read properties of null (reading '_id')
+***[LOGGER]*** [error at 24-07-23 17:07:23] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:23] Type:CartsServiceError in DELETE - /api/carts/669aedb08a50a9e242995ec9 from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:14] Llego al middleware de errores.  Cannot read properties of null (reading '_id')
+***[LOGGER]*** [error at 24-07-23 17:07:14] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:14] Type:CartsServiceError in DELETE - /api/carts/669aedb08a50a9e242995ec9 from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:53] Llego al middleware de errores.  Cannot read properties of null (reading '_id')
+***[LOGGER]*** [error at 24-07-23 17:07:53] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:53] Type:CartsServiceError in DELETE - /api/carts/669aedb08a50a9e242995ec9 from ::ffff:127.0.0.1
+***[LOGGER]*** [error at 24-07-23 17:07:79] Llego al middleware de errores.  No se encontro el carro para actualizar...
+***[LOGGER]*** [error at 24-07-23 17:07:79] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:79] Type:CartsServiceError in DELETE - /api/carts/669aedb08a50a9e242995ec9 from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:78] Llego al middleware de errores.  No se encontro el carro para actualizar...
+***[LOGGER]*** [error at 24-07-23 17:07:78] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:79] Type:CartsServiceError in DELETE - /api/carts/669aedb08a50a9e242995ec9 from ::1
+***[LOGGER]*** [error at 24-07-23 17:07:63] Llego al middleware de errores.  No se encontro el carro para actualizar...
+***[LOGGER]*** [error at 24-07-23 17:07:63] Type:object 
+***[LOGGER]*** [error at 24-07-23 17:07:63] Type:CartsServiceError in DELETE - /api/carts/669aedb08a50a9e242995ec9 from ::1
+***[LOGGER]*** [error at 24-07-23 18:07:28] Llego al middleware de errores. 
+***[LOGGER]*** [error at 24-07-23 18:07:28] Type:object 
+***[LOGGER]*** [error at 24-07-23 18:07:28] Type:UnauthorizedError in PUT - /api/carts/669aedb08a50a9e242995ec0 from ::ffff:127.0.0.1
+***[LOGGER]*** [error at 24-07-23 18:07:44] Llego al middleware de errores.  La lista de productos ingresada no tiene un formato esperado...
+***[LOGGER]*** [error at 24-07-23 18:07:44] Type:object 
+***[LOGGER]*** [error at 24-07-23 18:07:44] Type:CartsServiceError in PUT - /api/carts/669aedb08a50a9e242995ec0 from ::1
+***[LOGGER]*** [error at 24-07-23 18:07:14] Llego al middleware de errores.  Dato/s incompleto/s ! El/los campos ||quantity|| es/son requeridos.
+***[LOGGER]*** [error at 24-07-23 18:07:14] Type:object 
+***[LOGGER]*** [error at 24-07-23 18:07:26] Llego al middleware de errores.  Dato/s incompleto/s ! El/los campos ||quantity|| es/son requeridos.
+***[LOGGER]*** [error at 24-07-23 18:07:26] Type:object 

@@ -173,8 +173,9 @@ export default class UsersMongoDao{
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             //Utilizo findOneAndDelete que borra y devuelve el registro borrado. Y si no borra, devuelve null
             const deletedUser = await UserModel.findOneAndDelete({ email: userEmail })
+            console.log('deletedUser', deletedUser)
             //Si no lo borro lanzo error
-            if (!deletedUser) throw new UsersServiceError(UsersServiceError.USER_NO_EXIST,'|UsersMongoDAO.deleteUser|',`No existe en la BD un usuario con ${userEmail}.`)
+            if (deletedUser == null) throw new UsersServiceError(UsersServiceError.DELETING_ERROR,'|UsersMongoDAO.deleteUser|',`No existe en la BD un usuario con ${userEmail}.`)
             //Si todo salio OK devuelvo el dto del user borrado.
             return this.getUserDTO(deletedUser)
           
